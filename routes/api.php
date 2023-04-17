@@ -25,7 +25,7 @@ Route::get('prueba', [ZohoController::class, 'prueba']);
 Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
 Route::get('GetLeads', [ZohoController::class, 'GetLeads']);
 Route::get('Leads/{id}', [ZohoController::class, 'GetByIdLeads']);
-Route::patch('UpdateLeads/{id}', [ZohoController::class, 'UpdateLeads']);
+Route::put('UpdateLeads/{id}', [ZohoController::class, 'UpdateLeads']);
 Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
 
 Route::get('Contacts', [ZohoController::class, 'GetContacts']);

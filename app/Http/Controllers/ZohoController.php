@@ -111,12 +111,10 @@ class ZohoController extends Controller
         $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO').'/Leads'.'/'.$id;
 
-
         $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
-                'Content-Type' => 'application/json'
             ])
-            ->get($URL_ZOHO, $request->all())
+            ->put($URL_ZOHO, $request->all())
             ->json();
     
         return response()->json([
@@ -163,7 +161,7 @@ class ZohoController extends Controller
                 'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
                 'Content-Type' => 'application/json'
             ])
-            ->post($URL_ZOHO, $request->all())
+            ->put($URL_ZOHO, $request->all())
             ->json();
     
         return response()->json([
