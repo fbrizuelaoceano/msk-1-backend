@@ -63,11 +63,22 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->token;
+        // Verifica si el usuario tiene tokens activos
+        $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
+        if ($activeTokens->count() > 0) {
+            $token = $activeTokens->first();
+        } else {
+            // Genera un nuevo token de acceso
+            $tokenResult = $user->createToken($request->email.'-Personal Access Token');
+            $token = $tokenResult->token;
+            if ($request->remember_me) {
+                $token->expires_at = now()->addMinutes(120);
+            }
+            $token->save();
+        }
 
         if ($request->remember_me) {
-            $token->expires_at = now()->addWeeks(1);
+            $token->expires_at = now()->addWeek(1);
         }
 
         $token->save();
