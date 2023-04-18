@@ -7,11 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-// use samples\src\com\zoho\crm\api\initializer;
 
-use samples\src\com\zoho\crm\api\initializer\Initialize;
-
-class ZohoController extends Controller
+class ZohoOMController extends Controller
 {
     private $accessToken;
 
@@ -20,10 +17,10 @@ class ZohoController extends Controller
         try {
             // Initialize::initialize();
 
-            $ZOHO_API_BASE_URL = env('ZOHO_API_BASE_URL');
-            $ZOHO_CLIENT_ID = env('ZOHO_CLIENT_ID');
-            $ZOHO_CLIENT_SECRET = env('ZOHO_CLIENT_SECRET');
-            $ZOHO_REFRESH_TOKEN = env('ZOHO_REFRESH_TOKEN');
+            $ZOHO_API_BASE_URL = env('ZOHO_OM_API_BASE_URL');
+            $ZOHO_CLIENT_ID = env('ZOHO_OM_CLIENT_ID');
+            $ZOHO_CLIENT_SECRET = env('ZOHO_OM_CLIENT_SECRET');
+            $ZOHO_REFRESH_TOKEN = env('ZOHO_OM_REFRESH_TOKEN');
 
             $URL = 'https://' . $ZOHO_API_BASE_URL . '/oauth/v2/token?' .
                 'refresh_token=' . $ZOHO_REFRESH_TOKEN .
@@ -34,9 +31,9 @@ class ZohoController extends Controller
             $response = Http::post($URL)->json();
             // Dump the contents of the variable
             var_dump($response->data->access_token);
-            Storage::disk('public')->put('/zoho/access_token.txt', $response->data->access_token);
+            Storage::disk('public')->put('/zoho/OM/access_token.txt', $response->data->access_token);
 
-            // putenv('ZOHO_ACCESS_TOKEN='.$response->data->access_token);//no se guarda
+            // putenv('ZOHO_OM_ACCESS_TOKEN='.$response->data->access_token);//no se guarda
         } catch (Exception $e) {
             Log::error($e);
         }
@@ -45,10 +42,10 @@ class ZohoController extends Controller
     function CreateAccessToken()
     {
 
-        $ZOHO_API_BASE_URL = env('ZOHO_API_BASE_URL');
-        $ZOHO_CLIENT_ID = env('ZOHO_CLIENT_ID');
-        $ZOHO_CLIENT_SECRET = env('ZOHO_CLIENT_SECRET');
-        $ZOHO_REFRESH_TOKEN = env('ZOHO_REFRESH_TOKEN');
+        $ZOHO_API_BASE_URL = env('ZOHO_OM_API_BASE_URL');
+        $ZOHO_CLIENT_ID = env('ZOHO_OM_CLIENT_ID');
+        $ZOHO_CLIENT_SECRET = env('ZOHO_OM_CLIENT_SECRET');
+        $ZOHO_REFRESH_TOKEN = env('ZOHO_OM_REFRESH_TOKEN');
 
         $URL = 'https://' . $ZOHO_API_BASE_URL . '/oauth/v2/token?' .
             'refresh_token=' . $ZOHO_REFRESH_TOKEN .
@@ -65,7 +62,7 @@ class ZohoController extends Controller
 
     function GetLeads()
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
         $URL_ZOHO = env('URL_ZOHO') . '/Leads';
 
         // return response()->json([
@@ -83,7 +80,7 @@ class ZohoController extends Controller
     }
     function GetByIdLeads($id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Leads/search?criteria=(id:equals:' . $id . ')';
 
         $response = Http::withHeaders([
@@ -98,7 +95,7 @@ class ZohoController extends Controller
     }
     function CreateLeads(Request $request)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Leads';
 
         $response = Http::withHeaders([
@@ -114,7 +111,7 @@ class ZohoController extends Controller
     }
     function UpdateLeads(Request $request, $id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Leads' . '/' . $id;
 
         $response = Http::withHeaders([
@@ -130,7 +127,7 @@ class ZohoController extends Controller
     function DeleteLeads(Request $request, $ids)
     {
 
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Leads?ids=' . $ids . '&wf_trigger=true';
 
         if ($ids)
@@ -148,7 +145,7 @@ class ZohoController extends Controller
 
     function GetContacts()
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
         $URL_ZOHO = env('URL_ZOHO') . '/Contacts';
 
         // return response()->json([
@@ -166,7 +163,7 @@ class ZohoController extends Controller
     }
     function GetByIdContacts($id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contacts/search?criteria=(id:equals:' . $id . ')';
 
         $response = Http::withHeaders([
@@ -181,7 +178,7 @@ class ZohoController extends Controller
     }
     function UpdateContacts(Request $request, $id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contacts' . '/' . $id;
 
         $response = Http::withHeaders([
@@ -196,7 +193,7 @@ class ZohoController extends Controller
     }
     function CreateContacts(Request $request)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contacts';
 
         $response = Http::withHeaders([
@@ -213,7 +210,7 @@ class ZohoController extends Controller
     function DeleteContacts(Request $request, $ids)
     {
 
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contacts?ids=' . $ids . '&wf_trigger=true';
 
         $response = Http::withHeaders([
@@ -229,7 +226,7 @@ class ZohoController extends Controller
 
     function GetContracts()
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
         $URL_ZOHO = env('URL_ZOHO') . '/Contracts';
 
         // return response()->json([
@@ -247,7 +244,7 @@ class ZohoController extends Controller
     }
     function GetByIdContracts($id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contracts/search?criteria=(id:equals:' . $id . ')';
 
         $response = Http::withHeaders([
@@ -262,7 +259,7 @@ class ZohoController extends Controller
     }
     function CreateContracts(Request $request)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contracts';
 
         $response = Http::withHeaders([
@@ -278,7 +275,7 @@ class ZohoController extends Controller
     }
     function UpdateContracts(Request $request, $id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contracts' . '/' . $id;
 
         $response = Http::withHeaders([
@@ -294,7 +291,7 @@ class ZohoController extends Controller
     function DeleteContracts(Request $request, $ids)
     {
 
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Contracts?ids=' . $ids . '&wf_trigger=true';
 
         $response = Http::withHeaders([
@@ -310,7 +307,7 @@ class ZohoController extends Controller
 
     function ConvertLead(Request $request, $id)
     {
-        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_OM_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO') . '/Leads' . '/' . $id . '/actions/convert';
 
         $response = Http::withHeaders([

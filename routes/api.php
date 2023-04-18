@@ -1,6 +1,7 @@
 <?php
 
 // use Illuminate\Http\Request;
+use App\Http\Controllers\ZohoOMController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZohoController;
@@ -24,6 +25,12 @@ Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 
 Route::get('prueba', [Zoho2Controller::class, 'prueba']);
 
+Route::prefix('om')->group(function () {
+    Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
+    Route::get('GetLeads', [ZohoOMController::class, 'GetLeads']);
+
+});
+
 Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
 Route::get('GetLeads', [ZohoController::class, 'GetLeads']);
 Route::get('Leads/{id}', [ZohoController::class, 'GetByIdLeads']);
@@ -39,6 +46,3 @@ Route::get('Contacts/{id}', [ZohoController::class, 'GetByIdContacts']);
 // Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
 
 Route::get('Contracts', [ZohoController::class, 'GetContracts']);
-
-
-
