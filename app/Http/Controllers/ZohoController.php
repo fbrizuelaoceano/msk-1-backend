@@ -14,6 +14,9 @@ class ZohoController extends Controller
 {
     private $accessToken;
 
+   
+    
+
     public function __construct()
     {
         try {
@@ -41,6 +44,29 @@ class ZohoController extends Controller
         }
     }
 
+    function CreateRefreshToken(){
+
+        $ZOHO_CLIENT_ID = env('ZOHO_CLIENT_ID');
+        $ZOHO_CLIENT_SECRET = env('ZOHO_CLIENT_SECRET');
+        $ZOHO_GRANT_TOKEN = env('ZOHO_GRANT_TOKEN');
+        $ZOHO_API_TOKEN_URL= env('ZOHO_API_TOKEN_URL');
+        $ZOHO_REDIRECT_URI=env("ZOHO_REDIRECT_URI");
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ])->post($ZOHO_API_TOKEN_URL, [
+            'body' => 
+            'code='.$ZOHO_GRANT_TOKEN
+            .'&redirect_url='.$ZOHO_REDIRECT_URI
+            .'&client_id='.$ZOHO_CLIENT_ID
+            .'&client_secret='.$ZOHO_CLIENT_SECRET
+            .'&grant_type=authorization_code'
+        ])->json();
+
+        return response()->json([
+            'data' => $response,
+        ]);
+    }
     function CreateAccessToken(){
         
         $ZOHO_API_BASE_URL = env('ZOHO_API_BASE_URL');
@@ -307,6 +333,19 @@ class ZohoController extends Controller
         ]);
     }
     
+    function GetByEmail($module,$email){
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/'.$module.'/search?email='.$email;
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+        ])
+        ->get($URL_ZOHO)->json();
+    
+        return response()->json([
+            'data' => $response,
+        ]);
+    }
 
    function prueba(){
 

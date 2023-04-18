@@ -24,8 +24,15 @@ Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 
 Route::get('prueba', [Zoho2Controller::class, 'prueba']);
 
+
+
+Route::get('CreateRefreshToken', [ZohoController::class, 'CreateRefreshToken']);
 Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
+
+
 Route::get('GetLeads', [ZohoController::class, 'GetLeads']);
+Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmail']);
+
 Route::get('Leads/{id}', [ZohoController::class, 'GetByIdLeads']);
 Route::put('UpdateLeads/{id}', [ZohoController::class, 'UpdateLeads']);
 Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
