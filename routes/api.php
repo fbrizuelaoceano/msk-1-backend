@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\Zoho2Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,12 +22,16 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 
-Route::get('prueba', [ZohoController::class, 'prueba']);
+Route::get('prueba', [Zoho2Controller::class, 'prueba']);
+
 Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
 Route::get('GetLeads', [ZohoController::class, 'GetLeads']);
 Route::get('Leads/{id}', [ZohoController::class, 'GetByIdLeads']);
 Route::put('UpdateLeads/{id}', [ZohoController::class, 'UpdateLeads']);
 Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
+Route::delete('DeleteLeads/{id}', [ZohoController::class, 'DeleteLeads']);
+
+Route::post('ConvertLead/{id}', [ZohoController::class, 'ConvertLead']);
 
 Route::get('Contacts', [ZohoController::class, 'GetContacts']);
 Route::get('Contacts/{id}', [ZohoController::class, 'GetByIdContacts']);

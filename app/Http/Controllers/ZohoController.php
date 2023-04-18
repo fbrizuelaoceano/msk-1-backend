@@ -121,6 +121,23 @@ class ZohoController extends Controller
                 'data' => $response,
             ]);
     }
+    function DeleteLeads(Request $request,$ids){
+        
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/Leads?ids='.$ids.'&wf_trigger=true';
+
+        if($ids)
+
+        $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+            ])
+            ->delete($URL_ZOHO, $request->all())
+            ->json();
+    
+        return response()->json([
+                'data' => $response,
+            ]);
+    }
 
     function GetContacts(){
         $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN'); //obtener de otro lado porque no se guarda
@@ -153,6 +170,20 @@ class ZohoController extends Controller
             'data' => $response,
         ]);
     }
+    function UpdateContacts(Request $request,$id){
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/Contacts'.'/'.$id;
+
+        $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+            ])
+            ->put($URL_ZOHO, $request->all())
+            ->json();
+    
+        return response()->json([
+                'data' => $response,
+            ]);
+    }
     function CreateContacts(Request $request){
         $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
         $URL_ZOHO = env('URL_ZOHO').'/Contacts';
@@ -167,6 +198,21 @@ class ZohoController extends Controller
         return response()->json([
                 'data' => $response,
             ]);
+    }
+    function DeleteContacts(Request $request,$ids){
+        
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/Contacts?ids='.$ids.'&wf_trigger=true';
+
+        $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+            ])
+            ->delete($URL_ZOHO, $request->all())
+            ->json();
+    
+        return response()->json([
+            'data' => $response,
+        ]);
     }
     
     function GetContracts(){
@@ -215,6 +261,52 @@ class ZohoController extends Controller
                 'data' => $response,
             ]);
     }
+    function UpdateContracts(Request $request,$id){
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/Contracts'.'/'.$id;
+
+        $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+            ])
+            ->put($URL_ZOHO, $request->all())
+            ->json();
+    
+        return response()->json([
+                'data' => $response,
+            ]);
+    }
+    function DeleteContracts(Request $request,$ids){
+        
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/Contracts?ids='.$ids.'&wf_trigger=true';
+
+        $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+            ])
+            ->delete($URL_ZOHO, $request->all())
+            ->json();
+    
+        return response()->json([
+            'data' => $response,
+        ]);
+    }
+
+    function ConvertLead(Request $request,$id){
+        $ZOHO_ACCESS_TOKEN = env('ZOHO_ACCESS_TOKEN');
+        $URL_ZOHO = env('URL_ZOHO').'/Leads'.'/'.$id.'/actions/convert';
+
+        $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken '.$ZOHO_ACCESS_TOKEN,
+                'Content-Type' => 'application/json',
+            ])
+            ->post($URL_ZOHO, $request->all())
+            ->json();
+    
+        return response()->json([
+            'data' => $response,
+        ]);
+    }
+    
 
    function prueba(){
 
