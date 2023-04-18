@@ -31,8 +31,14 @@ Route::prefix('om')->group(function () {
 
 });
 
+
+Route::get('CreateRefreshToken', [ZohoController::class, 'CreateRefreshToken']);
 Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
+
+
 Route::get('GetLeads', [ZohoController::class, 'GetLeads']);
+Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmail']);
+
 Route::get('Leads/{id}', [ZohoController::class, 'GetByIdLeads']);
 Route::put('UpdateLeads/{id}', [ZohoController::class, 'UpdateLeads']);
 Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
