@@ -3,6 +3,8 @@
 // use Illuminate\Http\Request;
 use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
+use App\Models\Profession;
+use App\Models\Speciality;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeadController;
@@ -61,4 +63,13 @@ Route::prefix('crm')->group(function () {
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
+});
+
+Route::get('professions', function () {
+    $professions = Profession::all();
+    return response()->json($professions);
+});
+Route::get('specialities', function () {
+    $specialities = Speciality::all();
+    return response()->json($specialities);
 });
