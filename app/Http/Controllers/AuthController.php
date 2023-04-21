@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Models\Contact;
 
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
@@ -120,7 +120,7 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
     
-    public function signup(Request $request){
+    public function signup(Request $request){//devolver el el token para que quede logeado
         
         $request->validate([
             'last_name' => 'required|string',
@@ -226,14 +226,6 @@ class AuthController extends Controller
             }
            
         }
-        //respuestas al crear
-        
-        // code:"INVALID_DATA"
-        // details: array(2)
-        //      expected_data_type: "jsonarray"
-        // api_name: "data"
-        // message: "invalid data"
-        // status: "error"
 
     }
 

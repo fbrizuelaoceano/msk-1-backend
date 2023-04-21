@@ -23,15 +23,13 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 
 Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 
 Route::get('prueba', [AuthController::class, 'CreateContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
 
-
-//Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
-Route::post('CreateLeadMSKCRM', [ZohoController::class, 'CreateLeadFunction']);
+Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
 
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
@@ -61,7 +59,6 @@ Route::prefix('crm')->group(function () {
     Route::delete('DeleteContacts/{id}', [ZohoController::class, 'DeleteContacts']);
 
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
-
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
 });
