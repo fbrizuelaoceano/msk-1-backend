@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('source_lead')->nullable()->default(null);
             $table->string('lead_source')->nullable()->default(null);
             $table->string('name')->nullable()->default(null);
-            $table->string('username')->nullable()->default(null);
+            $table->string('last_name')->nullable()->default(null);
             $table->string('email')->nullable()->default(null);
-            $table->string('telephone')->nullable()->default(null);
+            $table->string('phone')->nullable()->default(null);
 
             $table->foreignId('profession')->nullable()->default(null)
                 ->references('id')

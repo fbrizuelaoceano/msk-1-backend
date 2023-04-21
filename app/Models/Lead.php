@@ -17,7 +17,7 @@ class Lead extends Model
         'source_lead',
         'lead_source',
         'name',
-        'username',
+        'last_name',
         'email',
         'telephone',
         'method_contact',
@@ -30,9 +30,9 @@ class Lead extends Model
     public $hidden = ['created_at','updated_at','source_lead','lead_status','lead_source','id'];
     private static $formAttributes = [
         'name',
-        'username',
+        'last_name',
         'email',
-        'telephone',
+        'phone',
         'method_contact',
         'contact_id',
         'method_contact_id',

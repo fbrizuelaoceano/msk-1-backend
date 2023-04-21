@@ -11,6 +11,8 @@ class Contact extends Model
     use HasFactory;
     protected $table = 'contacts';
     protected $fillable = [
+        'last_name',
+        'email',
         'id',
         'entity_id_crm',
         'dni',
@@ -29,6 +31,8 @@ class Contact extends Model
     ];
 
     private static $formAttributes = [
+        'last_name',
+        'email',
         'dni',
         'sex',
         'date_of_birth', 

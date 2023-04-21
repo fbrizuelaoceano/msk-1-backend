@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Contact;
+
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -17,14 +21,14 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function signup(Request $request)
+    public function signupForCRM(Request $request)
     {
         $request->validate([
             // 'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
         ]);
-
+        
         $user = new User([
             'name' => $request->email,
             'email' => $request->email,
@@ -114,5 +118,134 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+    
+    public function signup(Request $request){
+        
+        $request->validate([
+            'last_name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            // 'password' => 'required|string',
+        ]);
+        
+        $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?email='.$request["email"];
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
+        ])
+        ->get($URL_ZOHO)->json();
+
+        if ($response != null ) {//A -> Esta en CRM
+            if(isset($response->data) && count($response->data) > 0){//Existe en CRM
+                if($response->data->Password != null && $response->data->Usuario != null ){
+                    $user = new User([
+                        'name' => $response->data->Usuario,
+                        'email' => $response->data->Usuario,
+                        'password' => Hash::make($response->data->Password),
+                    ]);
+            
+                    $user->save();
+
+                    return response()->json([
+                        'message' => 'Successfully created user!',
+                    ], 201);
+                }
+            }else{
+                return response()->json([
+                    'message' => "Error consultar por email en api CRM",
+                    'responseCRM' => $response
+                ]);
+            }
+        }else{//B -> No esta en CRM
+
+            $data = [
+                "data" => [
+                    [
+                        "Last_Name" => $request->last_name,
+                        "Email" => $request->email
+                    ]
+                ]
+            ];
+
+            $URL_ZOHO = env('URL_ZOHO').'/Contacts';
+            $response = Http::withHeaders([
+                    'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
+                    'Content-Type' => 'application/json'
+                ])
+            ->post($URL_ZOHO, $data )
+            ->json();
+
+            /*Al crear usuario en crm productivo se ejecuta un flow que crea user y password.
+            Despues de craer los usuarios llama a la api msk productivo para hacer el registro de usuario en la base de msk
+            Con esto, ej: 
+            result2 = invokeurl
+                [
+                    url :"https://msklatam.com/msk-laravel/public/api/signupForCRM"
+                    type :POST
+                    parameters:new
+                ];
+            */
+    
+            // return response()->json($response,);
+
+            // // Validar si se creo o no 
+
+            // Cuando se cree el contacto.
+            if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
+
+                $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?criteria=(id:equals:'.$response['data'][0]['details']['id'].')';
+                $response = Http::withHeaders([
+                        'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
+                    ])
+                    ->get($URL_ZOHO)
+                    ->json();
+                
+                if(isset($response['data'][0]['Usuario']) && isset($response['data'][0]['Password'])){
+                    
+                    $user = new User([
+                        'name' => $response['data'][0]['Usuario'],
+                        'email' => $response['data'][0]['Usuario'],
+                        'password' => Hash::make($response['data'][0]['Password']),
+                    ]);
+                
+                    $user->save();
+                
+                    $newOrUpdatedLead = Contact::Create([
+                        'last_name' => $response['data'][0]['Last_Name'],
+                        'email' => $response['data'][0]['Usuario'],
+                    ]);
+    
+                    return response()->json([
+                        'message' => 'Successfully created user!',
+                    ], 201);
+                }
+            }else{
+                return response()->json([
+                    'message' => 'Error al crear el usuario en ZhoCRM',
+                    'resposneCRM' => $response
+                ], 201);
+            }
+           
+        }
+        //respuestas al crear
+        
+        // code:"INVALID_DATA"
+        // details: array(2)
+        //      expected_data_type: "jsonarray"
+        // api_name: "data"
+        // message: "invalid data"
+        // status: "error"
+
+    }
+
+    public function CreateContact(Request $request){
+
+        $newOrUpdatedLead = Contact::Create([
+            'last_name' => $request->email,
+            'email' => $request->email,
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully created user!',
+        ], 201);
     }
 }
