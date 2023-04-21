@@ -30,7 +30,8 @@ Route::get('prueba', [AuthController::class, 'CreateContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
 
 
-Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
+//Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
+Route::post('CreateLeadMSKCRM', [ZohoController::class, 'CreateLeadFunction']);
 
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
@@ -41,28 +42,26 @@ Route::prefix('om')->group(function () {
 Route::prefix('crm')->group(function () {
     Route::get('CreateRefreshToken', [ZohoController::class, 'CreateRefreshToken']);
     Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
-    
+
     Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmail']);
-    
+
     Route::get('GetLeads', [ZohoController::class, 'GetLeads']);
     Route::get('Leads/{id}', [ZohoController::class, 'GetByIdLeads']);
     Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
     Route::put('UpdateLeads/{id}', [ZohoController::class, 'UpdateLeads']);
     Route::delete('DeleteLeads/{id}', [ZohoController::class, 'DeleteLeads']);
-    
+
     Route::post('ConvertLead/{id}', [ZohoController::class, 'ConvertLead']);
-    
+
     Route::get('Contacts', [ZohoController::class, 'GetContacts']);
     Route::post('CreateContacts', [ZohoController::class, 'CreateContacts']);
     Route::get('Contacts/{id}', [ZohoController::class, 'GetByIdContacts']);
     // Route::post('ConvertLeads', [ZohoController::class, 'ConvertLeads']);
     // Route::post('CreateLeads', [ZohoController::class, 'CreateLeads']);
     Route::delete('DeleteContacts/{id}', [ZohoController::class, 'DeleteContacts']);
-    
+
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
 
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
 });
-
-
