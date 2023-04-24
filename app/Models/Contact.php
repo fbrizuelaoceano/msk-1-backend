@@ -28,7 +28,8 @@ class Contact extends Model
         'street',
         'locality',
         'province_state',
-        'lead_id'
+        'lead_id',
+        'user_id'
     ];
 
     private static $formAttributes = [
@@ -55,7 +56,15 @@ class Contact extends Model
         $lead = $this->hasOne(Lead::class, 'contact_id','id');
         return $lead;
     }
-
+    // public function user()
+    // {
+    //     $user = $this->hasOne(User::class, 'contact_id','id');
+    //     return $user;
+    // }
+    public function user(){
+         $user = $this->belongsTo(User::class,'user_id');
+         return $user;
+    }
     public static function getFormAttributes()
     {
         return self::$formAttributes;

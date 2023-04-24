@@ -24,7 +24,7 @@ class AuthController extends Controller
     public function signupForCRM(Request $request)
     {
         $request->validate([
-            // 'name' => 'required|string',
+            'last_name' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string',
         ]);
@@ -37,8 +37,32 @@ class AuthController extends Controller
 
         $user->save();
 
+        $newOrUpdatedLead = Contact::Create([
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'user_id' => $user->id
+        ]);
+
+        $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
+        if ($activeTokens->count() > 0) {
+            $token = $activeTokens->first();
+        } else {
+            // Genera un nuevo token de acceso
+            $tokenResult = $user->createToken($request->email.'-Personal Access Token');
+            $token = $tokenResult->token;
+        }
+
+        if ($request->remember_me) {
+            $token->expires_at = now()->addWeek(1);
+        }
+
+        $token->save();
+
         return response()->json([
             'message' => 'Successfully created user!',
+            'access_token' => $tokenResult->accessToken,
+                        'token_type' => 'Bearer',
+                        'expires_at' => $token->expires_at,
         ], 201);
     }
 
@@ -212,16 +236,36 @@ class AuthController extends Controller
                     $newOrUpdatedLead = Contact::Create([
                         'last_name' => $response['data'][0]['Last_Name'],
                         'email' => $response['data'][0]['Usuario'],
+                        'user_id' => $user->id
                     ]);
+
+                    $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
+                    if ($activeTokens->count() > 0) {
+                        $token = $activeTokens->first();
+                    } else {
+                        // Genera un nuevo token de acceso
+                        $tokenResult = $user->createToken($request->email.'-Personal Access Token');
+                        $token = $tokenResult->token;
+                    }
+            
+                    if ($request->remember_me) {
+                        $token->expires_at = now()->addWeek(1);
+                    }
+            
+                    $token->save();
     
                     return response()->json([
                         'message' => 'Successfully created user!',
+                        'access_token' => $tokenResult->accessToken,
+                        'token_type' => 'Bearer',
+                        'expires_at' => $token->expires_at,
                     ], 201);
                 }
             }else{
                 return response()->json([
                     'message' => 'Error al crear el usuario en ZhoCRM',
-                    'resposneCRM' => $response
+                    'resposneCRM' => $response,
+                    
                 ], 201);
             }
            

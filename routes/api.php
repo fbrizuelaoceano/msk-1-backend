@@ -7,6 +7,7 @@ use App\Models\Profession;
 use App\Models\Speciality;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LeadController;
 
 
@@ -28,10 +29,11 @@ Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 
-Route::get('prueba', [AuthController::class, 'CreateContact']);
+Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
 
 Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
+Route::get('Contacts', [ContactController::class, 'Contacts']);
 
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
