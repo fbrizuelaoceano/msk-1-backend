@@ -24,6 +24,8 @@ class ZohoController extends Controller
     private $ZOHO_GRANT_TOKEN = '';
     private $ZOHO_REFRESH_TOKEN = '';
     private $ZOHO_ACCESS_TOKEN = '';
+    private $ZOHO_ACCESS_TOKEN_RESET = '';
+
 
     private $URL_ZOHO = '';
 
@@ -45,6 +47,20 @@ class ZohoController extends Controller
             Log::error($e);
         }
     }
+
+    // function ResetAccessToken(){
+
+    //     $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
+    //         'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
+    //         '&client_id=' . $this->ZOHO_CLIENT_ID .
+    //         '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
+    //         '&grant_type=' . 'refresh_token';
+
+    //     $response = Http::post($URL)->json();
+
+    //     return response()->json($response);
+    //     $this->ZOHO_ACCESS_TOKEN_RESET = ;
+    // }
 
     function CreateRefreshToken()
     {

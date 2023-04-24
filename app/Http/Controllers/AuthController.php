@@ -15,37 +15,7 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
-    public function newPassword(Request $request){
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|confirmed',
-        ]);
-
-        $user = User::where([ "email" => $request->email])->first();
-        $user->password = Hash::make($request->password);
-
-        $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
-        if ($activeTokens->count() > 0) {
-            $token = $activeTokens->first();
-        } else {
-            // Genera un nuevo token de acceso
-            $tokenResult = $user->createToken($request->email.'-Personal Access Token');
-            $token = $tokenResult->token;
-        }
-
-        if ($request->remember_me) {
-            $token->expires_at = now()->addWeek(1);
-        }
-
-        $token->save();
-
-        return response()->json([
-            'message' => 'Successfully created user!',
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => $token->expires_at,
-        ], 201);  
-    }
+    
     /**
      * Register a new user.
      *
@@ -68,32 +38,25 @@ class AuthController extends Controller
 
         $user->save();
 
-        $newOrUpdatedLead = Contact::Create([
+        $newContact = Contact::Create([
             'last_name' => $request->last_name,
             'email' => $request->email,
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'entity_id_crm' => $request->entity_id_crm
         ]);
 
-        $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
-        if ($activeTokens->count() > 0) {
-            $token = $activeTokens->first();
-        } else {
-            // Genera un nuevo token de acceso
-            $tokenResult = $user->createToken($request->email.'-Personal Access Token');
-            $token = $tokenResult->token;
-        }
-
-        if ($request->remember_me) {
-            $token->expires_at = now()->addWeek(1);
-        }
-
+        // Revoca todos los tokens activos del usuario
+        $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+        // Crea un nuevo token de acceso
+        $tokenResult = $user->createToken($request->email);
+        $token = $tokenResult->token;
         $token->save();
 
         return response()->json([
             'message' => 'Successfully created user!',
             'access_token' => $tokenResult->accessToken,
-                        'token_type' => 'Bearer',
-                        'expires_at' => $token->expires_at,
+            'token_type' => 'Bearer',
+            'expires_at' => $token->expires_at,
         ], 201);
     }
 
@@ -122,24 +85,11 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        // Verifica si el usuario tiene tokens activos
-        $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
-        if ($activeTokens->count() > 0) {
-            $token = $activeTokens->first();
-        } else {
-            // Genera un nuevo token de acceso
-            $tokenResult = $user->createToken($request->email.'-Personal Access Token');
-            $token = $tokenResult->token;
-            if ($request->remember_me) {
-                $token->expires_at = now()->addMinutes(120);
-            }
-            $token->save();
-        }
-
-        if ($request->remember_me) {
-            $token->expires_at = now()->addWeek(1);
-        }
-
+        // Revoca todos los tokens activos del usuario
+        $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+        // Crea un nuevo token de acceso
+        $tokenResult = $user->createToken($request->email);
+        $token = $tokenResult->token;
         $token->save();
 
         return response()->json([
@@ -157,13 +107,51 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
-
+        $request->user()->tokens()->where('revoked', false)->update(['revoked' => true]);
         return response()->json([
             'message' => 'Successfully logged out',
         ]);
     }
+    public function newPassword(Request $request){
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|confirmed',
+        ]);
 
+        $user = User::where([ "email" => $request->email])->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Revoca todos los tokens activos del usuario
+        $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+        // Crea un nuevo token de acceso
+        $tokenResult = $user->createToken($request->email);
+        $token = $tokenResult->token;
+
+        $token->save();
+        
+        $data = [
+            "data" => [
+                [
+                    "Password" => $request->password,
+                ]
+            ]
+        ];
+        $contact = Contact::where([ "email" => $request->email])->first();
+        $URL_ZOHO = env('URL_ZOHO') . '/Contacts' . '/' . $contact->entity_id_crm;
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . env("ZOHO_ACCESS_TOKEN"),
+        ])
+            ->put($URL_ZOHO, $data)
+            ->json();
+
+        return response()->json([
+            'message' => 'Successfully created user!',
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => $token->expires_at,
+        ], 201);  
+    }
     /**
      * Get the authenticated User.
      *
@@ -197,11 +185,15 @@ class AuthController extends Controller
                         'email' => $response->data->Usuario,
                         'password' => Hash::make($response->data->Password),
                     ]);
-            
                     $user->save();
-
+                    // Crea un nuevo token de acceso
+                    $tokenResult = $user->createToken($request->email);
+                    $token = $tokenResult->token;
+                    $token->save();
+            
                     return response()->json([
                         'message' => 'Successfully created user!',
+                        'access_token' => $tokenResult->accessToken,
                     ], 201);
                 }
             }else{
@@ -264,27 +256,21 @@ class AuthController extends Controller
                 
                     $user->save();
                 
-                    $newOrUpdatedLead = Contact::Create([
+                    $newContact = Contact::Create([
                         'last_name' => $response['data'][0]['Last_Name'],
                         'email' => $response['data'][0]['Usuario'],
-                        'user_id' => $user->id
+                        'user_id' => $user->id,
+                        'entity_id_crm' => $response['data'][0]['id']
                     ]);
 
-                    $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
-                    if ($activeTokens->count() > 0) {
-                        $token = $activeTokens->first();
-                    } else {
-                        // Genera un nuevo token de acceso
-                        $tokenResult = $user->createToken($request->email.'-Personal Access Token');
-                        $token = $tokenResult->token;
-                    }
-            
-                    if ($request->remember_me) {
-                        $token->expires_at = now()->addWeek(1);
-                    }
+                    // Revoca todos los tokens activos del usuario
+                    $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+                    // Crea un nuevo token de acceso
+                    $tokenResult = $user->createToken($request->email);
+                    $token = $tokenResult->token;
             
                     $token->save();
-    
+            
                     return response()->json([
                         'message' => 'Successfully created user!',
                         'access_token' => $tokenResult->accessToken,
