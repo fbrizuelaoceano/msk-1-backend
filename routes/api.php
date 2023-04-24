@@ -24,6 +24,7 @@ use App\Http\Controllers\LeadController;
 
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
+Route::post('newPassword', [AuthController::class, 'newPassword']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');

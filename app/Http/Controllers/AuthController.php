@@ -15,6 +15,37 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
+    public function newPassword(Request $request){
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|confirmed',
+        ]);
+
+        $user = User::where([ "email" => $request->email])->first();
+        $user->password = Hash::make($request->password);
+
+        $activeTokens = $user->tokens()->where('revoked', false)->where('expires_at', '>', now())->get();
+        if ($activeTokens->count() > 0) {
+            $token = $activeTokens->first();
+        } else {
+            // Genera un nuevo token de acceso
+            $tokenResult = $user->createToken($request->email.'-Personal Access Token');
+            $token = $tokenResult->token;
+        }
+
+        if ($request->remember_me) {
+            $token->expires_at = now()->addWeek(1);
+        }
+
+        $token->save();
+
+        return response()->json([
+            'message' => 'Successfully created user!',
+            'access_token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => $token->expires_at,
+        ], 201);  
+    }
     /**
      * Register a new user.
      *
