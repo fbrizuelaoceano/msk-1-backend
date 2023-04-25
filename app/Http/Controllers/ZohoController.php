@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Profession;
 use App\Models\Speciality;
+use App\Models\TokenPassport;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -24,6 +26,7 @@ class ZohoController extends Controller
     private $ZOHO_GRANT_TOKEN = '';
     private $ZOHO_REFRESH_TOKEN = '';
     private $ZOHO_ACCESS_TOKEN = '';
+    private $ZOHO_REFRESH_TOKEN_RESET = '';
     private $ZOHO_ACCESS_TOKEN_RESET = '';
 
 
@@ -43,13 +46,14 @@ class ZohoController extends Controller
 
             $this->URL_ZOHO = env('URL_ZOHO');
 
+            // $this->ZOHO_ACCESS_TOKEN_RESET = $this->AccessTokenDB();
+
         } catch (Exception $e) {
             Log::error($e);
         }
     }
 
     // function ResetAccessToken(){
-
     //     $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
     //         'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
     //         '&client_id=' . $this->ZOHO_CLIENT_ID .
@@ -58,10 +62,30 @@ class ZohoController extends Controller
 
     //     $response = Http::post($URL)->json();
 
-    //     return response()->json($response);
-    //     $this->ZOHO_ACCESS_TOKEN_RESET = ;
+    //     return ;
     // }
 
+    public function CreateRefreshTokenDB()
+    {
+        $ZOHO_CLIENT_ID = env('ZOHO_CLIENT_ID');
+        $ZOHO_CLIENT_SECRET = env('ZOHO_CLIENT_SECRET');
+        $ZOHO_GRANT_TOKEN = env('ZOHO_GRANT_TOKEN');
+        $ZOHO_API_TOKEN_URL = env('ZOHO_API_TOKEN_URL');
+        $ZOHO_REDIRECT_URI = env("ZOHO_REDIRECT_URI");
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/x-www-form-urlencoded'
+        ])->post($ZOHO_API_TOKEN_URL, [
+                'body' =>
+                'code=' . $ZOHO_GRANT_TOKEN
+                . '&redirect_url=' . $ZOHO_REDIRECT_URI
+                . '&client_id=' . $ZOHO_CLIENT_ID
+                . '&client_secret=' . $ZOHO_CLIENT_SECRET
+                . '&grant_type=authorization_code'
+            ])->json();
+
+        return $response;
+    }
     function CreateRefreshToken()
     {
 
@@ -84,6 +108,7 @@ class ZohoController extends Controller
 
         return response()->json($response);
     }
+   
     function CreateAccessToken()
     {
 
@@ -100,9 +125,10 @@ class ZohoController extends Controller
 
     function GetLeads()
     {
+        
         $URL_ZOHO = env('URL_ZOHO') . '/Leads';
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN,
+            'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
         ])
             ->get($URL_ZOHO)->json();
 
@@ -352,6 +378,69 @@ class ZohoController extends Controller
 
         return $response;
     }
+
+    /* Desarrollo de Refactorizacion */
+    function AccessTokenDB()
+    {
+        $accessToken = TokenPassport::where(['name' => 'Access Token'])->first();
+        if (isset($accessToken)){
+            if(empty($this->ZOHO_ACCESS_TOKEN_RESET)){
+                $this->ZOHO_ACCESS_TOKEN_RESET = $accessToken->token;
+            }
+
+            $createdAt = Carbon::parse($accessToken->created_at);
+            $expiresAt = $createdAt->addHours($accessToken->hours_duration);
+            
+            $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
+            if ($timeLeft <= 300) {/*300seg = 5min*/ //Refresh Token Acces
+                // El token expira en menos de 5 minutos
+                $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
+                    'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
+                    '&client_id=' . $this->ZOHO_CLIENT_ID .
+                    '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
+                    '&grant_type=' . 'refresh_token';
+                $response = Http::post($URL)->json();
+    
+                $tokenData = [
+                    'name' => 'Access Token',
+                    'token' => $response['access_token'],
+                    'hours_duration' => floor($response['expires_in'] / 3600),//calcular horas, 3600 = seg
+                ];
+                $newAccessToken = TokenPassport::create($tokenData);
+                $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
+            }
+        }else{//Lo cargo por primera vez
+            $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
+                    'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
+                    '&client_id=' . $this->ZOHO_CLIENT_ID .
+                    '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
+                    '&grant_type=' . 'refresh_token';
+                $response = Http::post($URL)->json();
+    
+                $tokenData = [
+                    'name' => 'Access Token',
+                    'token' => $response['access_token'],
+                    'hours_duration' => floor($response['expires_in'] / 3600),//calcular horas, 3600 = seg
+                ];
+                $newAccessToken = TokenPassport::create($tokenData);
+                $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
+
+        }
+    }
+
+    public function Get($module)
+    {
+        $this->AccessTokenDB();
+        $URL_ZOHO = env('URL_ZOHO') . '/'.$module;
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
+        ])
+            ->get($URL_ZOHO)->json();
+
+        return $response;
+    }
+    /* End Desarrollo de Refactorizacion */
+
 
     function prueba()
     {

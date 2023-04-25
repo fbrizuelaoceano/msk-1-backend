@@ -44,7 +44,7 @@ Route::prefix('om')->group(function () {
 
 Route::prefix('crm')->group(function () {
     Route::get('CreateRefreshToken', [ZohoController::class, 'CreateRefreshToken']);
-    Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessToken']);
+    Route::get('CreateAccessToken', [ZohoController::class, 'CreateAccessTokenDB']);
 
     Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmail']);
 
