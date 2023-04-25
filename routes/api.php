@@ -3,6 +3,7 @@
 // use Illuminate\Http\Request;
 use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
+use App\Http\Controllers\ZohoWorkflowController;
 use App\Models\Profession;
 use App\Models\Speciality;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +25,7 @@ use App\Http\Controllers\LeadController;
 
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
-Route::post('newPassword', [AuthController::class, 'newPassword']);
+Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
