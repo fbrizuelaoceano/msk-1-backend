@@ -138,12 +138,16 @@ class AuthController extends Controller
             ]
         ];
         $contact = Contact::where([ "email" => $request->email])->first();
-        $URL_ZOHO = env('URL_ZOHO') . '/Contacts' . '/' . $contact->entity_id_crm;
-        $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . env("ZOHO_ACCESS_TOKEN"),
-        ])
-            ->put($URL_ZOHO, $data)
-            ->json();
+        
+        $zohoService = new ZohoController();
+        $response = $zohoService->Update('Contacts',$data,$contact->entity_id_crm);
+        
+        // $URL_ZOHO = env('URL_ZOHO') . '/Contacts' . '/' . $contact->entity_id_crm;
+        // $response = Http::withHeaders([
+        //     'Authorization' => 'Zoho-oauthtoken ' . env("ZOHO_ACCESS_TOKEN"),
+        // ])
+        //     ->put($URL_ZOHO, $data)
+        //     ->json();
 
         return response()->json([
             'message' => 'Successfully created user!',
@@ -171,11 +175,14 @@ class AuthController extends Controller
             // 'password' => 'required|string',
         ]);
         
-        $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?email='.$request["email"];
-        $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
-        ])
-        ->get($URL_ZOHO)->json();
+        $zohoService = new ZohoController();
+        $response = $zohoService->GetByEmailService('Contacts',$request["email"]);
+        
+        // $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?email='.$request["email"];
+        // $response = Http::withHeaders([
+        //     'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
+        // ])
+        // ->get($URL_ZOHO)->json();
 
         if ($response != null ) {//A -> Esta en CRM
             if(isset($response->data) && count($response->data) > 0){//Existe en CRM
@@ -213,13 +220,15 @@ class AuthController extends Controller
                 ]
             ];
 
+            $response = $zohoService->Create('Contacts', $data);
             $URL_ZOHO = env('URL_ZOHO').'/Contacts';
-            $response = Http::withHeaders([
-                    'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
-                    'Content-Type' => 'application/json'
-                ])
-            ->post($URL_ZOHO, $data )
-            ->json();
+
+            // $response = Http::withHeaders([
+            //         'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
+            //         'Content-Type' => 'application/json'
+            //     ])
+            // ->post($URL_ZOHO, $data )
+            // ->json();
 
             /*Al crear usuario en crm productivo se ejecuta un flow que crea user y password.
             Despues de craer los usuarios llama a la api msk productivo para hacer el registro de usuario en la base de msk
@@ -239,12 +248,14 @@ class AuthController extends Controller
             // Cuando se cree el contacto.
             if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
 
-                $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?criteria=(id:equals:'.$response['data'][0]['details']['id'].')';
-                $response = Http::withHeaders([
-                        'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
-                    ])
-                    ->get($URL_ZOHO)
-                    ->json();
+                $response = $zohoService->GetById('Contacts', $response['data'][0]['details']['id']);
+
+                // $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?criteria=(id:equals:'.$response['data'][0]['details']['id'].')';
+                // $response = Http::withHeaders([
+                //         'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
+                //     ])
+                //     ->get($URL_ZOHO)
+                //     ->json();
                 
                 if(isset($response['data'][0]['Usuario']) && isset($response['data'][0]['Password'])){
                     
