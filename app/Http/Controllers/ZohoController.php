@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lead;
 use App\Models\Profession;
 use App\Models\Speciality;
 use App\Models\TokenPassport;
@@ -270,6 +271,52 @@ class ZohoController extends Controller
             ->json();
 
         return $response;
+    }
+
+    // export type ContactUs = {
+    //     Name: string;
+    //     Last_Name: string;
+    //     Email: string;
+    //     Profession: string;
+    //     Message: string;
+    //   }
+
+    public function CreateLeadHomeContactUs(Request $request){
+        
+        $request->validate([
+            'Email' => 'required|string|email',
+            // 'password' => 'required|string',
+        ]);
+        
+        $response = $this->GetByEmailService('Leads',$request->Email);
+        if ($response != null ) {//A -> Esta en CRM
+            
+        }else{//B -> No esta en CRM
+            $data = [
+                "data" => [
+                    [
+                        "Email" => $request->Email,
+                        "Last_Name" => $request->Last_Name,
+                        "Message" => $request->Message,
+                        "Name" => $request->Name,
+                        "Profession" => $request->Profession,
+                    ]
+                ]
+            ];
+            $response = $this->Create('Leads', $data);
+            $newLead = Lead::Create([
+                "email" => $request->Email,
+                "last_name" => $request->Last_Name,
+                // "Message" => $request->Message,
+                "name" => $request->Name,
+                // "profession" => $request->Profession,
+            ]);
+        }
+
+        return response()->json([
+            "crm" => $response,
+            "msk" => $newLead
+        ]);
     }
 
     function prueba()
