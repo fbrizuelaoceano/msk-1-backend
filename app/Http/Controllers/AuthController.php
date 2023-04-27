@@ -221,7 +221,6 @@ class AuthController extends Controller
             ];
 
             $response = $zohoService->Create('Contacts', $data);
-            $URL_ZOHO = env('URL_ZOHO').'/Contacts';
 
             // $response = Http::withHeaders([
             //         'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
@@ -303,7 +302,7 @@ class AuthController extends Controller
 
     public function CreateContact(Request $request){
 
-        $newOrUpdatedLead = Contact::Create([
+        $newContact = Contact::Create([
             'last_name' => $request->email,
             'email' => $request->email,
         ]);
