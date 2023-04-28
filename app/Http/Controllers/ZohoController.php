@@ -298,12 +298,12 @@ class ZohoController extends Controller
                     [
                         "Email" => $request->Email,
                         "Last_Name" => $request->Last_Name,
-                        // "Message" => $request->Message,//Definir cual va a ser el campo en CRM
+                        // "Message" => $request->Message, //Definir cual va a ser el campo en CRM. (Podria ser "Description")
                         "Name" => $request->Name,
                         "Profesion" => $request->Profession,
                         "Especialidad" => $request->Specialty,
                         "Phone" => $request->Phone,
-                        // "Contact_Method" => $request->Contact_Method//Definir cual va a ser el campo en CRM
+                        // "Contact_Method" => $request->Contact_Method //Definir cual va a ser el campo en CRM (Podria ser "Preferencia_de_contactaci_n")
                     ]
                 ]
             ];
@@ -335,7 +335,56 @@ class ZohoController extends Controller
             "msk" => $newLead
         ]);
     }
+    public function CreateLeadHomeNewsletter(Request $request){
+        
+        $request->validate([
+            'Email' => 'required|string|email',
+        ]);
+        
+        $data = [
+            "data" => [
+                [
+                    "Email" => $request->Email,
+                    "Last_Name" => $request->Email,
+                    "Ad_Campaign" => "Newsletter",
+                ]
+            ]
+        ];
+        $leadExists= Lead::where(['email' => $request->Email])->first();
+        if (!$leadExists) {// no se encontró ningún registro con ese email
+            $response = $this->Create('Leads', $data);
+            
+            $leadMSK = new Lead();
+            $leadMSK->email = $request->Email; 
+    
+            if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
+                $leadMSK->entity_id_crm = $response['data'][0]['details']['id'];
+            }
+    
+            $newLead = Lead::Create($leadMSK->toArray());
+            return response()->json([
+                "crm" => $response,
+                "msk" => $newLead
+            ]);
+        }else{// se encontró un registro con ese email
+            if (isset($leadExists->entity_id_crm)) {//Tiene id en crm, existe en crm, entonces actualizo
+                $response = $this->Update('Leads', $data,$leadExists->entity_id_crm);
+            } else {// No tiene id de crm, no existe en crm, entonces lo creo
+                $response = $this->Create('Leads', $data);
+                if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
+                    $leadExists->entity_id_crm = $response['data'][0]['details']['id'];
+                    $leadExists->save();
+                }
+            }
+            return response()->json([
+                "crm" => $response,
+                "msk" => $leadExists
+            ]);
+        }
 
+        
+    }
+    
     function prueba()
     {
         $accessToken = Storage::disk('public')->get('/zoho/access_token.txt');
@@ -392,7 +441,7 @@ class ZohoController extends Controller
                     $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
             }
         }
-        /* End Administracion de token */
+    /* End Administracion de token */
 
     public function Get($module){
         $this->AccessTokenDB();

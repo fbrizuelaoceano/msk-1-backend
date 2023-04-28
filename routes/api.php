@@ -37,8 +37,6 @@ Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
 Route::get('Contacts', [ContactController::class, 'Contacts']);
 
 
-
-
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
     Route::get('GetLeads', [ZohoOMController::class, 'GetLeads']);
@@ -70,6 +68,7 @@ Route::prefix('crm')->group(function () {
 
     // Home
     Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
+    Route::post('CreateLeadHomeNewsletter', [ZohoController::class, 'CreateLeadHomeNewsletter']);
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
 
