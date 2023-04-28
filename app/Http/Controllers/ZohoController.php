@@ -121,28 +121,28 @@ class ZohoController extends Controller
     }
     function GetByIdLeads($id)
     {
-        $response = $this->GetById('Leads',$id);
+        $response = $this->GetById('Leads', $id);
         return response()->json(
             $response,
         );
     }
     function CreateLeads(Request $request)
     {
-        $response = $this->Create('Leads',$request->all());
+        $response = $this->Create('Leads', $request->all());
         return response()->json(
             $response,
         );
     }
     function UpdateLeads(Request $request, $id)
     {
-        $response = $this->Update('Leads',$request->all(),$id);       
+        $response = $this->Update('Leads', $request->all(), $id);
         return response()->json(
             $response,
         );
     }
     function DeleteLeads(Request $request, $ids)
     {
-        $response = $this->Delete('Leads',$ids);
+        $response = $this->Delete('Leads', $ids);
         return response()->json($response);
     }
 
@@ -155,28 +155,28 @@ class ZohoController extends Controller
     }
     function CreateContacts(Request $request)
     {
-        $response = $this->Create('Contacts',$request->all());
+        $response = $this->Create('Contacts', $request->all());
         return response()->json(
             $response,
         );
     }
     function GetByIdContacts($id)
     {
-        $response = $this->GetById('Contacts',$id);
+        $response = $this->GetById('Contacts', $id);
         return response()->json(
             $response,
         );
     }
     function UpdateContacts(Request $request, $id)
     {
-        $response = $this->Update('Contacts',$request->all(),$id);       
+        $response = $this->Update('Contacts', $request->all(), $id);
         return response()->json(
-            $response,
+            $response
         );
     }
     function DeleteContacts(Request $request, $ids)
     {
-        $response = $this->Delete('Contacts',$ids);
+        $response = $this->Delete('Contacts', $ids);
         return response()->json($response);
     }
 
@@ -189,28 +189,28 @@ class ZohoController extends Controller
     }
     function GetByIdContracts($id)
     {
-        $response = $this->GetById('Contracts',$id);
+        $response = $this->GetById('Contracts', $id);
         return response()->json(
             $response,
         );
     }
     function CreateContracts(Request $request)
     {
-        $response = $this->Create('Contracts',$request->all());
+        $response = $this->Create('Contracts', $request->all());
         return response()->json(
             $response,
         );
     }
     function UpdateContracts(Request $request, $id)
     {
-        $response = $this->Update('Contracts',$request->all(),$id);       
+        $response = $this->Update('Contracts', $request->all(), $id);
         return response()->json(
             $response,
         );
     }
     function DeleteContracts(Request $request, $ids)
     {
-        $response = $this->Delete('Contacts',$ids);
+        $response = $this->Delete('Contacts', $ids);
         return response()->json($response);
     }
 
@@ -346,57 +346,59 @@ class ZohoController extends Controller
     }
 
     /* Desarrollo de Refactorizacion */
-        /* Administracion de token */
-        function AccessTokenDB(){
-            $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
-            if (isset($accessToken)){
-                if(empty($this->ZOHO_ACCESS_TOKEN_RESET)){
-                    $this->ZOHO_ACCESS_TOKEN_RESET = $accessToken->token;
-                }
-
-                $createdAt = Carbon::parse($accessToken->created_at);
-                $expiresAt = $createdAt->addHours($accessToken->hours_duration);
-                
-                $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
-                if ($timeLeft <= 300) {/*300seg = 5min*/ //Refresh Token Acces
-                    // El token expira en menos de 5 minutos
-                    $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
-                        'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
-                        '&client_id=' . $this->ZOHO_CLIENT_ID .
-                        '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
-                        '&grant_type=' . 'refresh_token';
-                    $response = Http::post($URL)->json();
-        
-                    $tokenData = [
-                        'name' => 'Access Token',
-                        'token' => $response['access_token'],
-                        'hours_duration' => floor($response['expires_in'] / 3600),//calcular horas, 3600 = seg
-                    ];
-                    $newAccessToken = TokenPassport::create($tokenData);
-                    $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
-                }
-            }else{//Lo cargo por primera vez
-                $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
-                        'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
-                        '&client_id=' . $this->ZOHO_CLIENT_ID .
-                        '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
-                        '&grant_type=' . 'refresh_token';
-                    $response = Http::post($URL)->json();
-        
-                    $tokenData = [
-                        'name' => 'Access Token',
-                        'token' => $response['access_token'],
-                        'hours_duration' => floor($response['expires_in'] / 3600),//calcular horas, 3600 = seg
-                    ];
-                    $newAccessToken = TokenPassport::create($tokenData);
-                    $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
+    /* Administracion de token */
+    function AccessTokenDB()
+    {
+        $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
+        if (isset($accessToken)) {
+            if (empty($this->ZOHO_ACCESS_TOKEN_RESET)) {
+                $this->ZOHO_ACCESS_TOKEN_RESET = $accessToken->token;
             }
-        }
-        /* End Administracion de token */
 
-    public function Get($module){
+            $createdAt = Carbon::parse($accessToken->created_at);
+            $expiresAt = $createdAt->addHours($accessToken->hours_duration);
+
+            $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
+            if ($timeLeft <= 300) { /*300seg = 5min*///Refresh Token Acces
+                // El token expira en menos de 5 minutos
+                $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
+                    'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
+                    '&client_id=' . $this->ZOHO_CLIENT_ID .
+                    '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
+                    '&grant_type=' . 'refresh_token';
+                $response = Http::post($URL)->json();
+
+                $tokenData = [
+                    'name' => 'Access Token',
+                    'token' => $response['access_token'],
+                    'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                ];
+                $newAccessToken = TokenPassport::create($tokenData);
+                $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
+            }
+        } else { //Lo cargo por primera vez
+            $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
+                'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
+                '&client_id=' . $this->ZOHO_CLIENT_ID .
+                '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
+                '&grant_type=' . 'refresh_token';
+            $response = Http::post($URL)->json();
+
+            $tokenData = [
+                'name' => 'Access Token',
+                'token' => $response['access_token'],
+                'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+            ];
+            $newAccessToken = TokenPassport::create($tokenData);
+            $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
+        }
+    }
+    /* End Administracion de token */
+
+    public function Get($module)
+    {
         $this->AccessTokenDB();
-        $URL_ZOHO = env('URL_ZOHO') . '/'.$module;
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
         ])
@@ -404,9 +406,10 @@ class ZohoController extends Controller
 
         return $response;
     }
-    public function GetById($module,$id){
+    public function GetById($module, $id)
+    {
         $this->AccessTokenDB();
-        $URL_ZOHO = env('URL_ZOHO') . '/'.$module.'/search?criteria=(id:equals:' . $id . ')';
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/search?criteria=(id:equals:' . $id . ')';
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
@@ -416,7 +419,8 @@ class ZohoController extends Controller
 
         return $response;
     }
-    public function Create($module,$requestArray){
+    public function Create($module, $requestArray)
+    {
         $this->AccessTokenDB();
 
         $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
@@ -429,10 +433,11 @@ class ZohoController extends Controller
 
         return $response;
     }
-    public function Update($module,$requestArray,$id){
+    public function Update($module, $requestArray, $id)
+    {
         $this->AccessTokenDB();
 
-        $URL_ZOHO = env('URL_ZOHO') . '/'. $module . '/' . $id;
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id;
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
@@ -442,10 +447,11 @@ class ZohoController extends Controller
 
         return response()->json($response, );
     }
-    public function Delete($module,$ids){
+    public function Delete($module, $ids)
+    {
         $this->AccessTokenDB();
 
-        $URL_ZOHO = env('URL_ZOHO') . '/'.$module.'?ids=' . $ids . '&wf_trigger=true';
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '?ids=' . $ids . '&wf_trigger=true';
         if ($ids)
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
@@ -471,6 +477,6 @@ class ZohoController extends Controller
             Log::error($e);
         }
     }
-    /* End Desarrollo de Refactorizacion */
+/* End Desarrollo de Refactorizacion */
 
 }
