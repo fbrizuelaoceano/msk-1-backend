@@ -69,6 +69,24 @@ Route::prefix('crm')->group(function () {
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
 });
 
+Route::get('store/professions', function () {
+    $professions = [
+        [
+            'id' => 1,
+            'name' => 'Personal médico'
+        ],
+        [
+            'id' => 2,
+            'name' => 'Personal de enfermería y auxiliares'
+        ],
+        [
+            'id' => 3,
+            'name' => 'Otra profesión'
+        ],
+    ];
+    return response()->json($professions);
+});
+
 Route::get('professions', function () {
     $professions = Profession::all();
     return response()->json($professions);
