@@ -283,8 +283,9 @@ class ZohoController extends Controller
     //     Message: string;
     //   }
 
-    public function CreateLeadHomeContactUs(Request $request){
-        
+    public function CreateLeadHomeContactUs(Request $request)
+    {
+
         $request->validate([
             'Email' => 'required|string|email',
             'Last_Name' => 'required|string',
@@ -293,39 +294,48 @@ class ZohoController extends Controller
         // $lead = Lead::where(['Email'=> $request->Email ])->first();
         // $response = $this->GetByEmailService('Leads',$request->Email);
         // if ($response == null ) {//No esta en CRM
-            $data = [
-                "data" => [
-                    [
-                        "Email" => $request->Email,
-                        "Last_Name" => $request->Last_Name,
-                        // "Message" => $request->Message,//Definir cual va a ser el campo en CRM
-                        "Name" => $request->Name,
-                        "Profesion" => $request->Profession,
-                        "Especialidad" => $request->Specialty,
-                        "Phone" => $request->Phone,
-                        // "Contact_Method" => $request->Contact_Method//Definir cual va a ser el campo en CRM
-                    ]
+        $data = [
+            "data" => [
+                [
+                    "Email" => $request->Email,
+                    "Last_Name" => $request->Last_Name,
+                    "Name" => $request->Name,
+                    "Profesion" => $request->Profesion,
+                    "Especialidad" => $request->Especialidad,
+                    "Phone" => $request->Phone,
+                    "Description" => $request->Description,
+                    "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
                 ]
-            ];
-            $response = $this->Create('Leads', $data);
+            ]
+        ];
+
+        if (!empty($request->Otra_profesion)) {
+            $data['data'][0]['Otra_profesion'] = $request->Otra_profesion;
+        }
+
+        if (!empty($request->Otra_especialidad)) {
+            $data['data'][0]['Otra_especialidad'] = $request->Otra_especialidad;
+        }
+
+        $response = $this->Create('Leads', $data);
         // }
 
-        if(!empty($request->Profession))
-            $profession = Profession::where([ 'name' => $request->Profession ])->first();
-        if(!empty($request->Specialty))
-            $specialty = Speciality::where([ 'name' => $request->Specialty ])->first();
-        if(!empty($request->Contact_Method))
-            $contactMethod = MethodContact::where([ 'name' => $request->Contact_Method ])->first();
-            
+        if (!empty($request->Profession))
+            $profession = Profession::where(['name' => $request->Profession])->first();
+        if (!empty($request->Specialty))
+            $specialty = Speciality::where(['name' => $request->Specialty])->first();
+        if (!empty($request->Preferencia_de_contactaci_n))
+            $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
+
         $newLead = Lead::Create([
             "email" => $request->Email,
             "last_name" => $request->Last_Name,
             "name" => $request->Name,
-            "profession" => isset($profession->id) ? $profession->id: '',
-            "speciality" => isset($specialty->id) ? $specialty->id: '',
+            "profession" => isset($profession->id) ? $profession->id : '',
+            "speciality" => isset($specialty->id) ? $specialty->id : '',
             "phone" => $request->Phone,
-            "method_contact" => isset($contactMethod->id) ? $contactMethod->id: '',
-            
+            "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
+
             // "entity_id_crm" => $response->id,//Hay que asociar el id del crm
             // "Message" => $request->Message,//Crear un campo para esto
         ]);
@@ -334,6 +344,56 @@ class ZohoController extends Controller
             "crm" => $response,
             "msk" => $newLead
         ]);
+    }
+    public function CreateLeadHomeNewsletter(Request $request)
+    {
+
+        $request->validate([
+            'Email' => 'required|string|email',
+        ]);
+
+        $data = [
+            "data" => [
+                [
+                    "Email" => $request->Email,
+                    "Last_Name" => $request->Email,
+                    "Ad_Account" => ["Newsletter"],
+                ]
+            ]
+        ];
+        $leadExists = Lead::where(['email' => $request->Email])->first();
+        if (!$leadExists) { // no se encontró ningún registro con ese email
+            $response = $this->Create('Leads', $data);
+
+            $leadMSK = new Lead();
+            $leadMSK->email = $request->Email;
+
+            if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
+                $leadMSK->entity_id_crm = $response['data'][0]['details']['id'];
+            }
+
+            $newLead = Lead::Create($leadMSK->toArray());
+            return response()->json([
+                "crm" => $response,
+                "msk" => $newLead
+            ]);
+        } else { // se encontró un registro con ese email
+            if (isset($leadExists->entity_id_crm)) { //Tiene id en crm, existe en crm, entonces actualizo
+                $response = $this->Update('Leads', $data, $leadExists->entity_id_crm);
+            } else { // No tiene id de crm, no existe en crm, entonces lo creo
+                $response = $this->Create('Leads', $data);
+                if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
+                    $leadExists->entity_id_crm = $response['data'][0]['details']['id'];
+                    $leadExists->save();
+                }
+            }
+            return response()->json([
+                "crm" => $response,
+                "msk" => $leadExists
+            ]);
+        }
+
+
     }
 
     function prueba()
@@ -359,8 +419,7 @@ class ZohoController extends Controller
             $expiresAt = $createdAt->addHours($accessToken->hours_duration);
 
             $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
-            if ($timeLeft <= 300) { /*300seg = 5min*///Refresh Token Acces
-                // El token expira en menos de 5 minutos
+            if ($timeLeft <= 300) { /*300seg = 5min*///Refresh Token Acces                // El token expira en menos de 5 minutos
                 $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
                     'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
                     '&client_id=' . $this->ZOHO_CLIENT_ID .
