@@ -10,6 +10,7 @@
         "laravel/framework": "^10.0",
         "laravel/passport": "^11.8",
         "laravel/sanctum": "^3.2",
+        "laravel/telescope": "^4.14",
         "laravel/tinker": "^2.8",
         "zohocrm/php-sdk-2.0": "4.0.0"
     },
