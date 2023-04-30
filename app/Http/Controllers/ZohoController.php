@@ -327,7 +327,7 @@ class ZohoController extends Controller
             "speciality" => isset($specialty->id) ? $specialty->id: '',
             "phone" => $request->Phone,
             "method_contact" => isset($contactMethod->id) ? $contactMethod->id: '',
-            
+
             // "entity_id_crm" => $response->id,//Hay que asociar el id del crm
             // "Message" => $request->Message,//Crear un campo para esto
         ]);
@@ -348,7 +348,7 @@ class ZohoController extends Controller
                 [
                     "Email" => $request->Email,
                     "Last_Name" => $request->Email,
-                    "Ad_Campaign" => "Newsletter",
+                    "Ad_Account" => "Newsletter",
                 ]
             ]
         ];
