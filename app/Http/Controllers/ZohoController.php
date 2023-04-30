@@ -305,6 +305,7 @@ class ZohoController extends Controller
                     "Phone" => $request->Phone,
                     "Description" => $request->Description,
                     "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
+                    "Pais" => $request->Pais
                 ]
             ]
         ];
@@ -419,8 +420,7 @@ class ZohoController extends Controller
             $expiresAt = $createdAt->addHours($accessToken->hours_duration);
 
             $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
-            if ($timeLeft <= 300) { /*300seg = 5min*/// Refresh Token Acces  El token expira en menos de 5 minutos
-                $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
+            if ($timeLeft <= 300) { /*300seg = 5min*/// Refresh Token Acces  El token expira en menos de 5 minutos                $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
                     'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
                     '&client_id=' . $this->ZOHO_CLIENT_ID .
                     '&client_secret=' . $this->ZOHO_CLIENT_SECRET .
