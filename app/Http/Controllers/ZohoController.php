@@ -298,12 +298,14 @@ class ZohoController extends Controller
                     [
                         "Email" => $request->Email,
                         "Last_Name" => $request->Last_Name,
-                        // "Message" => $request->Message, //Definir cual va a ser el campo en CRM. (Podria ser "Description")
                         "Name" => $request->Name,
                         "Profesion" => $request->Profession,
                         "Especialidad" => $request->Specialty,
                         "Phone" => $request->Phone,
-                        // "Contact_Method" => $request->Contact_Method //Definir cual va a ser el campo en CRM (Podria ser "Preferencia_de_contactaci_n")
+                        "Description" => $request->Description, //Definir cual va a ser el campo en CRM. (Podria ser "Description")
+                        "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n], //Definir cual va a ser el campo en CRM (Podria ser "Preferencia_de_contactaci_n"),
+                        // "Otra_profesion" => $request-> , //Definir cual va a ser el campo en CRM (Podria ser "Preferencia_de_contactaci_n")
+                        // "Otra_especialidad" => $request-> //Definir cual va a ser el campo en CRM (Podria ser "Preferencia_de_contactaci_n")
                     ]
                 ]
             ];
@@ -314,8 +316,8 @@ class ZohoController extends Controller
             $profession = Profession::where([ 'name' => $request->Profession ])->first();
         if(!empty($request->Specialty))
             $specialty = Speciality::where([ 'name' => $request->Specialty ])->first();
-        if(!empty($request->Contact_Method))
-            $contactMethod = MethodContact::where([ 'name' => $request->Contact_Method ])->first();
+        if(!empty($request->Preferencia_de_contactaci_n))
+            $contactMethod = MethodContact::where([ 'name' => $request->Preferencia_de_contactaci_n ])->first();
             
         $newLead = Lead::Create([
             "email" => $request->Email,
