@@ -299,7 +299,7 @@ class ZohoController extends Controller
                 [
                     "Email" => $request->Email,
                     "Last_Name" => $request->Last_Name,
-                    "Name" => $request->Name,
+                    "First_Name" => $request->First_Name,
                     "Profesion" => $request->Profesion,
                     "Especialidad" => $request->Especialidad,
                     "Phone" => $request->Phone,
