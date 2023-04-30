@@ -348,7 +348,7 @@ class ZohoController extends Controller
                 [
                     "Email" => $request->Email,
                     "Last_Name" => $request->Email,
-                    "Ad_Account" => "Newsletter",
+                    "Ad_Account" => ["Newsletter"],
                 ]
             ]
         ];
