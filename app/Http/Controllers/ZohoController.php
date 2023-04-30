@@ -320,10 +320,10 @@ class ZohoController extends Controller
         $response = $this->Create('Leads', $data);
         // }
 
-        if (!empty($request->Profession))
-            $profession = Profession::where(['name' => $request->Profession])->first();
-        if (!empty($request->Specialty))
-            $specialty = Speciality::where(['name' => $request->Specialty])->first();
+        if (!empty($request->Profesion))
+            $profession = Profession::where(['name' => $request->Profesion])->first();
+        if (!empty($request->Especialidad))
+            $specialty = Speciality::where(['name' => $request->Especialidad])->first();
         if (!empty($request->Preferencia_de_contactaci_n))
             $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
 
@@ -419,7 +419,7 @@ class ZohoController extends Controller
             $expiresAt = $createdAt->addHours($accessToken->hours_duration);
 
             $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
-            if ($timeLeft <= 300) { /*300seg = 5min*///Refresh Token Acces                // El token expira en menos de 5 minutos
+            if ($timeLeft <= 300) { /*300seg = 5min*/// Refresh Token Acces  El token expira en menos de 5 minutos
                 $URL = 'https://' . $this->ZOHO_API_BASE_URL . '/oauth/v2/token?' .
                     'refresh_token=' . $this->ZOHO_REFRESH_TOKEN .
                     '&client_id=' . $this->ZOHO_CLIENT_ID .
