@@ -318,6 +318,10 @@ class ZohoController extends Controller
             $data['data'][0]['Otra_especialidad'] = $request->Otra_especialidad;
         }
 
+        if (!empty($request->Cursos_consultados)) {
+            $data['data'][0]['Cursos_consultados'] = $request->Cursos_consultados;
+        }
+
         $response = $this->Create('Leads', $data);
         // }
 
