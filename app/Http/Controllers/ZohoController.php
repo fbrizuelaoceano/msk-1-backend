@@ -290,6 +290,7 @@ class ZohoController extends Controller
         $request->validate([
             'Email' => 'required|string|email',
             'Last_Name' => 'required|string',
+            'Recaptcha' => ['required', new Recaptcha]
         ]);
 
         // $lead = Lead::where(['Email'=> $request->Email ])->first();
@@ -353,18 +354,7 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeNewsletter(Request $request)
     {
-        // https://www.youtube.com/watch?v=HK_146nJSWU&t=488s
-        // $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify',[
-        //     'secret' => '6LcIf-ElAAAAAMDxIODuptMWQ9R2LjdWoESBjO9k',
-        //     'response' => $request->input('Recaptcha')
-        // ])->object();
-    
-        // if($response->success){ //&& $response->score >= 0.7
-        //     return true;
-        // }else{
-        //     return false;
-        // }
-
+       
         $request->validate([
             'Email' => 'required|string|email',
             'Recaptcha' => ['required', new Recaptcha]
