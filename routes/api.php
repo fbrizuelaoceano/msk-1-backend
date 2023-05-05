@@ -1,6 +1,7 @@
 <?php
 
 // use Illuminate\Http\Request;
+use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
@@ -100,4 +101,11 @@ Route::get('professions', function () {
 Route::get('specialities', function () {
     $specialities = Speciality::all();
     return response()->json($specialities);
+});
+
+Route::prefix('webhook')->group(function () {
+    Route::post('ContactRegister', [WebhookController::class, 'ContactRegister']);
+    Route::post('ContactDetails', [WebhookController::class, 'ContactDetails']);
+    Route::post('ContactUpdate', [WebhookController::class, 'ContactUpdate']);
+    Route::post('ContractRegister', [WebhookController::class, 'ContractRegister']);
 });
