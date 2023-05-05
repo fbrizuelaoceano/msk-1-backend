@@ -7,6 +7,7 @@ use App\Models\MethodContact;
 use App\Models\Profession;
 use App\Models\Speciality;
 use App\Models\TokenPassport;
+use App\Rules\Recaptcha;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -352,9 +353,21 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeNewsletter(Request $request)
     {
+        // https://www.youtube.com/watch?v=HK_146nJSWU&t=488s
+        // $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify',[
+        //     'secret' => '6LcIf-ElAAAAAMDxIODuptMWQ9R2LjdWoESBjO9k',
+        //     'response' => $request->input('Recaptcha')
+        // ])->object();
+    
+        // if($response->success){ //&& $response->score >= 0.7
+        //     return true;
+        // }else{
+        //     return false;
+        // }
 
         $request->validate([
             'Email' => 'required|string|email',
+            'Recaptcha' => ['required', new Recaptcha]
         ]);
 
         $data = [
@@ -366,6 +379,7 @@ class ZohoController extends Controller
                 ]
             ]
         ];
+
         $leadExists = Lead::where(['email' => $request->Email])->first();
         if (!$leadExists) { // no se encontró ningún registro con ese email
             $response = $this->Create('Leads', $data);
