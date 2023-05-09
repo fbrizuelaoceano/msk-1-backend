@@ -28,7 +28,7 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-        return response()->json($request->contact);
+        return response($request->contact);
 
         $user = User::createdOrUpdate(['email' => $request->email], [
             'name' => $request->email,
