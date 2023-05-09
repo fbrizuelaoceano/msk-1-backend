@@ -31,8 +31,11 @@ class ZohoWorkflowController extends Controller
     public function salesForCRM(Request $request)
     {
 
-        $contactObj = json_decode($_POST['contact'])[0];
-        $saleObj = json_decode($_POST['sale'])[0];
+        $contactObj = json_decode($_POST['contact']);
+        $saleObj = json_decode($_POST['sale']);
+
+        Log::info(print_r($contactObj, true));
+        Log::info(print_r($saleObj, true));
 
 
         $user = User::updateOrCreate(['email' => $contactObj->Email], [
