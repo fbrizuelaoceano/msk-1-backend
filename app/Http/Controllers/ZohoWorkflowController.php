@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -32,8 +33,8 @@ class ZohoWorkflowController extends Controller
         $contact = collect($_POST['contact'])->toArray()[0];
         $sale = collect($_POST['sale'])->toArray()[0];
 
-        $contactObj = json_decode($contact)[0];
-        $saleObj = json_decode($sale)[0];
+        $contactObj = json_decode($contact);
+        $saleObj = json_decode($sale);
         Log::info($contactObj);
 
         $user = User::updateOrCreate(['email' => $contactObj->Email], [
