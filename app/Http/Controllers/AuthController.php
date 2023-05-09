@@ -29,7 +29,9 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        dd($request->contact);
+
+        $contact = collect($request->contact[0]);
+        dd($contact);
 
         $user = new User([
             'name' => $request->email,
