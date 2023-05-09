@@ -25,4 +25,28 @@ class ZohoWorkflowController extends Controller
             'message' => 'Successfully find user!',
         ], 201);
     }
+
+    public function salesForCRM(Request $request)
+    {
+        $contact = collect($_POST['contact'])->toArray()[0];
+        $sale = collect($_POST['sale'])->toArray()[0];
+
+        $contactObj = json_decode($contact)[0];
+        $saleObj = json_decode($sale)[0];
+
+        $user = User::updateOrCreate(['email' => $contactObj->Email], [
+            'name' => $contactObj->First_Name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $contact = Contact::updateOrCreate(['email' => $contactObj->Email], [
+            'last_name' => $contactObj->Last_Name,
+            'email' => $contactObj->Email,
+            'user_id' => $user->id,
+            'entity_id_crm' => $contactObj->id
+        ]);
+
+        return response()->json(['user' => $user, 'contact' => $contact]);
+    }
 }

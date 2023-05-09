@@ -25,6 +25,7 @@ use App\Http\Controllers\LeadController;
 
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
+Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
 
 Route::post('login', [AuthController::class, 'login']);
