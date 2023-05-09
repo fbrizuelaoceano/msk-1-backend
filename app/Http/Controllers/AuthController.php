@@ -6,12 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Contact;
-
-use Illuminate\Support\Facades\Hash;
-// use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -20,7 +18,6 @@ class AuthController extends Controller
      * Register a new user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function signupForCRM(Request $request)
     {
@@ -32,15 +29,16 @@ class AuthController extends Controller
 
         $contact = collect($request->contact[0])->toArray();
 
+        Log::info($contact);
+
         $user = User::updateOrCreate(['email' => $request->email], [
             'name' => $contact['First_Name'],
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $user->save();
 
-        $newContact = Contact::updateOrCreate(['email' => $request->email], [
+        Contact::updateOrCreate(['email' => $request->email], [
             'last_name' => $contact['Last_Name'],
             'email' => $request->email,
             'user_id' => $user->id,
