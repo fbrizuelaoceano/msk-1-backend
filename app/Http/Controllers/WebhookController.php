@@ -8,6 +8,7 @@ class WebhookController extends Controller
 {
     public function ContactRegister(Request $request)
     {
+
         return response()->json($request->all());
     }
 

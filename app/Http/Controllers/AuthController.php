@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
-    
+
     /**
      * Register a new user.
      *
@@ -25,20 +25,20 @@ class AuthController extends Controller
     public function signupForCRM(Request $request)
     {
         $request->validate([
-            'last_name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
+            'contact' => 'required|string',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-        
-        $user = new User([
+        return response()->json($request->contact);
+
+        $user = User::createdOrUpdate(['email' => $request->email], [
             'name' => $request->email,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $user->save();
 
-        $newContact = Contact::Create([
+        $newContact = Contact::createdOrupdate([
             'last_name' => $request->last_name,
             'email' => $request->email,
             'user_id' => $user->id,
@@ -112,13 +112,14 @@ class AuthController extends Controller
             'message' => 'Successfully logged out',
         ]);
     }
-    public function newPassword(Request $request){
+    public function newPassword(Request $request)
+    {
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|confirmed',
         ]);
 
-        $user = User::where([ "email" => $request->email])->first();
+        $user = User::where(["email" => $request->email])->first();
         $user->password = Hash::make($request->password);
         $user->save();
 
@@ -129,7 +130,7 @@ class AuthController extends Controller
         $token = $tokenResult->token;
 
         $token->save();
-        
+
         $data = [
             "data" => [
                 [
@@ -137,11 +138,11 @@ class AuthController extends Controller
                 ]
             ]
         ];
-        $contact = Contact::where([ "email" => $request->email])->first();
-        
+        $contact = Contact::where(["email" => $request->email])->first();
+
         $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts',$data,$contact->entity_id_crm);
-        
+        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+
         // $URL_ZOHO = env('URL_ZOHO') . '/Contacts' . '/' . $contact->entity_id_crm;
         // $response = Http::withHeaders([
         //     'Authorization' => 'Zoho-oauthtoken ' . env("ZOHO_ACCESS_TOKEN"),
@@ -154,7 +155,7 @@ class AuthController extends Controller
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => $token->expires_at,
-        ], 201);  
+        ], 201);
     }
     /**
      * Get the authenticated User.
@@ -166,27 +167,28 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
-    
-    public function signup(Request $request){//devolver el el token para que quede logeado
-        
+
+    public function signup(Request $request)
+    { //devolver el el token para que quede logeado
+
         $request->validate([
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:users',
             // 'password' => 'required|string',
         ]);
-        
+
         $zohoService = new ZohoController();
-        $response = $zohoService->GetByEmailService('Contacts',$request["email"]);
-        
+        $response = $zohoService->GetByEmailService('Contacts', $request["email"]);
+
         // $URL_ZOHO = env('URL_ZOHO').'/Contacts/search?email='.$request["email"];
         // $response = Http::withHeaders([
         //     'Authorization' => 'Zoho-oauthtoken '.env("ZOHO_ACCESS_TOKEN"),
         // ])
         // ->get($URL_ZOHO)->json();
 
-        if ($response != null ) {//A -> Esta en CRM
-            if(isset($response->data) && count($response->data) > 0){//Existe en CRM
-                if($response->data->Password != null && $response->data->Usuario != null ){
+        if ($response != null) { //A -> Esta en CRM
+            if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
+                if ($response->data->Password != null && $response->data->Usuario != null) {
                     $user = new User([
                         'name' => $response->data->Usuario,
                         'email' => $response->data->Usuario,
@@ -197,19 +199,19 @@ class AuthController extends Controller
                     $tokenResult = $user->createToken($request->email);
                     $token = $tokenResult->token;
                     $token->save();
-            
+
                     return response()->json([
                         'message' => 'Successfully created user!',
                         'access_token' => $tokenResult->accessToken,
                     ], 201);
                 }
-            }else{
+            } else {
                 return response()->json([
                     'message' => "Error consultar por email en api CRM",
                     'responseCRM' => $response
                 ]);
             }
-        }else{//B -> No esta en CRM
+        } else { //B -> No esta en CRM
 
             $data = [
                 "data" => [
@@ -231,21 +233,21 @@ class AuthController extends Controller
 
             /*Al crear usuario en crm productivo se ejecuta un flow que crea user y password.
             Despues de craer los usuarios llama a la api msk productivo para hacer el registro de usuario en la base de msk
-            Con esto, ej: 
+            Con esto, ej:
             result2 = invokeurl
-                [
-                    url :"https://msklatam.com/msk-laravel/public/api/signupForCRM"
-                    type :POST
-                    parameters:new
-                ];
+            [
+            url :"https://msklatam.com/msk-laravel/public/api/signupForCRM"
+            type :POST
+            parameters:new
+            ];
             */
-    
+
             // return response()->json($response,);
 
-            // // Validar si se creo o no 
+            // // Validar si se creo o no
 
             // Cuando se cree el contacto.
-            if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
+            if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
 
                 $response = $zohoService->GetById('Contacts', $response['data'][0]['details']['id']);
 
@@ -255,17 +257,17 @@ class AuthController extends Controller
                 //     ])
                 //     ->get($URL_ZOHO)
                 //     ->json();
-                
-                if(isset($response['data'][0]['Usuario']) && isset($response['data'][0]['Password'])){
-                    
+
+                if (isset($response['data'][0]['Usuario']) && isset($response['data'][0]['Password'])) {
+
                     $user = new User([
                         'name' => $response['data'][0]['Usuario'],
                         'email' => $response['data'][0]['Usuario'],
                         'password' => Hash::make($response['data'][0]['Password']),
                     ]);
-                
+
                     $user->save();
-                
+
                     $newContact = Contact::Create([
                         'last_name' => $response['data'][0]['Last_Name'],
                         'email' => $response['data'][0]['Usuario'],
@@ -278,9 +280,9 @@ class AuthController extends Controller
                     // Crea un nuevo token de acceso
                     $tokenResult = $user->createToken($request->email);
                     $token = $tokenResult->token;
-            
+
                     $token->save();
-            
+
                     return response()->json([
                         'message' => 'Successfully created user!',
                         'access_token' => $tokenResult->accessToken,
@@ -288,19 +290,20 @@ class AuthController extends Controller
                         'expires_at' => $token->expires_at,
                     ], 201);
                 }
-            }else{
+            } else {
                 return response()->json([
                     'message' => 'Error al crear el usuario en ZhoCRM',
                     'resposneCRM' => $response,
-                    
+
                 ], 201);
             }
-           
+
         }
 
     }
 
-    public function CreateContact(Request $request){
+    public function CreateContact(Request $request)
+    {
 
         $newContact = Contact::Create([
             'last_name' => $request->email,
