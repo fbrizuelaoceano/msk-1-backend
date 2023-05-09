@@ -27,7 +27,8 @@ class AuthController extends Controller
         ]);
 
         $contact = collect($_POST['contact'])->toArray()[0];
-        Log::info($contact['id']);
+        Log::info(gettype($contact));
+        Log::info($contact->Owner);
 
 
 
