@@ -30,7 +30,7 @@ class AuthController extends Controller
         ]);
 
 
-        $contact = collect($request->contact[0]);
+        $contact = collect($request->contact[0])->toArray();
         dd($contact);
 
         $user = new User([
