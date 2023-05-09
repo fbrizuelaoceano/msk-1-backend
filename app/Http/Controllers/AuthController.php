@@ -25,10 +25,10 @@ class AuthController extends Controller
             'email' => 'required|string|email|',
             'password' => 'required|string',
         ]);
-        $data = json_decode($request->getContent(), true);
-        $contact = collect($request->contact)->toArray();
-        Log::info(print_r($_POST, true));
-        Log::info(print_r($data->FirstName, true));
+
+        $contact = collect($_POST['contact'])->toArray();
+        Log::info(print_r($contact, true));
+
 
         $user = User::updateOrCreate(['email' => $request->email], [
             'name' => $contact['First_Name'],
