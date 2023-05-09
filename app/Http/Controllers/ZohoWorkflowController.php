@@ -31,13 +31,14 @@ class ZohoWorkflowController extends Controller
     public function salesForCRM(Request $request)
     {
         $contact = collect($_POST['contact'])->toArray()[0];
-        $sale = collect($_POST['sale'])->toArray()[0];
+        $sale = collect($_POST['sale'])->toArray();
 
         $contactObj = json_decode($contact);
-        $saleObj = json_decode($sale);
-        Log::info($_POST);
+        $saleObj = json_decode($_POST['sale']);
         Log::info($contact);
-        Log::info($contactObj);
+        Log::info($sale);
+        Log::info(print_r($saleObj, true));
+
 
         return;
 
