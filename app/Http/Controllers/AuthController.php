@@ -31,25 +31,23 @@ class AuthController extends Controller
 
 
         $contact = collect($request->contact[0])->toArray();
-        dd($contact);
 
-        $user = new User([
-            'name' => $request->email,
+        $user = User::updateOrCreate(['email' => $request->email], [
+            'name' => $contact['First_Name'],
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         $user->save();
 
-        $newContact = Contact::Create([
-            'last_name' => $request->last_name,
+        $newContact = Contact::updateOrCreate(['email' => $request->email], [
+            'last_name' => $contact['Last_Name'],
             'email' => $request->email,
             'user_id' => $user->id,
-            'entity_id_crm' => $request->entity_id_crm
+            'entity_id_crm' => $contact['id']
         ]);
 
-        // Revoca todos los tokens activos del usuario
-        $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+
         // Crea un nuevo token de acceso
         $tokenResult = $user->createToken($request->email);
         $token = $tokenResult->token;
