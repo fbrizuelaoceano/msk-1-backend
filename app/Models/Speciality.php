@@ -11,4 +11,6 @@ class Speciality extends Model
     protected $timestamp = true;
     protected $fillable = ['name'];
     protected $hidden = ['created_at','updated_at'];
+
+    
 }
