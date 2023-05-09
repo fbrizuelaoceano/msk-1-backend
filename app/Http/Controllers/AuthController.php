@@ -38,10 +38,10 @@ class AuthController extends Controller
 
 
         Contact::updateOrCreate(['email' => $request->email], [
-            'last_name' => $contact->Last_Name,
+            'last_name' => $contactObj->Last_Name,
             'email' => $request->email,
             'user_id' => $user->id,
-            'entity_id_crm' => $contact->id
+            'entity_id_crm' => $contactObj->id
         ]);
 
 
