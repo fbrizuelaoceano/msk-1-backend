@@ -25,7 +25,6 @@ class AuthController extends Controller
     public function signupForCRM(Request $request)
     {
         $request->validate([
-            'contact' => 'required|string',
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
