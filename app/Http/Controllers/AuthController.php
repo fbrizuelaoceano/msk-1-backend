@@ -26,10 +26,9 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        $contact = collect($request->contact)->toArray();
 
-        $contact = collect($request->contact[0])->toArray();
-
-        Log::info($contact);
+        Log::info($request->getContent());
 
         $user = User::updateOrCreate(['email' => $request->email], [
             'name' => $contact['First_Name'],
