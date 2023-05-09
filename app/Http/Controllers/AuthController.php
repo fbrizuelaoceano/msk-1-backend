@@ -27,26 +27,21 @@ class AuthController extends Controller
         ]);
 
         $contact = collect($_POST['contact'])->toArray()[0];
-        $contactArr = json_decode($contact);
-        $contactArr2 = explode(",", $contact);
-        Log::info(print_r($contactArr, true));
-        Log::info(print_r($contactArr2, true));
-        Log::info($contact);
-
+        $contactObj = json_decode($contact)[0];
 
 
         $user = User::updateOrCreate(['email' => $request->email], [
-            'name' => $contact['First_Name'],
+            'name' => $contactObj->First_Name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
 
         Contact::updateOrCreate(['email' => $request->email], [
-            'last_name' => $contact['Last_Name'],
+            'last_name' => $contact->Last_Name,
             'email' => $request->email,
             'user_id' => $user->id,
-            'entity_id_crm' => $contact['id']
+            'entity_id_crm' => $contact->id
         ]);
 
 
