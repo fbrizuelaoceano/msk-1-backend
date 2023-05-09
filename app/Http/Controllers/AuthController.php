@@ -26,7 +26,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $contact = collect($_POST['contact'])->toArray();
+        $contact = collect($_POST['contact'])->toArray()[0];
         Log::info(print_r($contact, true));
 
 
