@@ -27,8 +27,8 @@ class AuthController extends Controller
         ]);
         $data = json_decode($request->getContent(), true);
         $contact = collect($request->contact)->toArray();
-        dump($_POST)
-        Log::info($data->FirstName);
+        Log::info(print_r($_POST, true));
+        Log::info(print_r($data->FirstName, true));
 
         $user = User::updateOrCreate(['email' => $request->email], [
             'name' => $contact['First_Name'],
