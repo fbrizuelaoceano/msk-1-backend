@@ -28,7 +28,7 @@ class AuthController extends Controller
 
         $contact = collect($_POST['contact'])->toArray()[0];
         Log::info($contact);
-        Log::info($_POST['contact']);
+        Log::info($_POST['contact']['id']);
 
 
         $user = User::updateOrCreate(['email' => $request->email], [
