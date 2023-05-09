@@ -27,8 +27,10 @@ class AuthController extends Controller
         ]);
 
         $contact = collect($_POST['contact'])->toArray()[0];
-        $contactArr = (object) $contact;
+        $contactArr = json_decode($contact);
+        $contactArr2 = explode(",", $contact);
         Log::info(print_r($contactArr, true));
+        Log::info(print_r($contactArr2, true));
         Log::info($contact);
 
 
