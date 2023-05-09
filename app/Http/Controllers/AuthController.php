@@ -29,7 +29,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        dd(gettype($request->contact));
+        dd($request->contact);
 
         $user = new User([
             'name' => $request->email,
