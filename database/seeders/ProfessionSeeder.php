@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Profession;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ProfessionSeeder extends Seeder
 {
@@ -27,6 +28,7 @@ class ProfessionSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('professions')->truncate();
         foreach ($this->data as $d) {
             Profession::create($d);
         }
