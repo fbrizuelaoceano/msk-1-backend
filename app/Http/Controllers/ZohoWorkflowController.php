@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contract;
 use App\Models\User;
 use App\Models\Contact;
 use Illuminate\Http\Request;
@@ -49,6 +50,12 @@ class ZohoWorkflowController extends Controller
             'email' => $contactObj->Email,
             'user_id' => $user->id,
             'entity_id_crm' => $contactObj->id
+        ]);
+
+        Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
+            'entity_id_crm' => $saleObj->id,
+            'country' => $saleObj->Pais_de_facturaci_n,
+            'status' => $saleObj->Status,
         ]);
 
         return response()->json(['user' => $user, 'contact' => $contact]);
