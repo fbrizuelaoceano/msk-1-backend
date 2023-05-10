@@ -9,15 +9,15 @@ class ProfessionSeeder extends Seeder
 {
 
     public $data = [
-        ['name' => "Médico"],
-        ['name' => "Lic. de la Salud"],
-        ['name' => "Enfermero"],
+        ['name' => "Personal médico"],
+        ['name' => "Licenciado de la salud"],
+        ['name' => "Personal de enfermería"],
         ['name' => "Auxiliar de enfermería"],
-        ['name' => "Fuerza Pública"],
-        ['name' => "Técnico Universitario"],
+        ['name' => "Fuerza pública"],
+        ['name' => "Técnico universitario"],
         ['name' => "Residente"],
         ['name' => "Estudiante"],
-        ['name' => "Otra Profesión"],
+        ['name' => "Otra profesión"],
     ];
 
     /**
