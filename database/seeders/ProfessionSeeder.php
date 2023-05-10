@@ -28,7 +28,9 @@ class ProfessionSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;'); // Desactivamos la revisión de claves foráneas
         DB::table('professions')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1;'); // Reactivamos la revisión de claves foráneas
         foreach ($this->data as $d) {
             Profession::create($d);
         }
