@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\MethodContact;
 use App\Models\Profession;
 use App\Models\Speciality;
 use App\Models\TokenPassport;
@@ -281,7 +282,68 @@ class ZohoController extends Controller
             'data' => $accessToken,
         ]);
     }
+    public function CreateLeadHomeContactUs(Request $request)
+    {
 
+        $request->validate([
+            'Email' => 'required|string|email',
+            'Last_Name' => 'required|string',
+        ]);
+
+        // $lead = Lead::where(['Email'=> $request->Email ])->first();
+        // $response = $this->GetByEmailService('Leads',$request->Email);
+        // if ($response == null ) {//No esta en CRM
+        $data = [
+            "data" => [
+                [
+                    "Email" => $request->Email,
+                    "Last_Name" => $request->Last_Name,
+                    "Name" => $request->Name,
+                    "Profesion" => $request->Profesion,
+                    "Especialidad" => $request->Especialidad,
+                    "Phone" => $request->Phone,
+                    "Description" => $request->Description,
+                    "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
+                ]
+            ]
+        ];
+
+        if (!empty($request->Otra_profesion)) {
+            $data['data'][0]['Otra_profesion'] = $request->Otra_profesion;
+        }
+
+        if (!empty($request->Otra_especialidad)) {
+            $data['data'][0]['Otra_especialidad'] = $request->Otra_especialidad;
+        }
+
+        $response = $this->Create('Leads', $data);
+        // }
+
+        if (!empty($request->Profesion))
+            $profession = Profession::where(['name' => $request->Profesion])->first();
+        if (!empty($request->Especialidad))
+            $specialty = Speciality::where(['name' => $request->Especialidad])->first();
+        if (!empty($request->Preferencia_de_contactaci_n))
+            $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
+
+        $newLead = Lead::Create([
+            "email" => $request->Email,
+            "last_name" => $request->Last_Name,
+            "name" => $request->Name,
+            "profession" => isset($profession->id) ? $profession->id : '',
+            "speciality" => isset($specialty->id) ? $specialty->id : '',
+            "phone" => $request->Phone,
+            "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
+
+            // "entity_id_crm" => $response->id,//Hay que asociar el id del crm
+            // "Message" => $request->Message,//Crear un campo para esto
+        ]);
+
+        return response()->json([
+            "crm" => $response,
+            "msk" => $newLead
+        ]);
+    }
     public function CreateLeadHomeNewsletter(Request $request){
         
         $request->validate([

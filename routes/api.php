@@ -67,6 +67,8 @@ Route::prefix('crm')->group(function () {
 
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
     
+    Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
+
     Route::post('CreateLeadHomeNewsletter', [ZohoController::class, 'CreateLeadHomeNewsletter']);
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
