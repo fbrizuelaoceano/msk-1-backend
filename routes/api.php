@@ -66,6 +66,8 @@ Route::prefix('crm')->group(function () {
     Route::delete('DeleteContacts/{id}', [ZohoController::class, 'DeleteContacts']);
 
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
+    
+    Route::post('CreateLeadHomeNewsletter', [ZohoController::class, 'CreateLeadHomeNewsletter']);
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lead;
 use App\Models\Profession;
 use App\Models\Speciality;
 use App\Models\TokenPassport;
@@ -281,6 +282,54 @@ class ZohoController extends Controller
         ]);
     }
 
+    public function CreateLeadHomeNewsletter(Request $request){
+        
+        $request->validate([
+            'Email' => 'required|string|email',
+        ]);
+        
+        $data = [
+            "data" => [
+                [
+                    "Email" => $request->Email,
+                    "Last_Name" => $request->Email,
+                    "Ad_Account" => ["Newsletter"],
+                ]
+            ]
+        ];
+        $leadExists= Lead::where(['email' => $request->Email])->first();
+        if (!$leadExists) {// no se encontró ningún registro con ese email
+            $response = $this->Create('Leads', $data);
+            
+            $leadMSK = new Lead();
+            $leadMSK->email = $request->Email; 
+    
+            if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
+                $leadMSK->entity_id_crm = $response['data'][0]['details']['id'];
+            }
+    
+            $newLead = Lead::Create($leadMSK->toArray());
+            
+            return response()->json([
+                "crm" => $response,
+                "msk" => $newLead
+            ]);
+        }else{// se encontró un registro con ese email
+            if (isset($leadExists->entity_id_crm)) {//Tiene id en crm, existe en crm, entonces actualizo
+                $response = $this->Update('Leads', $data,$leadExists->entity_id_crm);
+            } else {// No tiene id de crm, no existe en crm, entonces lo creo
+                $response = $this->Create('Leads', $data);
+                if(isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS"){
+                    $leadExists->entity_id_crm = $response['data'][0]['details']['id'];
+                    $leadExists->save();
+                }
+            }
+            return response()->json([
+                "crm" => $response,
+                "msk" => $leadExists
+            ]);
+        }
+    }
     /* Desarrollo de Refactorizacion */
     /* Administracion de token */
     function AccessTokenDB()
