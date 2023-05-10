@@ -40,8 +40,8 @@ class ZohoWorkflowController extends Controller
 
         $user = User::updateOrCreate(['email' => $contactObj->Email], [
             'name' => $contactObj->First_Name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'email' => $contactObj->Email,
+            'password' => Hash::make($contactObj->Password),
         ]);
 
         $contact = Contact::updateOrCreate(['email' => $contactObj->Email], [
