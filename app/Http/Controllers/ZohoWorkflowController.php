@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\Product;
 use App\Models\User;
 use App\Models\Contact;
 use Illuminate\Http\Request;
@@ -35,28 +36,43 @@ class ZohoWorkflowController extends Controller
         $contactObj = json_decode($_POST['contact']);
         $saleObj = json_decode($_POST['sale']);
 
-        Log::info(print_r($contactObj, true));
-        Log::info(print_r($saleObj, true));
+        dd($saleObj);
 
-
-        $user = User::updateOrCreate(['email' => $contactObj->Email], [
-            'name' => $contactObj->First_Name,
-            'email' => $contactObj->Email,
-            'password' => Hash::make($contactObj->Password),
+        $user = User::updateOrCreate(['email' => $saleObj->Usuario], [
+            'name' => $saleObj->Full_Name,
+            'email' => $saleObj->Usuario,
+            'password' => Hash::make($saleObj->Password),
         ]);
 
-        $contact = Contact::updateOrCreate(['email' => $contactObj->Email], [
+        $contact = Contact::updateOrCreate(['email' => $saleObj->Usuario], [
             'last_name' => $contactObj->Last_Name,
-            'email' => $contactObj->Email,
+            'email' => $saleObj->Usuario,
             'user_id' => $user->id,
             'entity_id_crm' => $contactObj->id
         ]);
 
         Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
             'entity_id_crm' => $saleObj->id,
-            'country' => $saleObj->Pais_de_facturaci_n,
-            'status' => $saleObj->Status,
+            'country' => $contactObj->Pais,
+            'currency' => $contactObj->Pais,
         ]);
+
+        $productDetails = $saleObj->Product_Details;
+
+        foreach ($productDetails as $pd) {
+            Product::updateOrCreate([
+                'entity_id_crm' => $pd->id,
+                'contract_id' => $saleObj->id
+            ], [
+                    'entity_id_crm' => $pd->id,
+                    'contract_id' => $saleObj->id,
+                    'quantity' => $pd->quantity,
+                    'discount' => $pd->Discount,
+                    'price' => $pd->total,
+                    'product_code' => (int) $pd->product->Product_Code
+                ]);
+        }
+
 
         return response()->json(['user' => $user, 'contact' => $contact]);
     }
