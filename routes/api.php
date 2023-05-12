@@ -6,6 +6,7 @@ use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
 use App\Models\Profession;
 use App\Models\Speciality;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
@@ -27,6 +28,11 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
+
+Route::get('/profile/{email}', function (Request $request, $email) {
+    $user = User::where("email", $email)->first();
+    return response()->json($user);
+});
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
@@ -66,7 +72,7 @@ Route::prefix('crm')->group(function () {
     Route::delete('DeleteContacts/{id}', [ZohoController::class, 'DeleteContacts']);
 
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
-    
+
     Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
 
     Route::post('CreateLeadHomeNewsletter', [ZohoController::class, 'CreateLeadHomeNewsletter']);
