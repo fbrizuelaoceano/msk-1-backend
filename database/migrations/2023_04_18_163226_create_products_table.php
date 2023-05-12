@@ -22,9 +22,6 @@ return new class extends Migration {
             $table->integer('product_code', false, true);
             $table->decimal('price', 10, 2);
             $table->decimal('discount');
-            $table->string('title');
-
-
 
             $table->timestamps();
         });
