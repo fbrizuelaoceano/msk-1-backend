@@ -12,15 +12,18 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('contract_id')
+                ->references('id')
+                ->on('contracts')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('contract_entity_id');
+            $table->string('entity_id');
             $table->integer('quantity', false, true);
             $table->integer('product_code', false, true);
             $table->decimal('price', 10, 2);
             $table->decimal('discount');
             $table->string('title');
 
-            $table->foreignId('contract_id')
-                ->references('id')
-                ->on('contracts')->onDelete('cascade')->onUpdate('cascade');
+
 
             $table->timestamps();
         });

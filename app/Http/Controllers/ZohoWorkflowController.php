@@ -36,25 +36,26 @@ class ZohoWorkflowController extends Controller
         $contactObj = json_decode($_POST['contact']);
         $saleObj = json_decode($_POST['sale']);
 
-        Log::info(print_r($contactObj, true));
-        Log::info(print_r($saleObj, true));
+        /* Log::info(print_r($contactObj, true));
+        Log::info(print_r($saleObj, true)); */
 
-        dd($contactObj->Usuario);
+        //dd($contactObj->Usuario);
 
         $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
-            'name' => $saleObj->Full_Name,
-            'email' => $saleObj->Usuario,
-            'password' => Hash::make($saleObj->Password),
+            'name' => $contactObj->Full_Name,
+            'email' => $contactObj->Usuario,
+            'password' => Hash::make($contactObj->Password),
         ]);
 
-        $contact = Contact::updateOrCreate(['email' => $saleObj->Usuario], [
+        $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
             'last_name' => $contactObj->Last_Name,
-            'email' => $saleObj->Usuario,
+            'email' => $contactObj->Usuario,
             'user_id' => $user->id,
             'entity_id_crm' => $contactObj->id
         ]);
 
-        Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
+        $contract = Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
+            'contact_id' => $contact->id,
             'entity_id_crm' => $saleObj->id,
             'country' => $contactObj->Pais,
             'currency' => $contactObj->Pais,
@@ -68,7 +69,8 @@ class ZohoWorkflowController extends Controller
                 'contract_id' => $saleObj->id
             ], [
                     'entity_id_crm' => $pd->id,
-                    'contract_id' => $saleObj->id,
+                    'contract_id' => $contract->id,
+                    'contract_entity_id' => $saleObj->id,
                     'quantity' => $pd->quantity,
                     'discount' => $pd->Discount,
                     'price' => $pd->total,
