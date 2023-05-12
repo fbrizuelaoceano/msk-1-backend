@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('contact_id')
                 ->references('id')
-                ->on('contacts')->onDelete('cascade')->onUpdate('cascade');
+                ->on('contacts')->onDelete('cascade')->onUpdate('cascade')->nullable()->default(null);
             $table->string('installments')->nullable()->default(null);
             $table->string('entity_id_crm')->nullable()->default(null);
             $table->string('Fecha_de_Vto')->nullable()->default(null);
