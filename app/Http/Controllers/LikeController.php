@@ -49,35 +49,27 @@ class LikeController extends Controller
         }
     }
     public function SwitchLike(Request $request){
-        //le dio al liker
-            // 'entity_id_crm_contrato',
-            // 'product_code',
-            // 'user_id',
-        $fillable = [
-            'entity_id_crm_contrato',
-            'product_code',
-            'user_id',
-        ];
-
         $user = $request->user();
 
-        $likes = Like::updateOrCreate([
-                'entity_id_crm_contrato' => $request->entityId,
+        //retornar vacio
+        if($user){
+
+            $switchLike = Like::updateOrCreate([
                 'product_code' => $request->productCode
             ],
             [
                 'user_id' => $user->id,
-                'entity_id_crm_contrato' => $request->entityId,
                 'product_code' => $request->productCode,
                 'is_liked' => DB::raw('NOT is_liked')
-            ]);        
+            ]);
+            
+            $like = Like::find($switchLike->id);
 
-        // $like = Like::find($id);
-        if (!$likes) {
-            $likes->delete();
-            return response()->json(['message' => 'Like deleted']);
+            return response()->json(['is_liked' => $like->is_liked,"like" => $like]);
         } else {
-            return response()->json(['message' => 'Like not found'], 404);
+            return response()->json(['error' => "not user"]);
         }
+
     }
 }
+
