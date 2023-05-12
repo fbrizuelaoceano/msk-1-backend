@@ -16,7 +16,7 @@ return new class extends Migration {
                 ->references('id')
                 ->on('contracts')->onDelete('cascade')->onUpdate('cascade');
 
-            $table->string('contract_entity_id');
+            $table->string('contract_entity_id')->nullable()->default(null);
             $table->string('entity_id_crm')->nullable()->default(null);
             $table->integer('quantity', false, true);
             $table->integer('product_code', false, true);
