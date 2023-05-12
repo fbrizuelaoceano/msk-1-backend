@@ -12,7 +12,9 @@ return new class extends Migration {
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-
+            $table->foreignId('contact_id')
+                ->references('id')
+                ->on('contacts')->onDelete('cascade')->onUpdate('cascade');
             $table->string('installments')->nullable()->default(null);
             $table->string('entity_id_crm')->nullable()->default(null);
             $table->string('Fecha_de_Vto')->nullable()->default(null);
