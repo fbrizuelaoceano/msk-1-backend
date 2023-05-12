@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LeadController;
-
+use App\Http\Controllers\LikeController;
+use App\Models\Like;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,9 @@ Route::post('prueba', [AuthController::class, 'CreateContact']);
 
 Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
 Route::get('Contacts', [ContactController::class, 'Contacts']);
+
+Route::post('SwitchLike', [LikeController::class, 'SwitchLike'])->middleware('auth:api');
+
 
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
