@@ -15,8 +15,9 @@ return new class extends Migration {
             $table->foreignId('contract_id')
                 ->references('id')
                 ->on('contracts')->onDelete('cascade')->onUpdate('cascade');
+
             $table->string('contract_entity_id');
-            $table->string('entity_id');
+            $table->string('entity_id_crm');
             $table->integer('quantity', false, true);
             $table->integer('product_code', false, true);
             $table->decimal('price', 10, 2);
