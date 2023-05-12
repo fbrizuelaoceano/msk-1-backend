@@ -30,7 +30,7 @@ Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
 
-Route::get('/profile/{email}', function (Request $request, $email) {
+Route::middleware("auth:api")->get('/profile/{email}', function (Request $request, $email) {
     $user = User::where("email", $email)->first();
     return response()->json($user);
 });
