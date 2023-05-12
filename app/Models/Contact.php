@@ -17,7 +17,7 @@ class Contact extends Model
         'id',
         'entity_id_crm',
         'dni',
-        'sex',  
+        'sex',
         'date_of_birth',
         'registration_number',
         'area_of_work',
@@ -38,9 +38,9 @@ class Contact extends Model
         'email',
         'dni',
         'sex',
-        'date_of_birth', 
-        'registration_number', 
-        'area_of_work', 
+        'date_of_birth',
+        'registration_number',
+        'area_of_work',
         'training_interest',
         'type_of_address',
         'country',
@@ -53,7 +53,7 @@ class Contact extends Model
 
     public function lead()
     {
-        $lead = $this->hasOne(Lead::class, 'contact_id','id');
+        $lead = $this->hasOne(Lead::class, 'contact_id', 'id');
         return $lead;
     }
     // public function user()
@@ -61,9 +61,10 @@ class Contact extends Model
     //     $user = $this->hasOne(User::class, 'contact_id','id');
     //     return $user;
     // }
-    public function user(){
-         $user = $this->belongsTo(User::class,'user_id');
-         return $user;
+    public function user()
+    {
+        $user = $this->belongsTo(User::class, 'user_id');
+        return $user;
     }
     public static function getFormAttributes()
     {

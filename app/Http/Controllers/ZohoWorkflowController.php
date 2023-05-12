@@ -66,7 +66,7 @@ class ZohoWorkflowController extends Controller
         foreach ($productDetails as $pd) {
             Product::updateOrCreate([
                 'entity_id_crm' => $pd->id,
-                'contract_id' => $saleObj->id
+                'contract_entity_id' => $saleObj->id
             ], [
                     'entity_id_crm' => $pd->id,
                     'contract_id' => $contract->id,

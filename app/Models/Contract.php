@@ -10,6 +10,7 @@ class Contract extends Model
     use HasFactory;
     protected $fillable = [
         'id',
+        'contact_id',
         'entity_id_crm',
         'installments',
         'Fecha_de_Vto',
@@ -40,7 +41,7 @@ class Contract extends Model
         'currency'
     ];
     protected $table = 'contracts';
-    public $hidden = ['created_at','updated_at','products'];
+    public $hidden = ['created_at', 'updated_at', 'products'];
 
     public static function getFormAttributes()
     {
