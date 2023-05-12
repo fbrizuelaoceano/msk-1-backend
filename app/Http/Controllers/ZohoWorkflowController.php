@@ -36,8 +36,8 @@ class ZohoWorkflowController extends Controller
         $contactObj = json_decode($_POST['contact']);
         $saleObj = json_decode($_POST['sale']);
 
-        Log::info(print_r($contactObj));
-        Log::info(print_r($saleObj));
+        Log::info(print_r($contactObj, true));
+        Log::info(print_r($saleObj, true));
 
         dd($contactObj->Usuario);
 
