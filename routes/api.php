@@ -13,6 +13,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LikeController;
 use App\Models\Like;
+use GuzzleHttp\Psr7\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,14 +31,13 @@ Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
 
-Route::middleware("auth:api")->get('/profile/{email}', function (Request $request, $email) {
-    $user = User::where("email", $email)->first();
-    return response()->json($user);
-});
+
+
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
+Route::get('/profile/{email}',[AuthController::class,'GetProfile'])->middleware("auth:api");
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
@@ -51,7 +51,6 @@ Route::post('SwitchLike', [LikeController::class, 'SwitchLike'])->middleware('au
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
     Route::get('GetLeads', [ZohoOMController::class, 'GetLeads']);
-
 });
 
 Route::prefix('crm')->group(function () {

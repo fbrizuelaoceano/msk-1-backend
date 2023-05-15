@@ -302,7 +302,6 @@ class AuthController extends Controller
 
     public function CreateContact(Request $request)
     {
-
         $newOrUpdatedLead = Contact::Create([
             'last_name' => $request->email,
             'email' => $request->email,
@@ -311,5 +310,10 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Successfully created user!',
         ], 201);
+    }
+    
+    public function GetProfile(Request $request, $email) {
+        $user = User::where("email", $email)->first();
+        return response()->json([$user]);
     }
 }
