@@ -215,6 +215,9 @@ class AuthController extends Controller
                     [
                         "Last_Name" => $request->last_name,
                         "Email" => $request->email,
+                        "First_Name" => $request->name,
+                        // "Password" => $request->password,
+                        "Phone" => $request->phone,
                         "usuario_prueba" => true
                     ]
                 ]
@@ -259,13 +262,11 @@ class AuthController extends Controller
 
                 if (isset($response['data'][0]['Usuario']) && isset($response['data'][0]['Password'])) {
 
-                    $user = new User([
+                    $user = User::Create([
                         'name' => $response['data'][0]['Usuario'],
                         'email' => $response['data'][0]['Usuario'],
                         'password' => Hash::make($response['data'][0]['Password']),
                     ]);
-
-                    $user->save();
 
                     $newContact = Contact::Create([
                         'last_name' => $response['data'][0]['Last_Name'],

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('entity_id_crm')->nullable()->default(null);
             $table->string('dni')->nullable()->default(null);
+            $table->string('phone')->nullable()->default(null);
             $table->string('sex')->nullable()->default(null);
             $table->string('date_of_birth')->nullable()->default(null);
             $table->string('registration_number')->nullable()->default(null);
