@@ -47,7 +47,6 @@ Route::get('Contacts', [ContactController::class, 'Contacts']);
 
 Route::post('SwitchLike', [LikeController::class, 'SwitchLike'])->middleware('auth:api');
 
-
 Route::prefix('om')->group(function () {
     Route::get('CreateAccessToken', [ZohoOMController::class, 'CreateAccessToken']);
     Route::get('GetLeads', [ZohoOMController::class, 'GetLeads']);

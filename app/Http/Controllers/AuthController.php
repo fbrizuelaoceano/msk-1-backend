@@ -214,7 +214,8 @@ class AuthController extends Controller
                 "data" => [
                     [
                         "Last_Name" => $request->last_name,
-                        "Email" => $request->email
+                        "Email" => $request->email,
+                        "usuario_prueba" => true
                     ]
                 ]
             ];
