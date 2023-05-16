@@ -52,4 +52,8 @@ class Contract extends Model
     {
         return $this->hasMany(Product::class, 'contract_id', 'id');
     }
+    public function contact()
+    {
+        return $this->hasOne(Contact::class);
+    }
 }

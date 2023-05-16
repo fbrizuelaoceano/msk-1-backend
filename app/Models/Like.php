@@ -21,6 +21,6 @@ class Like extends Model
     // Relación con el modelo User
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
 }
