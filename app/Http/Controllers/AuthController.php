@@ -291,13 +291,8 @@ class AuthController extends Controller
     }
     
     public function GetProfile(Request $request, $email) {
-        $user = User::with('contact.contracts','likes')->where('email', $email)->first();
-        $user = User::with('contact.contracts.products')->where('email', 'likes.1@oceano.com')->first();
-
-        $user = User::with('likes')->whereHas('contact', function ($query) {
-            $query->where('email', 'likes.1@oceano.com');
-        })->first();
-        
+        $user = User::with('contact.contracts.products')->where('email', $email)->first();
+     
         return response()->json([
             $user,
             $user->likes
