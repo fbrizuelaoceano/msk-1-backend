@@ -70,4 +70,8 @@ class Contact extends Model
     {
         return self::$formAttributes;
     }
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class);
+    }
 }
