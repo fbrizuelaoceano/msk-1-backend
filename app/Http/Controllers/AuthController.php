@@ -218,7 +218,8 @@ class AuthController extends Controller
                         "First_Name" => $request->name,
                         // "Password" => $request->password,
                         "Phone" => $request->phone,
-                        "usuario_prueba" => true
+                        "usuario_prueba" => true,
+                        "Caracter_stica_contacto" => "Experiencia MSK"
                     ]
                 ]
             ];
