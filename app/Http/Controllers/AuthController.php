@@ -265,7 +265,6 @@ class AuthController extends Controller
         return response()->json($request->user());
     }
 
-
     public function CreateContact(Request $request)
     {
         $newOrUpdatedLead = Contact::Create([
@@ -286,4 +285,21 @@ class AuthController extends Controller
             $user->likes
         ]);
     }
+    public function ValidatePasswordChange(Request $request,$codeURLToken){
+        $contacto = Contact::where('validate', $codeURLToken)->first();
+
+        if ($contacto) {
+            // Si el contacto existe, muestra el formulario
+            return response()->json([
+                $contacto,
+                "redirect" => "FormChangePassword"
+            ]);
+        } else {
+            // Si el código no coincide con ningún contacto, muestra un error o redirecciona a otra página
+            return response()->json([
+                "error" => "Codigo no valido.",
+            ]);
+        }
+    }
 }
+

@@ -38,6 +38,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 Route::get('/profile/{email}',[AuthController::class,'GetProfile'])->middleware("auth:api");
+Route::get('/ValidatePasswordChange/{validateToken}',[AuthController::class,'ValidatePasswordChange']);
+
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
