@@ -14,7 +14,6 @@ class ZohoWorkflowController extends Controller
 {
     public function setNewPasswordFromMSK(Request $request)
     {
-
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required',
@@ -23,7 +22,6 @@ class ZohoWorkflowController extends Controller
         $user = User::where(["email" => $request->email])->first();
         $user->password = Hash::make($request->password);
         $user->save();
-
 
         return response()->json([
             'message' => 'Successfully find user!',
@@ -92,8 +90,7 @@ class ZohoWorkflowController extends Controller
         //dd($contactObj->Usuario);
 
         $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
-            'last_name' => $contactObj->Validador,
-            'entity_id_crm' => $contactObj->id
+            'validate' => $contactObj->Validador,
         ]);
 
         return response()->json(['contact' => $contact]);
