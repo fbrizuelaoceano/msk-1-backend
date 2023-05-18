@@ -81,4 +81,21 @@ class ZohoWorkflowController extends Controller
 
         return response()->json(['user' => $user, 'contact' => $contact]);
     }
+
+    public function ValidatedUser(Request $request)
+    {
+        $contactObj = json_decode($_POST['contact']);
+
+        /* Log::info(print_r($contactObj, true));
+        Log::info(print_r($saleObj, true)); */
+
+        //dd($contactObj->Usuario);
+
+        $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
+            'last_name' => $contactObj->Validador,
+            'entity_id_crm' => $contactObj->id
+        ]);
+
+        return response()->json(['contact' => $contact]);
+    }
 }

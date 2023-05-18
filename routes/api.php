@@ -30,8 +30,7 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
-
-
+Route::get('/ValidatedUser',[ZohoWorkflowController::class,'ValidatedUser']);
 
 
 Route::post('login', [AuthController::class, 'login']);
