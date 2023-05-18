@@ -29,7 +29,8 @@ class Contact extends Model
         'locality',
         'province_state',
         'lead_id',
-        'user_id'
+        'user_id',
+        'validate'
     ];
 
     private static $formAttributes = [
@@ -48,7 +49,8 @@ class Contact extends Model
         'street',
         'locality',
         'province_state',
-        'entity_id_crm'
+        'entity_id_crm',
+        'validate'
     ];
 
     public function lead()

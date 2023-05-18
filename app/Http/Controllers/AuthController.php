@@ -278,15 +278,16 @@ class AuthController extends Controller
     }
 
     public function GetProfile(Request $request, $email) {
+        // Me pide contaaacto tacto tacto
         $user = User::with('contact.contracts.products')->where('email', $email)->first();
 
         return response()->json([
             $user,
-            $user->likes
+            // $user->likes
         ]);
     }
-    public function ValidatePasswordChange(Request $request,$codeURLToken){
-        $contacto = Contact::where('validate', $codeURLToken)->first();
+    public function ValidatePasswordChange(Request $request){
+        $contacto = Contact::where('validate', $request->contact->Validador)->first();
 
         if ($contacto) {
             // Si el contacto existe, muestra el formulario
