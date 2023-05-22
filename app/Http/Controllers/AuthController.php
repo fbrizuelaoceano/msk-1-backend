@@ -313,7 +313,7 @@ class AuthController extends Controller
         if ($contacto) {
             // Si el contacto existe, muestra el formulario
             return response()->json([
-                $contacto,
+                "contact" => $contacto,
                 "redirect" => "FormChangePassword"
             ]);
         } else {
