@@ -212,8 +212,10 @@ class AuthController extends Controller
     public function newPassword(Request $request)
     {
         $request->validate([
+            //Dato del codigo del usuario validado, para seguridad
+            'validate' => 'required|string',
             'email' => 'required|string|email',
-            'password' => 'required|confirmed',
+            'password' => 'required',
         ]);
 
         $user = User::where(["email" => $request->email])->first();
@@ -231,6 +233,7 @@ class AuthController extends Controller
         $data = [
             "data" => [
                 [
+                    "Generar_nueva_password"=>0,
                     "Password" => $request->password,
                 ]
             ]
@@ -238,14 +241,8 @@ class AuthController extends Controller
         $contact = Contact::where(["email" => $request->email])->first();
 
         $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-
-        // $URL_ZOHO = env('URL_ZOHO') . '/Contacts' . '/' . $contact->entity_id_crm;
-        // $response = Http::withHeaders([
-        //     'Authorization' => 'Zoho-oauthtoken ' . env("ZOHO_ACCESS_TOKEN"),
-        // ])
-        //     ->put($URL_ZOHO, $data)
-        //     ->json();
+        // $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        $response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json([
             'message' => 'Successfully created user!',
@@ -285,6 +282,27 @@ class AuthController extends Controller
             $user,
             // $user->likes
         ]);
+    }
+    public function RequestPasswordChange(Request $request){
+
+        $data = [
+            "data" => [
+                [
+                    "Generar_nueva_password" => 1,
+                ]
+            ]
+        ];
+        $contact = Contact::where(["email" => $request->email])->first();
+
+        $zohoService = new ZohoController();
+        // $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        $response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+
+        return response()->json([
+            "message" => "Solicitud enviada.",
+            $response
+        ]);
+
     }
     public function ValidatePasswordChange(Request $request){
         $contacto = Contact::where('validate', $request->contact->Validador)->first();
