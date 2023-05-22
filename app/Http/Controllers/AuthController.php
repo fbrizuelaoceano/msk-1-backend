@@ -306,9 +306,9 @@ class AuthController extends Controller
         ]);
 
     }
-    public function ValidatePasswordChange(Request $request, $validadorID)
+    public function ValidatePasswordChange(Request $request)
     {
-        $contacto = Contact::where('validate', $validadorID)->first();
+        $contacto = Contact::where('validate', $request->contact->Validador)->first();
 
         if ($contacto) {
             // Si el contacto existe, muestra el formulario
