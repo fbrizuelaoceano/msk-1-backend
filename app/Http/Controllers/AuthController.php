@@ -241,15 +241,10 @@ class AuthController extends Controller
         $contact = Contact::where(["email" => $request->email])->first();
 
         $zohoService = new ZohoController();
-        // $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-        $response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
-        return response()->json([
-            'message' => 'Successfully created user!',
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => $token->expires_at,
-        ], 201);
+        return response()->json($response, 201);
     }
     /**
      * Get the authenticated User.
