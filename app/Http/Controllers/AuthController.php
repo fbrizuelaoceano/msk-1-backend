@@ -233,7 +233,7 @@ class AuthController extends Controller
         $data = [
             "data" => [
                 [
-                    "Generar_nueva_password"=>0,
+                    "Generar_nueva_password" => 0,
                     "Password" => $request->password,
                 ]
             ]
@@ -274,7 +274,8 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function GetProfile(Request $request, $email) {
+    public function GetProfile(Request $request, $email)
+    {
         // Me pide contaaacto tacto tacto
         $user = User::with('contact.contracts.products')->where('email', $email)->first();
 
@@ -283,7 +284,8 @@ class AuthController extends Controller
             // $user->likes
         ]);
     }
-    public function RequestPasswordChange(Request $request){
+    public function RequestPasswordChange(Request $request)
+    {
 
         $data = [
             "data" => [
@@ -304,8 +306,9 @@ class AuthController extends Controller
         ]);
 
     }
-    public function ValidatePasswordChange(Request $request){
-        $contacto = Contact::where('validate', $request->contact->Validador)->first();
+    public function ValidatePasswordChange(Request $request, $validadorID)
+    {
+        $contacto = Contact::where('validate', $validadorID)->first();
 
         if ($contacto) {
             // Si el contacto existe, muestra el formulario
@@ -321,4 +324,3 @@ class AuthController extends Controller
         }
     }
 }
-

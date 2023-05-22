@@ -30,15 +30,15 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
-Route::post('/ValidatedUser',[ZohoWorkflowController::class,'ValidatedUser']);
+Route::post('/ValidatedUser', [ZohoWorkflowController::class, 'ValidatedUser']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
-Route::get('/profile/{email}',[AuthController::class,'GetProfile'])->middleware("auth:api");
-Route::post('/ValidatePasswordChange',[AuthController::class,'ValidatePasswordChange']);
-Route::post('/RequestPasswordChange',[AuthController::class,'RequestPasswordChange']);
-Route::post('/newPassword',[AuthController::class,'newPassword']);
+Route::get('/profile/{email}', [AuthController::class, 'GetProfile'])->middleware("auth:api");
+Route::post('/ValidatePasswordChange/{validadorID}', [AuthController::class, 'ValidatePasswordChange']);
+Route::post('/RequestPasswordChange', [AuthController::class, 'RequestPasswordChange']);
+Route::post('/newPassword', [AuthController::class, 'newPassword']);
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
