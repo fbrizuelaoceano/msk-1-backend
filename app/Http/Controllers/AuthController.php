@@ -297,8 +297,8 @@ class AuthController extends Controller
         $contact = Contact::where(["email" => $request->email])->first();
 
         $zohoService = new ZohoController();
-        // $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-        $response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json([
             "message" => "Solicitud enviada.",
