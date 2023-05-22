@@ -29,4 +29,8 @@ class Product extends Model
     public $hidden = ['created_at', 'updated_at', 'id'];
 
     protected $table = 'products';
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'contract_id', 'id');
+    }
 }

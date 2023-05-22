@@ -241,8 +241,8 @@ class AuthController extends Controller
         $contact = Contact::where(["email" => $request->email])->first();
 
         $zohoService = new ZohoController();
-        // $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-        $response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json([
             'message' => 'Successfully created user!',
@@ -277,11 +277,19 @@ class AuthController extends Controller
     public function GetProfile(Request $request, $email)
     {
         // Me pide contaaacto tacto tacto
-        $user = User::with('contact.contracts.products')->where('email', $email)->first();
-
+        $user = User::with('contact.contracts.products')
+        ->where('email', $email)
+        ->first();
+                    
+        $contracts = $user->contact->contracts;
+        
+        $contracts->each(function ($contract) {
+            $contract->setAttribute('products', $contract->products);
+        });
+        
         return response()->json([
-            $user,
-            // $user->likes
+            'user' => $user,
+            'contracts' => $contracts,
         ]);
     }
     public function RequestPasswordChange(Request $request)

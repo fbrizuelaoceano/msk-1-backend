@@ -24,6 +24,7 @@ class Contract extends Model
         'left_installments',
         'left_payment_type',
         'currency',
+
     ];
     private static $formAttributes = [
         'id',
@@ -41,7 +42,7 @@ class Contract extends Model
         'currency'
     ];
     protected $table = 'contracts';
-    public $hidden = ['created_at', 'updated_at', 'products'];
+    public $hidden = ['created_at', 'updated_at'];
 
     public static function getFormAttributes()
     {
