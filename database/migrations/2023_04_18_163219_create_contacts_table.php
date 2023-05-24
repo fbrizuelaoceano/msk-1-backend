@@ -14,11 +14,17 @@ return new class extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable()->default(null);
+
+            $table->string('Profes_n')->nullable()->default(null);
+            $table->string('Especialidad')->nullable()->default(null);
+            $table->string('RFC')->nullable()->default(null);
+            $table->string('R_gimen_fiscal')->nullable()->default(null);
+            
+            $table->string('phone')->nullable()->default(null);
             $table->string('last_name')->nullable(false);
             $table->string('email')->unique();
             $table->string('entity_id_crm')->nullable()->default(null);
             $table->string('dni')->nullable()->default(null);
-            $table->string('phone')->nullable()->default(null);
             $table->string('sex')->nullable()->default(null);
             $table->string('date_of_birth')->nullable()->default(null);
             $table->string('registration_number')->nullable()->default(null);

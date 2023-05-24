@@ -36,10 +36,12 @@ class AuthController extends Controller
         ]);
 
         Contact::updateOrCreate(['email' => $request->email], [
+            'name' => $contactObj->name,
             'last_name' => $contactObj->Last_Name,
             'email' => $request->email,
             'user_id' => $user->id,
-            'entity_id_crm' => $contactObj->id
+            'entity_id_crm' => $contactObj->id,
+            'phone' => $contactObj->phone
         ]);
 
         // Crea un nuevo token de acceso
@@ -127,11 +129,15 @@ class AuthController extends Controller
                     ]);
 
                     $newContact = Contact::Create([
+                        
+
+                        'name' => $contactCreated['First_Name'],
+                        'phone' => $contactCreated['Phone'],
                         'last_name' => $contactCreated['Last_Name'],
                         'email' => $contactCreated['Usuario'],
                         'user_id' => $user->id,
                         'entity_id_crm' => $contactCreated['id']
-                    ]);
+                    ]); 
 
                     // Revoca todos los tokens activos del usuario
                     $user->tokens()->where('revoked', false)->update(['revoked' => true]);

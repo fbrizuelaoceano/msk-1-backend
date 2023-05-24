@@ -30,7 +30,11 @@ class Contact extends Model
         'province_state',
         'lead_id',
         'user_id',
-        'validate'
+        'validate',
+        'Profes_n',
+        'Especialidad',
+        'RFC',
+        'R_gimen_fiscal'
     ];
 
     private static $formAttributes = [
