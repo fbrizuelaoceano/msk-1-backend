@@ -150,7 +150,7 @@ class AuthController extends Controller
                 }
             } else {
                 return response()->json([
-                    'message' => 'Error al crear el usuario en ZhoCRM',
+                    'message' => 'Error al crear el usuario en ZohoCRM',
                     'resposneCRM' => $response,
                 ], 201);
             }
@@ -284,7 +284,6 @@ class AuthController extends Controller
         
         return response()->json([
             'user' => $user,
-            'contracts' => $contracts,
         ]);
     }
     public function RequestPasswordChange(Request $request)
