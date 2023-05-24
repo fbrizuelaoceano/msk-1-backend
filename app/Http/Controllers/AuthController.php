@@ -161,7 +161,6 @@ class AuthController extends Controller
      * Login user and create token.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function login(Request $request)
     {
@@ -273,15 +272,15 @@ class AuthController extends Controller
     {
         // Me pide contaaacto tacto tacto
         $user = User::with('contact.contracts.products')
-        ->where('email', $email)
-        ->first();
-                    
+            ->where('email', $email)
+            ->first();
+
         $contracts = $user->contact->contracts;
-        
+
         $contracts->each(function ($contract) {
             $contract->setAttribute('products', $contract->products);
         });
-        
+
         return response()->json([
             'user' => $user,
         ]);
