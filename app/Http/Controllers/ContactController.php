@@ -27,6 +27,14 @@ class ContactController extends Controller
             'contact' => $contacts,
         ]);
     }
+    public function ContactById(Request $request,$id){
+
+        $contact = Contact::find($id);
+
+        return response()->json([
+            'contact' => $contact,
+        ]);
+    }
     public function relacionarUserContact(){
 
         $contact = Contact::all()->first();

@@ -54,7 +54,11 @@ class Contact extends Model
         'locality',
         'province_state',
         'entity_id_crm',
-        'validate'
+        'validate',
+        'Profes_n',
+        'Especialidad',
+        'RFC',
+        'R_gimen_fiscal'
     ];
 
     public function lead()

@@ -45,6 +45,9 @@ Route::post('prueba', [AuthController::class, 'CreateContact']);
 
 Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
 Route::get('Contacts', [ContactController::class, 'Contacts']);
+Route::get('Contacts/{id}', [ContactController::class, 'ContactById']);
+
+
 
 Route::post('SwitchLike', [LikeController::class, 'SwitchLike'])->middleware('auth:api');
 
