@@ -39,7 +39,7 @@ class ZohoWorkflowController extends Controller
         Log::info(print_r($contactObj, true));
         Log::info(print_r($saleObj, true));
 
-        dd($contactObj->Usuario);
+        //dd($contactObj->Usuario);
 
         $profession = Profession::where('name', $contactObj->Profesi_n)->first();
         $specialty = Speciality::where('name', $contactObj->Especialidad)->first();
