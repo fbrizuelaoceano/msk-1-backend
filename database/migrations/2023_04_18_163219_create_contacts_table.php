@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->string('name');
             $table->string('last_name');
 
-            $table->foreignId('profession')->references('id')->on('professions')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('speciality')->references('id')->on('specialities')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('profession')->references('id')->nullable()->default(null)->on('professions')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('speciality')->references('id')->nullable()->default(null)->on('specialities')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('rfc')->nullable()->default(null);
