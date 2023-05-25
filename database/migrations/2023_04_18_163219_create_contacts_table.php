@@ -28,7 +28,7 @@ return new class extends Migration {
             $table->string('phone');
             $table->string('email')->unique();
             $table->string('sex');
-            $table->string('date_of_birth');
+            $table->string('date_of_birth')->nullable()->default(null);
 
             $table->string('country');
             $table->string('postal_code')->nullable()->default(null);
