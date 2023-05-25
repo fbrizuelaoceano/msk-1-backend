@@ -10,55 +10,46 @@ class Contact extends Model
 {
     use HasFactory;
     protected $table = 'contacts';
+
+    /*
+
+*/
     protected $fillable = [
+        'entity_id_crm',
         'name',
         'last_name',
-        'email',
-        'id',
-        'entity_id_crm',
+        'profession',
+        'speciality',
+        'user_id',
+        'rfc',
         'dni',
+        'fiscal_regime',
+        'phone',
+        'email',
         'sex',
         'date_of_birth',
-        'registration_number',
-        'area_of_work',
-        'training_interest',
-        'type_of_address',
         'country',
         'postal_code',
-        'street',
-        'locality',
-        'province_state',
-        'lead_id',
-        'user_id',
-        'validate',
-        'Profes_n',
-        'Especialidad',
-        'RFC',
-        'R_gimen_fiscal'
+        'address',
     ];
 
     private static $formAttributes = [
+        'entity_id_crm',
         'name',
         'last_name',
-        'email',
+        'profession',
+        'speciality',
+        'user_id',
+        'rfc',
         'dni',
+        'fiscal_regime',
+        'phone',
+        'email',
         'sex',
         'date_of_birth',
-        'registration_number',
-        'area_of_work',
-        'training_interest',
-        'type_of_address',
         'country',
         'postal_code',
-        'street',
-        'locality',
-        'province_state',
-        'entity_id_crm',
-        'validate',
-        'Profes_n',
-        'Especialidad',
-        'RFC',
-        'R_gimen_fiscal'
+        'address',
     ];
 
     public function lead()
@@ -66,11 +57,7 @@ class Contact extends Model
         $lead = $this->hasOne(Lead::class, 'contact_id', 'id');
         return $lead;
     }
-    // public function user()
-    // {
-    //     $user = $this->hasOne(User::class, 'contact_id','id');
-    //     return $user;
-    // }
+
     public function user()
     {
         $user = $this->belongsTo(User::class, 'user_id');

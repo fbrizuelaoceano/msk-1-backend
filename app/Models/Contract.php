@@ -8,38 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class Contract extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'id',
-        'contact_id',
-        'entity_id_crm',
-        'installments',
-        'Fecha_de_Vto',
-        'lead_source',
-        'name',
-        'address',
-        'payment_type',
-        'country',
-        'is_sub',
-        'payment_in_advance',
-        'left_installments',
-        'left_payment_type',
-        'currency',
 
+    protected $fillable = [
+        'contact_id',
+        'installments',
+        'entity_id_crm',
+        'so_crm',
+        'status',
+        'status_payment',
+        'country',
+        'currency',
     ];
     private static $formAttributes = [
         'id',
+        'contact_id',
         'installments',
-        'Fecha_de_Vto',
-        'lead_source',
-        'name',
-        'address',
-        'payment_type',
+        'entity_id_crm',
+        'so_crm',
+        'status',
+        'status_payment',
         'country',
-        'is_sub',
-        'payment_in_advance',
-        'left_installments',
-        'left_payment_type',
-        'currency'
+        'currency',
     ];
     protected $table = 'contracts';
     public $hidden = ['created_at', 'updated_at'];

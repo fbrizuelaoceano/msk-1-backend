@@ -10,25 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
+
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contact_id')->nullable()->default(null)
-                ->references('id')
-                ->on('contacts')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->foreignId('contact_id')->references('id')->on('contacts')->onDelete('cascade')->onUpdate('cascade');
+
             $table->string('installments')->nullable()->default(null);
-            $table->string('entity_id_crm')->nullable()->default(null);
-            $table->string('Fecha_de_Vto')->nullable()->default(null);
-            $table->string('lead_source')->nullable()->default(null);
-            $table->string('name')->nullable()->default(null);
-            $table->string('address')->nullable()->default(null);
-            $table->string('payment_type')->nullable()->default(null);
-            $table->string('status')->nullable()->default(null);
-            $table->string('country')->nullable()->default(null);
-            $table->string('is_sub')->nullable()->default(null);
-            $table->string('payment_in_advance')->nullable()->default(null);
-            $table->string('left_installments')->nullable()->default(null);
-            $table->string('left_payment_type')->nullable()->default(null);
-            $table->string('currency')->nullable()->default(null);
+            $table->string('entity_id_crm');
+            $table->string('so_crm');
+            $table->string('status');
+            $table->string('status_payment');
+            $table->string('country');
+            $table->string('currency');
 
             $table->timestamps();
         });
