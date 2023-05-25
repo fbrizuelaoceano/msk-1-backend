@@ -36,13 +36,10 @@ class ZohoWorkflowController extends Controller
         $contactObj = json_decode($_POST['contact']);
         $saleObj = json_decode($_POST['sale']);
 
-        Log::info(print_r($contactObj, true));
-        Log::info(print_r($saleObj, true));
-
+        /*  Log::info(print_r($contactObj, true));
+         Log::info(print_r($saleObj, true));
+  */
         //dd($contactObj->Usuario);
-
-        $profession = Profession::where('name', $contactObj->Profesi_n)->first();
-        $specialty = Speciality::where('name', $contactObj->Especialidad)->first();
 
         $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
             'name' => $contactObj->Full_Name,
@@ -54,8 +51,8 @@ class ZohoWorkflowController extends Controller
             'name' => $contactObj->First_Name,
             'last_name' => $contactObj->Last_Name,
             'email' => $contactObj->Usuario,
-            'profession' => $profession->id,
-            'specialty' => $specialty->id,
+            'profession' => $contactObj->Profesi_n,
+            'specialty' => $contactObj->Especialidad,
             'user_id' => $user->id,
             'entity_id_crm' => $contactObj->id,
             'rfc' => $contactObj->RFC,
