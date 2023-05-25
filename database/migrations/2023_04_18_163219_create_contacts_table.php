@@ -31,8 +31,8 @@ return new class extends Migration {
             $table->string('date_of_birth');
 
             $table->string('country');
-            $table->string('postal_code');
-            $table->string('address');
+            $table->string('postal_code')->nullable()->default(null);
+            $table->string('address')->nullable()->default(null);
             $table->timestamps();
         });
     }
