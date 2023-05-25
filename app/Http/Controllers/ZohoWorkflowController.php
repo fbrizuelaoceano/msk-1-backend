@@ -50,7 +50,7 @@ class ZohoWorkflowController extends Controller
             'password' => Hash::make($contactObj->Password),
         ]);
 
-        $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->Usuario], [
+        $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
             'name' => $contactObj->First_Name,
             'last_name' => $contactObj->Last_Name,
             'email' => $contactObj->Usuario,
@@ -75,8 +75,8 @@ class ZohoWorkflowController extends Controller
             'so_crm' => $saleObj->SO_Number,
             'status' => $saleObj->Status,
             'status_payment' => $saleObj->Estado_de_cobro,
-            'country' => $contactObj->Pais,
-            'currency' => $contactObj->Currency,
+            'country' => $saleObj->Pais_de_facturaci_n,
+            'currency' => $saleObj->Currency,
         ]);
 
         $productDetails = $saleObj->Product_Details;

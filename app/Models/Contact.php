@@ -31,6 +31,7 @@ class Contact extends Model
         'country',
         'postal_code',
         'address',
+        'validate'
     ];
 
     private static $formAttributes = [
