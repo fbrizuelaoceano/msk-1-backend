@@ -19,7 +19,7 @@ class Contact extends Model
         'name',
         'last_name',
         'profession',
-        'speciality',
+        'specialty',
         'user_id',
         'rfc',
         'dni',
