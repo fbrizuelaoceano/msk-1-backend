@@ -362,7 +362,12 @@ class ZohoController extends Controller
                     "Otra_profesion" => $request->Otra_profesion,
                     "Otra_especialidad" => $request->Otra_especialidad,
                     "Temas_de_interes" => $request->Temas_de_interes,
-                    "Ad_Campaign" => "Newsletter",
+                    "Lead_Source" => "Suscriptor newsletter",
+                    "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
+                    "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
+                    "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
+                    "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
+
                 ]
             ]
         ];
