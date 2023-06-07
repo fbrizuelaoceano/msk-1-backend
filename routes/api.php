@@ -36,7 +36,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
 Route::get('/profile/{email}',[AuthController::class,'GetProfile'])->middleware("auth:api");
-Route::put('/profile/{email}',[AuthController::class,'PutProfile'])->middleware("auth:api");
+Route::put('/profile/{email}',[AuthController::class,'PutProfile']);
 Route::post('/ValidatePasswordChange',[AuthController::class,'ValidatePasswordChange']);
 Route::post('/RequestPasswordChange',[AuthController::class,'RequestPasswordChange']);
 Route::post('/newPassword',[AuthController::class,'newPassword']);

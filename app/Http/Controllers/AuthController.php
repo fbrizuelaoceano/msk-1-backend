@@ -294,13 +294,33 @@ class AuthController extends Controller
 
     public function PutProfile(Request $request, $email)
     {
-        $contactData = $request->only(['name', 'last_name','email','phone','profession', 'specialty','address', 'country','province','postal_code','rfc','fiscal_regime']);
+        $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
 
-        $user = User::with('contact.contracts.products')->where('email', $email)->first();
+        $dataForCRM = [
+            'data' => [
+                'First_Name' => $contactData['name'],
+                'Last_Name' => $contactData['last_name'],
+                'Email' => $contactData['email'],
+                'Usuario' => $contactData['email'],
+                'Phone' => $contactData['phone'],
+                'Profesi_n' => $contactData['profession'],
+                'Otra_profesi_n' => $contactData['other_profession'],
+                'Especialidad' => $contactData['speciality'],
+                'Otra_especialidad' => $contactData['other_speciality'],
+                'Pais' => $contactData['country'],
+                'Mailing_State' => $contactData['state'],
+                'Mailing_Zip' => $contactData['postal_code'],
+                'RFC' => $contactData['rfc'],
+                'R_gimen_fiscal' => $contactData['fiscal_regime'],
+                'Mailing_Street' => $contactData['address'],
+            ]
+        ];
 
-        dd($user,$contactData);
+        $zohoService = new ZohoController();
+        $response = $zohoService->Update('Contacts', $dataForCRM, $request->entity_id_crm);
+
         return response()->json([
-            'user' => $user,
+            'updateCRM' => $response
         ]);
     }
     public function RequestPasswordChange(Request $request)
