@@ -362,7 +362,7 @@ class ZohoController extends Controller
                     "Otra_profesion" => $request->Otra_profesion,
                     "Otra_especialidad" => $request->Otra_especialidad,
                     "Temas_de_interes" => $request->Temas_de_interes,
-                    "Ad_Account" => ["Newsletter"],
+                    "Ad_Campaign" => "Newsletter",
                 ]
             ]
         ];
