@@ -129,7 +129,7 @@ class AuthController extends Controller
                     ]);
 
                     $newContact = Contact::Create([
-                        
+
 
                         'name' => $contactCreated['First_Name'],
                         'phone' => $contactCreated['Phone'],
@@ -137,7 +137,7 @@ class AuthController extends Controller
                         'email' => $contactCreated['Usuario'],
                         'user_id' => $user->id,
                         'entity_id_crm' => $contactCreated['id']
-                    ]); 
+                    ]);
 
                     // Revoca todos los tokens activos del usuario
                     $user->tokens()->where('revoked', false)->update(['revoked' => true]);
@@ -287,6 +287,18 @@ class AuthController extends Controller
             $contract->setAttribute('products', $contract->products);
         });
 
+        return response()->json([
+            'user' => $user,
+        ]);
+    }
+
+    public function PutProfile(Request $request, $email)
+    {
+        $contactData = $request->only(['name', 'last_name','email','phone','profession', 'specialty','address', 'country','province','postal_code','rfc','fiscal_regime']);
+
+        $user = User::with('contact.contracts.products')->where('email', $email)->first();
+
+        dd($user,$contactData);
         return response()->json([
             'user' => $user,
         ]);
