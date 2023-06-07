@@ -104,7 +104,7 @@ Route::get('store/professions', function () {
     return response()->json($professions);
 });
 
-Route::get('newsletter/specialties', function () {
+Route::get('newsletter/specialities', function () {
 
     $specialties = [
         [
