@@ -234,8 +234,8 @@ Route::prefix('products')->group(function () {
 
 
 Route::prefix('webhook/rebill')->group(function () {
-    Route::post('/newPayment', [RebillController::class, 'newPayment']);
-    Route::post('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
+    Route::any('/newPayment', [RebillController::class, 'newPayment']);
+    Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
 });
 Route::get("omApiPayments", function () {
 
