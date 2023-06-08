@@ -17,8 +17,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::prefix('webhook/rebill')->group(function () {
-    Route::any('/newPayment', [RebillController, 'newPayment']);
-    Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
-});

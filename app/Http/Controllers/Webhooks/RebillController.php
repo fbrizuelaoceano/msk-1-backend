@@ -10,14 +10,16 @@ class RebillController extends Controller
 {
     public function newPayment(Request $request)
     {
+        $jsonPayload = file_get_contents('php://input');
         $content = $request->getContent();
 
-        Log::info("newPayment: " . print_r($content));
+        Log::info("newPayment: " . print_r($jsonPayload));
     }
 
     public function changeStatusPayment(Request $request)
     {
+        $jsonPayload = file_get_contents('php://input');
         $content = $request->getContent();
-        Log::info("changeStatusPayment: " . print_r($content));
+        Log::info("changeStatusPayment: " . print_r($jsonPayload));
     }
 }
