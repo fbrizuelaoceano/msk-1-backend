@@ -19,7 +19,9 @@ class Contact extends Model
         'name',
         'last_name',
         'profession',
-        'specialty',
+        'speciality',
+        'other_profession',
+        'other_speciality',
         'user_id',
         'rfc',
         'dni',
@@ -29,6 +31,7 @@ class Contact extends Model
         'sex',
         'date_of_birth',
         'country',
+        'state',
         'postal_code',
         'address',
         'validate'
