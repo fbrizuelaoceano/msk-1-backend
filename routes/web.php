@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Webhooks\RebillController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,6 @@ Route::get('/', function () {
 });
 
 Route::prefix('webhook/rebill')->group(function () {
-    Route::any('/newPayment', [RebillController::class, 'newPayment']);
+    Route::any('/newPayment', [RebillController, 'newPayment']);
     Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
 });
