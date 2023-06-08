@@ -233,10 +233,7 @@ Route::prefix('products')->group(function () {
 });
 
 
-Route::prefix('webhook/rebill')->group(function () {
-    Route::any('/newPayment', [RebillController::class, 'newPayment']);
-    Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
-});
+
 Route::get("omApiPayments", function () {
 
     $apiPayments = DB::connection('omApiPayments')->select('SELECT * FROM payment_links');
