@@ -16,6 +16,14 @@ class RebillController extends Controller
         Log::info("newPayment: " . print_r($data));
     }
 
+    public function newSubscription(Request $request)
+    {
+        $jsonPayload = file_get_contents('php://input');
+        $data = json_decode($jsonPayload);
+
+        Log::info("newSubscription: " . print_r($data));
+    }
+
     public function changeStatusPayment(Request $request)
     {
         $jsonPayload = file_get_contents('php://input');
