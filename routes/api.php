@@ -1,6 +1,7 @@
 <?php
 
 // use Illuminate\Http\Request;
+use App\Http\Controllers\Webhooks\RebillController;
 use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
@@ -228,4 +229,16 @@ Route::get('specialities', function () {
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'GetProducts']);
     Route::post('/{id}', [ProductController::class, 'CreateLeads']);
+});
+
+
+Route::prefix('webhook/rebill')->group(function () {
+    Route::post('/newPayment', [RebillController::class, 'newPayment']);
+    Route::post('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
+});
+Route::get("omApiPayments", function () {
+
+    $apiPayments = DB::connection('omApiPayments')->select('SELECT * FROM payment_links');
+
+    return response()->json($apiPayments);
 });
