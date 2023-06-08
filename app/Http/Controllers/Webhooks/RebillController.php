@@ -10,11 +10,14 @@ class RebillController extends Controller
 {
     public function newPayment(Request $request)
     {
-        Log::info(print_r($request->all()));
+        $content = $request->getContent();
+
+        Log::info("newPayment: " . print_r($content));
     }
 
     public function changeStatusPayment(Request $request)
     {
-        Log::info(print_r($request->all()));
+        $content = $request->getContent();
+        Log::info("changeStatusPayment: " . print_r($content));
     }
 }
