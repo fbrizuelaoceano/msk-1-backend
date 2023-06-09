@@ -33,7 +33,6 @@ class RebillController extends Controller
             ["FAILED" => "Pago Rechazado"]
         ];
         $setPaymentLink->status = $statusPaymentLink[$status];
-        $setPaymentLink->save();
 
         $token = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11"; //"API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
 
@@ -44,7 +43,13 @@ class RebillController extends Controller
             'Authorization' => 'Bearer ' . $token
         ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
 
-        Log::info("response getPaymentById: " . print_r($response, true));
+        Log::info("response rebill newPayment: " . print_r($response, true));
+        $setPaymentLink->status = $statusPaymentLink[$response['payment']['status']];
+
+        $setPaymentLink->save();
+
+        Log::info("api-payment record newPayment: " . print_r($response, true));
+
 
         // if ($response->failed()) {
         //     Log::info("Error, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
