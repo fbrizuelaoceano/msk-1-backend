@@ -242,6 +242,7 @@ Route::prefix('webhook/rebill')->group(function () {
 Route::get("omApiPayments", function () {
 
     $apiPayments = DB::connection('omApiPayments')->select('SELECT * FROM payment_links');
-
+    
     return response()->json($apiPayments);
 });
+
