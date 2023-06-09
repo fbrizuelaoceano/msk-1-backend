@@ -81,26 +81,35 @@ class RebillController extends Controller
 
 
         $id = $data['payment']['id'];
+        $prevStatus = $data['payment']['previousStatus'];
+        $newStatus = $data['payment']['newStatus'];
 
+        // $tokenProd = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11"; 
+        $tokenTest = "API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4"; 
 
-        $token = "API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
-
-        $response = Http::withHeaders([
+        $responsePaymentById = Http::withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer ' . $tokenTest
         ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
 
-        Log::info("response getPaymentById: " . print_r($response, true));
+        Log::info("responsePaymentById getPaymentById,changeStatusPayment: " . print_r($responsePaymentById, true));
 
-        if ($response->failed()) {
-            Log::info("Error, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
-            // echo "HTTP Error: " . $response->status();
-        } else {
-            // echo $response->body();
-            // Log::info("bodyPayment, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
+        $status = $responsePaymentById['payment']['status'];
+        $email = $responsePaymentById['payment']['customer']['email'];
+        $paymentLink = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $email]);
 
+        Log::info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink, true));
 
-        }
+        $setPaymentLink = $paymentLink[0];
 
+        $statusPaymentLink = [
+            ["PENDING" => "pending"],
+            ["SUCCEEDED" => "Contrato Efectivo"],
+            ["FAILED" => "Pago Rechazado"]
+        ];
+        $setPaymentLink->status = $statusPaymentLink[$newStatus];
+
+        $setPaymentLink->save();
     }
+
 }
