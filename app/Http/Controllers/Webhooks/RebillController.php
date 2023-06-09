@@ -36,7 +36,6 @@ class RebillController extends Controller
 
         $token = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11"; //"API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
 
-        //->apipaymentlink.->update($newStatus)->where("",$)
 
         $response = Http::withHeaders([
             'Accept' => 'application/json',
@@ -44,22 +43,8 @@ class RebillController extends Controller
         ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
 
         Log::info("response rebill newPayment: " . print_r($response, true));
-        $setPaymentLink->status = $statusPaymentLink[$response['payment']['status']];
-
-        $setPaymentLink->save();
-
-        Log::info("api-payment record newPayment: " . print_r($response, true));
 
 
-        // if ($response->failed()) {
-        //     Log::info("Error, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
-        //     // echo "HTTP Error: " . $response->status();
-        // } else {
-        //     // echo $response->body();
-        //     // Log::info("bodyPayment, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
-
-
-        // }
 
     }
     public function newSubscription(Request $request)
@@ -81,21 +66,20 @@ class RebillController extends Controller
         $prevStatusWebhook = $dataWebhook['payment']['previousStatus'];
         $newStatusWebhook = $dataWebhook['payment']['newStatus'];
 
-        // $tokenProd = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11"; 
-        $tokenTest = "API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4"; 
+        $token = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11";
+        //$tokenTest = "API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
 
         $responsePaymentById = Http::withHeaders([
             'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $tokenTest
+            'Authorization' => 'Bearer ' . $token
         ])->get('https://api.rebill.to/v2/payments/' . $idWebhook)->json();
 
         Log::info("responsePaymentById getPaymentById,changeStatusPayment: " . print_r($responsePaymentById, true));
 
-        $statusPaymentById = $responsePaymentById['payment']['status'];
         $emailPaymentById = $responsePaymentById['payment']['customer']['email'];
         $paymentLink_Api_Payments = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $emailPaymentById]);
 
-        Log::info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink, true));
+        Log::info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink_Api_Payments, true));
 
         $setPaymentLink_Api_Payments = $paymentLink_Api_Payments[0];
 
