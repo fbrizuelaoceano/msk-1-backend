@@ -63,6 +63,27 @@ return [
             ]) : [],
         ],
 
+        // Base de datos de oceanomedicina.net/api-payments
+        'omApiPayments' => [
+            'driver' => 'mysql',
+            'host' => "80.240.127.191",
+            'port' => '3306',
+            'database' => 'laravel_api_payments',
+            'username' => 'developer',
+            'password' => 'JT3dedvAJy',
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+            'options' => [
+                PDO::ATTR_EMULATE_PREPARES => true
+            ]
+
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
@@ -125,7 +146,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

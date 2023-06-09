@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Webhooks\RebillController;
 use Illuminate\Support\Facades\Route;
 
 /*

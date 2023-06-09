@@ -1,6 +1,7 @@
 <?php
 
 // use Illuminate\Http\Request;
+use App\Http\Controllers\Webhooks\RebillController;
 use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
@@ -30,15 +31,16 @@ Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
 Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
-Route::post('/ValidatedUser',[ZohoWorkflowController::class,'ValidatedUser']);
+Route::post('/ValidatedUser', [ZohoWorkflowController::class, 'ValidatedUser']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
-Route::get('/profile/{email}',[AuthController::class,'GetProfile'])->middleware("auth:api");
-Route::post('/ValidatePasswordChange',[AuthController::class,'ValidatePasswordChange']);
-Route::post('/RequestPasswordChange',[AuthController::class,'RequestPasswordChange']);
-Route::post('/newPassword',[AuthController::class,'newPassword']);
+Route::get('/profile/{email}', [AuthController::class, 'GetProfile'])->middleware("auth:api");
+Route::put('/profile/{email}', [AuthController::class, 'PutProfile']);
+Route::post('/ValidatePasswordChange', [AuthController::class, 'ValidatePasswordChange']);
+Route::post('/RequestPasswordChange', [AuthController::class, 'RequestPasswordChange']);
+Route::post('/newPassword', [AuthController::class, 'newPassword']);
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
@@ -105,6 +107,118 @@ Route::get('store/professions', function () {
     return response()->json($professions);
 });
 
+Route::get('newsletter/specialities', function () {
+
+    $specialties = [
+        [
+            'id' => 1,
+            'name' => 'Cardiología'
+        ],
+        [
+            'id' => 2,
+            'name' => 'Ginecología'
+        ],
+        [
+            'id' => 3,
+            'name' => 'Diabetes'
+        ],
+        [
+            'id' => 4,
+            'name' => 'Psicología'
+        ],
+        [
+            'id' => 5,
+            'name' => 'Cirugía'
+        ],
+        [
+            'id' => 6,
+            'name' => 'Medicina general'
+        ],
+        [
+            'id' => 7,
+            'name' => 'Nutrición'
+        ],
+        [
+            'id' => 8,
+            'name' => 'Infectología'
+        ],
+        [
+            'id' => 9,
+            'name' => 'Obstetricia'
+        ],
+        [
+            'id' => 10,
+            'name' => 'Hematología'
+        ],
+        [
+            'id' => 11,
+            'name' => 'Emergentología'
+        ],
+        [
+            'id' => 12,
+            'name' => 'Oncología'
+        ],
+        [
+            'id' => 13,
+            'name' => 'Gastroenterología'
+        ],
+        [
+            'id' => 14,
+            'name' => 'Medicina intensiva'
+        ],
+        [
+            'id' => 15,
+            'name' => 'Anestesiología y dolor'
+        ],
+        [
+            'id' => 16,
+            'name' => 'Pediatría'
+        ],
+        [
+            'id' => 17,
+            'name' => 'Dermatología'
+        ],
+        [
+            'id' => 18,
+            'name' => 'Geriatría'
+        ],
+        [
+            'id' => 19,
+            'name' => 'Psiquiatría'
+        ],
+        [
+            'id' => 20,
+            'name' => 'Diagnóstico por imágenes'
+        ],
+        [
+            'id' => 21,
+            'name' => 'Endocrinología'
+        ],
+        [
+            'id' => 22,
+            'name' => 'Medicina interna'
+        ],
+        [
+            'id' => 23,
+            'name' => 'Neurología'
+        ],
+        [
+            'id' => 24,
+            'name' => 'Oftalmología'
+        ],
+        [
+            'id' => 25,
+            'name' => 'Traumatología'
+        ],
+        [
+            'id' => 26,
+            'name' => 'Otorrinolaringología'
+        ]
+    ];
+
+    return response()->json($specialties);
+});
+
 Route::get('professions', function () {
     $professions = Profession::all();
     return response()->json($professions);
@@ -117,4 +231,17 @@ Route::get('specialities', function () {
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'GetProducts']);
     Route::post('/{id}', [ProductController::class, 'CreateLeads']);
+});
+
+Route::prefix('webhook/rebill')->group(function () {
+    Route::any('/newPayment', [RebillController::class, 'newPayment']);
+    Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
+    Route::any('/newSubscription', [RebillController::class, 'newSubscription']);
+});
+
+Route::get("omApiPayments", function () {
+
+    $apiPayments = DB::connection('omApiPayments')->select('SELECT * FROM payment_links');
+
+    return response()->json($apiPayments);
 });
