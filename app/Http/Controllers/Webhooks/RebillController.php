@@ -15,7 +15,26 @@ class RebillController extends Controller
 
         Log::info("newPayment: " . print_r($data, true));
 
-        $apiPayments = DB::connection('omApiPayments')->select('SELECT * FROM payment_links');
+        $id = $data['payment']['id'];
+        
+        $token = "API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
+
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$token
+        ])->get('https://api.rebill.to/v2/payments/'.$id)->json();
+        
+        Log::info("response getPaymentById: " . print_r($response, true));
+
+        if ($response->failed()) {
+            Log::info("Error, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
+            // echo "HTTP Error: " . $response->status();
+        } else {
+            // echo $response->body();
+            // Log::info("bodyPayment, Response, getPayMentByID, changeStatusPayment: " . print_r($response, true));
+
+
+        }
 
     }
 
