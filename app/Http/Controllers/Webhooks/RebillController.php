@@ -20,7 +20,7 @@ class RebillController extends Controller
         $id = $data['payment']['id'];
         $email = $data['payment']['customer']['email'];
         $status = $data['payment']['status'];
-        // $email = "brizuelafacundoignacio@gmail.com";
+
         $paymentLink = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $email]);
 
         Log::info("paymentLink get by email: " . print_r($paymentLink, true));
@@ -34,7 +34,7 @@ class RebillController extends Controller
         ];
         $setPaymentLink->status = $statusPaymentLink[$status];
 
-        $token = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11"; //"API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
+        $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
 
 
         $response = Http::withHeaders([
@@ -66,8 +66,7 @@ class RebillController extends Controller
         $prevStatusWebhook = $dataWebhook['payment']['previousStatus'];
         $newStatusWebhook = $dataWebhook['payment']['newStatus'];
 
-        $token = "API_KEY_8875b726-fb7e-4040-9f31-298bde841d11";
-        //$tokenTest = "API_KEY_955a1b47-1b02-4f09-af6b-5be66da4d8d4";
+        $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
 
         $responsePaymentById = Http::withHeaders([
             'Accept' => 'application/json',
