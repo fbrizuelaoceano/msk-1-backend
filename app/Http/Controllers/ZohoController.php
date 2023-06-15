@@ -180,6 +180,7 @@ class ZohoController extends Controller
         return response()->json($response);
     }
 
+
     function GetContracts()
     {
         $response = $this->Get('Contracts');
@@ -212,6 +213,14 @@ class ZohoController extends Controller
     {
         $response = $this->Delete('Contacts', $ids);
         return response()->json($response);
+    }
+
+    function GetQuotes()
+    {
+        $response = $this->Get('Quotes');
+        return response()->json(
+            $response,
+        );
     }
 
     function ConvertLead(Request $request, $id)

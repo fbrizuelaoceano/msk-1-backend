@@ -33,6 +33,13 @@ Route::post('salesForCRM', [ZohoWorkflowController::class, 'salesForCRM']);
 Route::post('setNewPasswordFromMSK', [ZohoWorkflowController::class, 'setNewPasswordFromMSK']);
 Route::post('/ValidatedUser', [ZohoWorkflowController::class, 'ValidatedUser']);
 
+Route::prefix('ZohoWorkFlow')->group(function () {
+    // Usar el prefix para el zo (reglas de trabajo)
+    Route::get('UpdateQuotes', [ZohoWorkflowController::class, 'UpdateQuotes']);
+});
+
+Route::get('/GetQuotes', [ZohoController::class, 'GetQuotes']);
+
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
@@ -49,7 +56,6 @@ Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
 Route::get('Contacts', [ContactController::class, 'Contacts']);
 Route::get('Contacts/{id}', [ContactController::class, 'ContactById']);
 Route::post('Contact', [ContactController::class, 'Contact']);
-
 
 
 Route::post('SwitchLike', [LikeController::class, 'SwitchLike'])->middleware('auth:api');
@@ -246,4 +252,5 @@ Route::get("omApiPayments", function () {
     
     return response()->json($apiPayments);
 });
+
 

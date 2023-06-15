@@ -112,4 +112,33 @@ class ZohoWorkflowController extends Controller
 
         return response()->json(['contact' => $contact]);
     }
+    
+    function UpdateQuotes(Request $request){
+        $quoteObj = json_decode($_POST['quote']);
+        
+        // $quote = Quote::updateOrCreate(
+        //     ['email' => $contactObj->Usuario],
+        //     [
+        //         'name' => $contactObj->Full_Name,
+        //     'email' => $contactObj->Usuario,
+        //         'password' => Hash::make($contactObj->Password),
+        //     ]
+        // );
+
+        return response()->json(
+            [
+                $request,
+                $quoteObj
+                // $quote
+            ]
+        );
+    }
+
+    function getquote(Request $request){
+        
+
+        return response()->json([
+            $request
+        ]);
+    }
 }
