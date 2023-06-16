@@ -136,6 +136,7 @@ class ZohoWorkflowController extends Controller
             'Subject' => $quoteObj["Subject"],
             'Quote_Number' => $quoteObj["Quote_Number"],
         ];
+        Log::info("mskObjDBQuote: " . print_r($mskObjDBQuote, true));
 
         $quote = Quote::updateOrCreate(
             [
@@ -143,6 +144,7 @@ class ZohoWorkflowController extends Controller
             ],
             $mskObjDBQuote
         );        
+        Log::info("Quote::updateOrCreate: " . print_r($quote, true));
        
         // dd($mskObjDBQuote);
 
