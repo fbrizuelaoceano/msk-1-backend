@@ -116,6 +116,7 @@ class ZohoWorkflowController extends Controller
     
     function UpdateQuotes(Request $request){
         $quoteObj = json_decode($_POST['quote']);
+        Log::info("quoteObj: " . print_r($quoteObj, true));
         
         // $quoteObj = $request->quote;
 
@@ -153,6 +154,6 @@ class ZohoWorkflowController extends Controller
             $quote
         );
     }
-
+   
 }
 
