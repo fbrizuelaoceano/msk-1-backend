@@ -6,6 +6,7 @@ use App\Models\Contract;
 use App\Models\Product;
 use App\Models\Profession;
 use App\Models\Speciality;
+use App\Models\Quote;
 use App\Models\User;
 use App\Models\Contact;
 use Illuminate\Http\Request;
@@ -116,29 +117,40 @@ class ZohoWorkflowController extends Controller
     function UpdateQuotes(Request $request){
         $quoteObj = json_decode($_POST['quote']);
         
-        // $quote = Quote::updateOrCreate(
-        //     ['email' => $contactObj->Usuario],
-        //     [
-        //         'name' => $contactObj->Full_Name,
-        //     'email' => $contactObj->Usuario,
-        //         'password' => Hash::make($contactObj->Password),
-        //     ]
-        // );
+        // $quoteObj = $request->quote;
+
+        $mskObjDBQuote = [
+            'entity_id_crm' => $quoteObj["id"],
+            'Discount' => $quoteObj["Discount"],
+            'currency_symbol' => $quoteObj['$currency_symbol'],
+            'field_states' => $quoteObj['$field_states'],
+            'Seleccione_total_de_pagos_recurrentes' => $quoteObj["Seleccione_total_de_pagos_recurrentes"],
+            'M_todo_de_pago' => $quoteObj["M_todo_de_pago"],
+            'Currency' => $quoteObj["Currency"],
+            'otro_so' => $quoteObj["otro_so"],
+            'Modo_de_pago' => $quoteObj["Modo_de_pago"],
+            'Quote_Stage' => $quoteObj["Quote_Stage"],
+            'Grand_Total' => $quoteObj["Grand_Total"],
+            'Modified_Time' => $quoteObj["Modified_Time"],
+            'Sub_Total' => $quoteObj["Sub_Total"],
+            'Subject' => $quoteObj["Subject"],
+            'Quote_Number' => $quoteObj["Quote_Number"],
+        ];
+
+        $quote = Quote::updateOrCreate(
+            [
+                'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
+            ],
+            $mskObjDBQuote
+        );        
+       
+        // dd($mskObjDBQuote);
 
         return response()->json(
-            [
-                $request,
-                $quoteObj
-                // $quote
-            ]
+            $mskObjDBQuote,
+            $quote
         );
     }
 
-    function getquote(Request $request){
-        
-
-        return response()->json([
-            $request
-        ]);
-    }
 }
+

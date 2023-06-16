@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string("entity_id_crm")->nullable()->default(null);
             $table->decimal('Discount')->nullable()->default(null);
-            $table->string('$currency_symbol')->nullable()->default(null);
-            $table->string('$field_states')->nullable()->default(null);
+            $table->string('currency_symbol')->nullable()->default(null);
+            $table->string('field_states')->nullable()->default(null);
             $table->integer('Seleccione_total_de_pagos_recurrentes')->nullable()->default(null);
 
             $table->string('M_todo_de_pago')->nullable()->default(null);// "M_todo_de_pago": "Mercado Pago",
@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('Modified_Time')->nullable()->default(null);// "Modified_Time": "2023-06-14T19:05:56-03:00",
             $table->integer('Sub_Total')->nullable()->default(null);// "Sub_Total": 21000,
             $table->string('Subject')->nullable()->default(null);// "Subject": "Presupuesto",
-            $table->string('M_todo_de_pago')->nullable()->default(null);// "M_todo_de_pago": "Mercado Pago",
             $table->string('Quote_Number')->nullable()->default(null);// "Quote_Number": "5344455000005509042",
 
             $table->timestamps();
