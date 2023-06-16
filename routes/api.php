@@ -36,8 +36,11 @@ Route::post('/ValidatedUser', [ZohoWorkflowController::class, 'ValidatedUser']);
 Route::prefix('ZohoWorkFlow')->group(function () {
     // Usar el prefix para el zo (reglas de trabajo)
     Route::post('UpdateQuotes', [ZohoWorkflowController::class, 'UpdateQuotes']);
+    
 });
 
+Route::get('GetCursadas/{id}', [ZohoController::class, 'GetCursadaService']);
+Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmailService']);
 Route::get('/GetQuotes', [ZohoController::class, 'GetQuotes']);
 
 Route::post('login', [AuthController::class, 'login']);
