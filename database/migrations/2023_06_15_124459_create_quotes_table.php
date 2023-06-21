@@ -30,6 +30,10 @@ return new class extends Migration
             $table->string('Subject')->nullable()->default(null);// "Subject": "Presupuesto",
             $table->string('Quote_Number')->nullable()->default(null);// "Quote_Number": "5344455000005509042",
 
+            $table->foreignId('contact_id')->nullable()->default(null)
+                ->references('id')
+                ->on('contacts');
+
             $table->timestamps();
             
             // $objeto = '{

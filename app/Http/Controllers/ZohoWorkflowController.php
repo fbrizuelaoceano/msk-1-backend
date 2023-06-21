@@ -117,10 +117,12 @@ class ZohoWorkflowController extends Controller
     function UpdateQuotes(Request $request){
         try {
             $quoteObjstdClass = json_decode($_POST['quote']);
-            Log::info("quoteObjstdClass: " . print_r($quoteObjstdClass, true));
+            // Log::info("OnDev-quoteObjstdClass: " . print_r($quoteObjstdClass, true));
             $quoteObj = (array)$quoteObjstdClass;
-            Log::info("quoteObj: " . print_r($quoteObj, true));
-            // $quoteObj = $request->quote;
+            // Log::info("OnDev-quoteObj: " . print_r($quoteObj, true));
+
+            //prueba desde postman
+            // $quoteObj = $request->quote["context"];
 
             $mskObjDBQuote = [
                 'entity_id_crm' => $quoteObj['id'],
@@ -139,25 +141,40 @@ class ZohoWorkflowController extends Controller
                 'Subject' => $quoteObj['Subject'],
                 'Quote_Number' => $quoteObj['Quote_Number'],
             ];
-            Log::info("mskObjDBQuote: " . print_r($mskObjDBQuote, true));
+            // Log::info("OnDev-mskObjDBQuote: " . print_r($mskObjDBQuote, true));
 
+            $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
+            if ($contact) { //rober 
+                $mskObjDBQuote["contact_id"] = $contact->id;
+            }
             $quote = Quote::updateOrCreate(
                 [
                     'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
                 ],
                 $mskObjDBQuote
             );        
-            Log::info("Quote::updateOrCreate: " . print_r($quote, true));
+            // Log::info("Quote::updateOrCreate: " . print_r($quote, true));
         
-            return response()->json(
+            return response()->json([
                 $mskObjDBQuote,
-                // $quote
-            );
+                $quote,
+            ]);
+
         } catch (\Exception $e) {
-            Log::error("Error en UpdateQuotes: " . print_r($e->getMessage(),true));
+
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en UpdateQuotes: " . $e->getMessage(), $err);
+            
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
-                $e->getMessage()
+                $err,
             ], 500);
         }
     }
