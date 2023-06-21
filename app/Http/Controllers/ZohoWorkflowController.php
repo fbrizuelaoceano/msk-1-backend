@@ -118,7 +118,7 @@ class ZohoWorkflowController extends Controller
         try {
             $quoteObjstdClass = json_decode($_POST['quote']);
             Log::info("quoteObjstdClass: " . print_r($quoteObjstdClass, true));
-            $quoteObj = $quoteObjstdClass->toArray();
+            $quoteObj = (array)$quoteObjstdClass;
             Log::info("quoteObj: " . print_r($quoteObj, true));
             // $quoteObj = $request->quote;
 
@@ -149,7 +149,6 @@ class ZohoWorkflowController extends Controller
             );        
             Log::info("Quote::updateOrCreate: " . print_r($quote, true));
         
-
             return response()->json(
                 $mskObjDBQuote,
                 // $quote
@@ -158,7 +157,7 @@ class ZohoWorkflowController extends Controller
             Log::error("Error en UpdateQuotes: " . print_r($e->getMessage(),true));
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
-                $e
+                $e->getMessage()
             ], 500);
         }
     }
