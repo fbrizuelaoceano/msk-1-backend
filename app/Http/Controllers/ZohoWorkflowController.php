@@ -123,8 +123,8 @@ class ZohoWorkflowController extends Controller
         $mskObjDBQuote = [
             'entity_id_crm' => $quoteObj->id,
             'Discount' => $quoteObj->Discount,
-            'currency_symbol' => $quoteObj->$currency_symbol,
-            'field_states' => $quoteObj->$field_states,
+            'currency_symbol' => $quoteObj['$currency_symbol'],
+            'field_states' => $quoteObj['$field_states'],
             'Seleccione_total_de_pagos_recurrentes' => $quoteObj->Seleccione_total_de_pagos_recurrentes,
             'M_todo_de_pago' => $quoteObj->M_todo_de_pago,
             'Currency' => $quoteObj->Currency,
