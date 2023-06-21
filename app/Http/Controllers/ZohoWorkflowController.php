@@ -115,27 +115,27 @@ class ZohoWorkflowController extends Controller
     }
     
     function UpdateQuotes(Request $request){
-        $quoteObj = json_decode($_POST['quote']);
+        $quoteObjstdClass = json_decode($_POST['quote']);
+        $quoteObj = $quoteObjstdClass->toArray();
         Log::info("quoteObj: " . print_r($quoteObj, true));
-        
         // $quoteObj = $request->quote;
 
         $mskObjDBQuote = [
-            'entity_id_crm' => $quoteObj->id,
-            'Discount' => $quoteObj->Discount,
+            'entity_id_crm' => $quoteObj['id'],
+            'Discount' => $quoteObj['Discount'],
             'currency_symbol' => $quoteObj['$currency_symbol'],
             'field_states' => $quoteObj['$field_states'],
-            'Seleccione_total_de_pagos_recurrentes' => $quoteObj->Seleccione_total_de_pagos_recurrentes,
-            'M_todo_de_pago' => $quoteObj->M_todo_de_pago,
-            'Currency' => $quoteObj->Currency,
-            'otro_so' => $quoteObj->otro_so,
-            'Modo_de_pago' => $quoteObj->Modo_de_pago,
-            'Quote_Stage' => $quoteObj->Quote_Stage,
-            'Grand_Total' => $quoteObj->Grand_Total,
-            'Modified_Time' => $quoteObj->Modified_Time,
-            'Sub_Total' => $quoteObj->Sub_Total,
-            'Subject' => $quoteObj->Subject,
-            'Quote_Number' => $quoteObj->Quote_Number,
+            'Seleccione_total_de_pagos_recurrentes' => $quoteObj['Seleccione_total_de_pagos_recurrentes'],
+            'M_todo_de_pago' => $quoteObj['M_todo_de_pago'],
+            'Currency' => $quoteObj['Currency'],
+            'otro_so' => $quoteObj['otro_so'],
+            'Modo_de_pago' => $quoteObj['Modo_de_pago'],
+            'Quote_Stage' => $quoteObj['Quote_Stage'],
+            'Grand_Total' => $quoteObj['Grand_Total'],
+            'Modified_Time' => $quoteObj['Modified_Time'],
+            'Sub_Total' => $quoteObj['Sub_Total'],
+            'Subject' => $quoteObj['Subject'],
+            'Quote_Number' => $quoteObj['Quote_Number'],
         ];
         Log::info("mskObjDBQuote: " . print_r($mskObjDBQuote, true));
 
