@@ -115,44 +115,51 @@ class ZohoWorkflowController extends Controller
     }
     
     function UpdateQuotes(Request $request){
-        $quoteObjstdClass = json_decode($_POST['quote']);
-        $quoteObj = $quoteObjstdClass->toArray();
-        Log::info("quoteObj: " . print_r($quoteObj, true));
-        // $quoteObj = $request->quote;
+        try {
+            $quoteObjstdClass = json_decode($_POST['quote']);
+            $quoteObj = $quoteObjstdClass->toArray();
+            Log::info("quoteObj: " . print_r($quoteObj, true));
+            // $quoteObj = $request->quote;
 
-        $mskObjDBQuote = [
-            'entity_id_crm' => $quoteObj['id'],
-            'Discount' => $quoteObj['Discount'],
-            'currency_symbol' => $quoteObj['$currency_symbol'],
-            'field_states' => $quoteObj['$field_states'],
-            'Seleccione_total_de_pagos_recurrentes' => $quoteObj['Seleccione_total_de_pagos_recurrentes'],
-            'M_todo_de_pago' => $quoteObj['M_todo_de_pago'],
-            'Currency' => $quoteObj['Currency'],
-            'otro_so' => $quoteObj['otro_so'],
-            'Modo_de_pago' => $quoteObj['Modo_de_pago'],
-            'Quote_Stage' => $quoteObj['Quote_Stage'],
-            'Grand_Total' => $quoteObj['Grand_Total'],
-            'Modified_Time' => $quoteObj['Modified_Time'],
-            'Sub_Total' => $quoteObj['Sub_Total'],
-            'Subject' => $quoteObj['Subject'],
-            'Quote_Number' => $quoteObj['Quote_Number'],
-        ];
-        Log::info("mskObjDBQuote: " . print_r($mskObjDBQuote, true));
+            $mskObjDBQuote = [
+                'entity_id_crm' => $quoteObj['id'],
+                'Discount' => $quoteObj['Discount'],
+                'currency_symbol' => $quoteObj['$currency_symbol'],
+                'field_states' => $quoteObj['$field_states'],
+                'Seleccione_total_de_pagos_recurrentes' => $quoteObj['Seleccione_total_de_pagos_recurrentes'],
+                'M_todo_de_pago' => $quoteObj['M_todo_de_pago'],
+                'Currency' => $quoteObj['Currency'],
+                'otro_so' => $quoteObj['otro_so'],
+                'Modo_de_pago' => $quoteObj['Modo_de_pago'],
+                'Quote_Stage' => $quoteObj['Quote_Stage'],
+                'Grand_Total' => $quoteObj['Grand_Total'],
+                'Modified_Time' => $quoteObj['Modified_Time'],
+                'Sub_Total' => $quoteObj['Sub_Total'],
+                'Subject' => $quoteObj['Subject'],
+                'Quote_Number' => $quoteObj['Quote_Number'],
+            ];
+            Log::info("mskObjDBQuote: " . print_r($mskObjDBQuote, true));
 
-        $quote = Quote::updateOrCreate(
-            [
-                'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
-            ],
-            $mskObjDBQuote
-        );        
-        Log::info("Quote::updateOrCreate: " . print_r($quote, true));
-       
-        // dd($mskObjDBQuote);
+            $quote = Quote::updateOrCreate(
+                [
+                    'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
+                ],
+                $mskObjDBQuote
+            );        
+            Log::info("Quote::updateOrCreate: " . print_r($quote, true));
+        
 
-        return response()->json(
-            $mskObjDBQuote,
-            $quote
-        );
+            return response()->json(
+                $mskObjDBQuote,
+                // $quote
+            );
+        } catch (\Exception $e) {
+            Log::error("Error en UpdateQuotes: " . print_r($e->getMessage(),true));
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $e
+            ], 500);
+        }
     }
    
 }
