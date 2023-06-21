@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CourseProgressController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LikeController;
 use App\Models\Like;
@@ -39,6 +40,7 @@ Route::prefix('ZohoWorkFlow')->group(function () {
     
 });
 
+Route::get('GetByIdAllDetails/{module}/{id}', [ZohoController::class, 'GetByIdAllDetails']);
 Route::get('GetCursadas/{id}', [ZohoController::class, 'GetCursadaService']);
 Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmailService']);
 Route::get('/GetQuotes', [ZohoController::class, 'GetQuotes']);
@@ -54,6 +56,13 @@ Route::post('/newPassword', [AuthController::class, 'newPassword']);
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
+
+Route::prefix('CoursesProgress')->group(function () {
+    Route::get('/', [CourseProgressController::class,'GetAll']);
+    Route::post('/', [CourseProgressController::class,'Create']);
+
+});
+
 
 Route::post('CreateLeadMSKCRM', [LeadController::class, 'CreateLeadMSKCRM']);
 Route::get('Contacts', [ContactController::class, 'Contacts']);
