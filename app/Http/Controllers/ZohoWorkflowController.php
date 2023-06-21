@@ -117,6 +117,7 @@ class ZohoWorkflowController extends Controller
     function UpdateQuotes(Request $request){
         try {
             $quoteObjstdClass = json_decode($_POST['quote']);
+            Log::info("quoteObjstdClass: " . print_r($quoteObjstdClass, true));
             $quoteObj = $quoteObjstdClass->toArray();
             Log::info("quoteObj: " . print_r($quoteObj, true));
             // $quoteObj = $request->quote;
