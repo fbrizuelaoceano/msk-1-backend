@@ -33,69 +33,93 @@ class ZohoWorkflowController extends Controller
 
     public function salesForCRM(Request $request)
     {
+       try { 
+            $contactObj = json_decode($_POST['contact']);
+            $saleObj = json_decode($_POST['sale']);
+            $dos = [
+                $contactObj,
+                $saleObj
+            ];
+            Log::info("salesForCRM-dos: " . print_r($dos, true));
 
-        $contactObj = json_decode($_POST['contact']);
-        $saleObj = json_decode($_POST['sale']);
+            /*  
+                Log::info(print_r($contactObj, true));
+                Log::info(print_r($saleObj, true));
+            */
+            //dd($contactObj->Usuario);
 
-        /*  Log::info(print_r($contactObj, true));
-         Log::info(print_r($saleObj, true));
-  */
-        //dd($contactObj->Usuario);
+            // $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
+            //     'name' => $contactObj->Full_Name,
+            //     'email' => $contactObj->Usuario,
+            //     'password' => Hash::make($contactObj->Password),
+            // ]);
 
-        $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
-            'name' => $contactObj->Full_Name,
-            'email' => $contactObj->Usuario,
-            'password' => Hash::make($contactObj->Password),
-        ]);
+            // $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
+            //     'name' => $contactObj->First_Name,
+            //     'last_name' => $contactObj->Last_Name,
+            //     'email' => $contactObj->Usuario,
+            //     'profession' => $contactObj->Profesi_n,
+            //     'specialty' => $contactObj->Especialidad,
+            //     'user_id' => $user->id,
+            //     'entity_id_crm' => $contactObj->id,
+            //     'rfc' => $contactObj->RFC,
+            //     'sex' => $contactObj->Sexo,
+            //     'country' => $contactObj->Pais,
+            //     'phone' => $contactObj->Phone,
+            //     'validate' => $contactObj->Validador,
+            //     'fiscal_regime' => $contactObj->R_gimen_fiscal,
+            //     'postal_code' => $contactObj->Mailing_Zip,
+            //     'address' => $contactObj->Mailing_Street,
+            //     'date_of_birth' => $contactObj->Date_of_Birth
+            // ]);
 
-        $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
-            'name' => $contactObj->First_Name,
-            'last_name' => $contactObj->Last_Name,
-            'email' => $contactObj->Usuario,
-            'profession' => $contactObj->Profesi_n,
-            'specialty' => $contactObj->Especialidad,
-            'user_id' => $user->id,
-            'entity_id_crm' => $contactObj->id,
-            'rfc' => $contactObj->RFC,
-            'sex' => $contactObj->Sexo,
-            'country' => $contactObj->Pais,
-            'phone' => $contactObj->Phone,
-            'validate' => $contactObj->Validador,
-            'fiscal_regime' => $contactObj->R_gimen_fiscal,
-            'postal_code' => $contactObj->Mailing_Zip,
-            'address' => $contactObj->Mailing_Street,
-            'date_of_birth' => $contactObj->Date_of_Birth
-        ]);
+            // $contract = Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
+            //     'contact_id' => $contact->id,
+            //     'entity_id_crm' => $saleObj->id,
+            //     'so_crm' => $saleObj->SO_Number,
+            //     'status' => $saleObj->Status,
+            //     'status_payment' => $saleObj->Estado_de_cobro,
+            //     'country' => $saleObj->Pais_de_facturaci_n,
+            //     'currency' => $saleObj->Currency,
+            // ]);
 
-        $contract = Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
-            'contact_id' => $contact->id,
-            'entity_id_crm' => $saleObj->id,
-            'so_crm' => $saleObj->SO_Number,
-            'status' => $saleObj->Status,
-            'status_payment' => $saleObj->Estado_de_cobro,
-            'country' => $saleObj->Pais_de_facturaci_n,
-            'currency' => $saleObj->Currency,
-        ]);
+            // $productDetails = $saleObj->Product_Details;
 
-        $productDetails = $saleObj->Product_Details;
+            // foreach ($productDetails as $pd) {
+            //     Product::updateOrCreate([
+            //         'entity_id_crm' => $pd->id,
+            //         'contract_entity_id' => $saleObj->id
+            //     ], [
+            //             'entity_id_crm' => $pd->id,
+            //             'contract_id' => $contract->id,
+            //             'contract_entity_id' => $saleObj->id,
+            //             'quantity' => $pd->quantity,
+            //             'discount' => $pd->Discount,
+            //             'price' => $pd->total,
+            //             'product_code' => (int) $pd->product->Product_Code
+            //         ]);
+            // }
 
-        foreach ($productDetails as $pd) {
-            Product::updateOrCreate([
-                'entity_id_crm' => $pd->id,
-                'contract_entity_id' => $saleObj->id
-            ], [
-                    'entity_id_crm' => $pd->id,
-                    'contract_id' => $contract->id,
-                    'contract_entity_id' => $saleObj->id,
-                    'quantity' => $pd->quantity,
-                    'discount' => $pd->Discount,
-                    'price' => $pd->total,
-                    'product_code' => (int) $pd->product->Product_Code
-                ]);
+            return response()->json([
+                // 'user' => $user, 'contact' => $contact
+                $dos
+            ]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en UpdateQuotes: " . $e->getMessage(), $err);
+            
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+            ], 500);
         }
-
-
-        return response()->json(['user' => $user, 'contact' => $contact]);
     }
 
     public function ValidatedUser(Request $request)
