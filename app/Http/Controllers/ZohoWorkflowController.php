@@ -40,7 +40,7 @@ class ZohoWorkflowController extends Controller
             //$dos = [ $contactObj, $saleObj ];Log::info("salesForCRM-dos: " . print_r($dos, true));
 
             $contactArrayObj = (array)$contactObj;
-            Log::info("salesForCRM-contactArrayObj: " . print_r($contactArrayObj, true));
+            Log::info("salesForCRM-contactArrayObj['Formulario_de_cursada']: " . print_r($contactArrayObj["Formulario_de_cursada"], true));
 
             /*  
                 Log::info(print_r($contactObj, true));
@@ -102,7 +102,7 @@ class ZohoWorkflowController extends Controller
 
             return response()->json([
                 // 'user' => $user, 'contact' => $contact
-                $dos
+                $contactArrayObj["Formulario_de_cursada"]
             ]);
         } catch (\Exception $e) {
             $err = [
