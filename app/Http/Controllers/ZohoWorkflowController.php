@@ -77,7 +77,8 @@ class ZohoWorkflowController extends Controller
 
             if($formCourseProgress){
                 
-                foreach ($formCourseProgress as $formCP) {
+                foreach ($formCourseProgress as $formCPstdClass) {
+                    $formCP = (array)$formCPstdClass;
                     Log::info("salesForCRM-foreach: " . print_r($formCP, true));
                     
                     $mskObjDBCourseProgress = null;
@@ -102,7 +103,7 @@ class ZohoWorkflowController extends Controller
                     Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
 
                     CourseProgress::updateOrCreate([
-                        'entity_id_crm' => $formCP->id,
+                        'entity_id_crm' => $formCP['id'],
                         // 'contact_id' => $contact->id
                     ], $mskObjDBCourseProgress);
 
