@@ -36,11 +36,11 @@ class ZohoWorkflowController extends Controller
        try { 
             $contactObj = json_decode($_POST['contact']);
             $saleObj = json_decode($_POST['sale']);
-            $dos = [
-                $contactObj,
-                $saleObj
-            ];
-            Log::info("salesForCRM-dos: " . print_r($dos, true));
+            
+            //$dos = [ $contactObj, $saleObj ];Log::info("salesForCRM-dos: " . print_r($dos, true));
+
+            $contactArrayObj = (array)$contactObj;
+            Log::info("salesForCRM-contactArrayObj: " . print_r($contactArrayObj, true));
 
             /*  
                 Log::info(print_r($contactObj, true));
