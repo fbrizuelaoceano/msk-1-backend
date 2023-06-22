@@ -72,7 +72,7 @@ class ZohoWorkflowController extends Controller
             // ]);
 
             $contactArrayObj = (array)$contactObj;
-            $formCourseProgress = $contactArrayObj["Formulario_de_cursada"];
+            $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
             // Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if($formCourseProgress){
@@ -84,11 +84,11 @@ class ZohoWorkflowController extends Controller
                     $mskObjDBCourseProgress = [
                         'entity_id_crm' => $formCP['id'],
                         'Fecha_finalizaci_n' => $formCP['Fecha_finalizaci_n'],
-                        'Nombre_de_curso' => $formCP['Nombre_de_curso']->name.' id:'.$formCP['Nombre_de_curso']->id,
+                        'Nombre_de_curso' => $formCP['Nombre_de_curso']['name'].' id:'.$formCP['Nombre_de_curso']['id'],
                         'Estado_de_OV' => $formCP['Estado_de_OV'],
                         'field_states' => $formCP['$field_states'],
                         'Created_Time' => $formCP['Created_Time'],
-                        'Parent_Id' => $formCP['Parent_Id']->name.' id:'.$formCP['Parent_Id']->id,
+                        'Parent_Id' => $formCP['Parent_Id']['name'].' id:'.$formCP['Parent_Id']['id'],
                         'Nota' => $formCP['Nota'],
                         'Estado_cursada' => $formCP['Estado_cursada'],
                         'Avance' => $formCP['Avance'],
