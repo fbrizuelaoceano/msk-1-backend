@@ -72,12 +72,12 @@ class ZohoWorkflowController extends Controller
             // ]);
 
             $contactArrayObj = (array)$contactObj;
-            Log::info("salesForCRM-contactObj: " . print_r($contactObj, true));
-
             $formCourseProgress = $contactArrayObj["Formulario_de_cursada"];
             Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if($formCourseProgress){
+                Log::info("salesForCRM-if: " . print_r(true, true));
+
                 foreach ($formCourseProgress as $formCP) {
 
                     $mskObjDBCourseProgress = null;
