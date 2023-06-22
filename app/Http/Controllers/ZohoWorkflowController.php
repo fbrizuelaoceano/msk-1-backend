@@ -9,6 +9,7 @@ use App\Models\Speciality;
 use App\Models\Quote;
 use App\Models\User;
 use App\Models\Contact;
+use App\Models\CourseProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -38,10 +39,7 @@ class ZohoWorkflowController extends Controller
             $saleObj = json_decode($_POST['sale']);
             
             //$dos = [ $contactObj, $saleObj ];Log::info("salesForCRM-dos: " . print_r($dos, true));
-
-            $contactArrayObj = (array)$contactObj;
-            Log::info("salesForCRM-contactArrayObj['Formulario_de_cursada']: " . print_r($contactArrayObj["Formulario_de_cursada"], true));
-
+            
             /*  
                 Log::info(print_r($contactObj, true));
                 Log::info(print_r($saleObj, true));
@@ -73,6 +71,40 @@ class ZohoWorkflowController extends Controller
             //     'date_of_birth' => $contactObj->Date_of_Birth
             // ]);
 
+            $contactArrayObj = (array)$contactObj;
+            $formCourseProgress = $contactArrayObj["Formulario_de_cursada"];
+            if($formCourseProgress){
+                foreach ($formCourseProgress as $formCP) {
+
+                    $mskObjDBCourseProgress = null;
+                    $mskObjDBCourseProgress = [
+                        'entity_id_crm' => $formCP['id'],
+                        'Fecha_finalizaci_n' => $formCP['Fecha_finalizaci_n'],
+                        'Nombre_de_curso' => $formCP['Nombre_de_curso']['name'].' id:'.$formCP['Nombre_de_curso']['id'],
+                        'Estado_de_OV' => $formCP['Estado_de_OV'],
+                        'field_states' => $formCP['$field_states'],
+                        'Created_Time' => $formCP['Created_Time'],
+                        'Parent_Id' => $formCP['Parent_Id']['name'].' id:'.$formCP['Parent_Id']['id'],
+                        'Nota' => $formCP['Nota'],
+                        'Estado_cursada' => $formCP['Estado_cursada'],
+                        'Avance' => $formCP['Avance'],
+                        'Fecha_de_expiraci_n' => $formCP['Fecha_de_expiraci_n'],
+                        'in_merge' => $formCP['$in_merge'],
+                        'Fecha_de_compra' => $formCP['Fecha_de_compra'],
+                        'Enrollamiento' => $formCP['Enrollamiento'],
+                        'Fecha_de_ltima_sesi_n' => $formCP['Fecha_de_ltima_sesi_n'],
+                    ];
+
+                    Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
+
+                    CourseProgress::updateOrCreate([
+                        'entity_id_crm' => $formCP->id,
+                        // 'contact_id' => $contact->id
+                    ], $mskObjDBCourseProgress);
+
+                }
+            }
+
             // $contract = Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
             //     'contact_id' => $contact->id,
             //     'entity_id_crm' => $saleObj->id,
@@ -102,7 +134,6 @@ class ZohoWorkflowController extends Controller
 
             return response()->json([
                 // 'user' => $user, 'contact' => $contact
-                $contactArrayObj["Formulario_de_cursada"]
             ]);
         } catch (\Exception $e) {
             $err = [

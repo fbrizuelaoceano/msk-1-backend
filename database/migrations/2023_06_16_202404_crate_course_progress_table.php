@@ -30,8 +30,6 @@ return new class extends Migration
             $table->string('Enrollamiento')->nullable()->default(null);         // "Enrollamiento": "2023-05-24T11:10:00-03:00",
             $table->string('Fecha_de_ltima_sesi_n')->nullable()->default(null); // "Fecha_de_ltima_sesi_n": null
             
-         
-
             $table->timestamps();
             // "Nombre_de_curso": {
             //     "name": "Medicina Interna",
