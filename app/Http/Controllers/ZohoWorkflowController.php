@@ -76,10 +76,10 @@ class ZohoWorkflowController extends Controller
             Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if($formCourseProgress){
-                Log::info("salesForCRM-if: " . print_r(true, true));
-
+                
                 foreach ($formCourseProgress as $formCP) {
-
+                    Log::info("salesForCRM-foreach: " . print_r($formCP, true));
+                    
                     $mskObjDBCourseProgress = null;
                     $mskObjDBCourseProgress = [
                         'entity_id_crm' => $formCP['id'],
