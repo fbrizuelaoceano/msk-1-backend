@@ -64,13 +64,13 @@ class ZohoController extends Controller
         $response = Http::withHeaders([
             'Content-Type' => 'application/x-www-form-urlencoded'
         ])->post($ZOHO_API_TOKEN_URL, [
-                'body' =>
-                'code=' . $ZOHO_GRANT_TOKEN
-                . '&redirect_url=' . $ZOHO_REDIRECT_URI
-                . '&client_id=' . $ZOHO_CLIENT_ID
-                . '&client_secret=' . $ZOHO_CLIENT_SECRET
-                . '&grant_type=authorization_code'
-            ])->json();
+                    'body' =>
+                    'code=' . $ZOHO_GRANT_TOKEN
+                    . '&redirect_url=' . $ZOHO_REDIRECT_URI
+                    . '&client_id=' . $ZOHO_CLIENT_ID
+                    . '&client_secret=' . $ZOHO_CLIENT_SECRET
+                    . '&grant_type=authorization_code'
+                ])->json();
 
         return $response;
     }
@@ -86,13 +86,13 @@ class ZohoController extends Controller
         $response = Http::withHeaders([
             'Content-Type' => 'application/x-www-form-urlencoded'
         ])->post($ZOHO_API_TOKEN_URL, [
-                'body' =>
-                'code=' . $ZOHO_GRANT_TOKEN
-                . '&redirect_url=' . $ZOHO_REDIRECT_URI
-                . '&client_id=' . $ZOHO_CLIENT_ID
-                . '&client_secret=' . $ZOHO_CLIENT_SECRET
-                . '&grant_type=authorization_code'
-            ])->json();
+                    'body' =>
+                    'code=' . $ZOHO_GRANT_TOKEN
+                    . '&redirect_url=' . $ZOHO_REDIRECT_URI
+                    . '&client_id=' . $ZOHO_CLIENT_ID
+                    . '&client_secret=' . $ZOHO_CLIENT_SECRET
+                    . '&grant_type=authorization_code'
+                ])->json();
 
         return response()->json($response);
     }
@@ -301,31 +301,33 @@ class ZohoController extends Controller
         // $lead = Lead::where(['Email'=> $request->Email ])->first();
         // $response = $this->GetByEmailService('Leads',$request->Email);
         // if ($response == null ) {//No esta en CRM
+
+
         $data = [
             "data" => [
                 [
-                    "Email" => $request->Email,
-                    "Last_Name" => $request->Last_Name,
-                    "Name" => $request->Name,
-                    "Profesion" => $request->Profesion,
-                    "Especialidad" => $request->Especialidad,
+
                     "Phone" => $request->Phone,
                     "Description" => $request->Description,
                     "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
+
+                    "First_Name" => $request->First_Name,
+                    "Last_Name" => $request->Last_Name,
+                    "Email" => $request->Email,
+                    "Profesion" => $request->Profesion,
+                    "Especialidad" => $request->Especialidad,
+                    "Otra_profesion" => $request->Otra_profesion,
+                    "Otra_especialidad" => $request->Otra_especialidad,
+                    "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
+                    "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
+                    "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
+                    "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
+
                 ]
             ]
         ];
 
-        if (!empty($request->Otra_profesion)) {
-            $data['data'][0]['Otra_profesion'] = $request->Otra_profesion;
-        }
-
-        if (!empty($request->Otra_especialidad)) {
-            $data['data'][0]['Otra_especialidad'] = $request->Otra_especialidad;
-        }
-
         $response = $this->Create('Leads', $data);
-        // }
 
         if (!empty($request->Profesion))
             $profession = Profession::where(['name' => $request->Profesion])->first();
@@ -343,7 +345,7 @@ class ZohoController extends Controller
             "phone" => $request->Phone,
             "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
 
-            // "entity_id_crm" => $response->id,//Hay que asociar el id del crm
+            "entity_id_crm" => $response['data'][0]['details']['id'], //Hay que asociar el id del crm
             // "Message" => $request->Message,//Crear un campo para esto
         ]);
 
