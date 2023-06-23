@@ -13,22 +13,21 @@ class Contact extends Model
 
     protected $fillable = [
         'entity_id_crm',
-        'Discount',
-        '$currency_symbol',
-        '$field_states',
-        'Seleccione_total_de_pagos_recurrentes',
-        'M_todo_de_pago',
-        'Currency',
-        'otro_so',
-        'Modo_de_pago',
-        'Quote_Stage',
-        'Grand_Total',
-        'Modified_Time',
-        'Sub_Total',
-        'Subject',
-        'M_todo_de_pago',
-        'Quote_Number',
-        'name'
+        'name',
+        "last_name",
+        "profession",
+        "speciality",
+        "user_id",
+        "rfc",
+        "dni",
+        "fiscal_regime",
+        "phone",
+        "email",
+        "sex",
+        "date_of_birth",
+        "country",
+        "postal_code",
+        "address",
     ];
 
     private static $formAttributes = [
