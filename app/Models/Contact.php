@@ -27,7 +27,8 @@ class Contact extends Model
         'Sub_Total',
         'Subject',
         'M_todo_de_pago',
-        'Quote_Number'
+        'Quote_Number',
+        'name'
     ];
 
     private static $formAttributes = [
