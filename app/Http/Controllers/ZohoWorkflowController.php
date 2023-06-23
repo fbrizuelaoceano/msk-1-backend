@@ -45,6 +45,7 @@ class ZohoWorkflowController extends Controller
                 Log::info(print_r($saleObj, true));
             */
             //dd($contactObj->Usuario);
+            Log::info("salesForCRM-contactObj: " . print_r($contactObj, true));
 
             $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
                 'name' => $contactObj->Full_Name,
@@ -152,7 +153,7 @@ class ZohoWorkflowController extends Controller
                 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en UpdateQuotes: " . $e->getMessage(), $err);
+            Log::error("Error en salesForCRM: " . $e->getMessage(), $err);
             
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
