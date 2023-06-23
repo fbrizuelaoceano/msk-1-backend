@@ -46,30 +46,30 @@ class ZohoWorkflowController extends Controller
             */
             //dd($contactObj->Usuario);
 
-            // $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
-            //     'name' => $contactObj->Full_Name,
-            //     'email' => $contactObj->Usuario,
-            //     'password' => Hash::make($contactObj->Password),
-            // ]);
+            $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
+                'name' => $contactObj->Full_Name,
+                'email' => $contactObj->Usuario,
+                'password' => Hash::make($contactObj->Password),
+            ]);
 
-            // $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
-            //     'name' => $contactObj->First_Name,
-            //     'last_name' => $contactObj->Last_Name,
-            //     'email' => $contactObj->Usuario,
-            //     'profession' => $contactObj->Profesi_n,
-            //     'specialty' => $contactObj->Especialidad,
-            //     'user_id' => $user->id,
-            //     'entity_id_crm' => $contactObj->id,
-            //     'rfc' => $contactObj->RFC,
-            //     'sex' => $contactObj->Sexo,
-            //     'country' => $contactObj->Pais,
-            //     'phone' => $contactObj->Phone,
-            //     'validate' => $contactObj->Validador,
-            //     'fiscal_regime' => $contactObj->R_gimen_fiscal,
-            //     'postal_code' => $contactObj->Mailing_Zip,
-            //     'address' => $contactObj->Mailing_Street,
-            //     'date_of_birth' => $contactObj->Date_of_Birth
-            // ]);
+            $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
+                'name' => $contactObj->First_Name,
+                'last_name' => $contactObj->Last_Name,
+                'email' => $contactObj->Usuario,
+                'profession' => $contactObj->Profesi_n,
+                'specialty' => $contactObj->Especialidad,
+                'user_id' => $user->id,
+                'entity_id_crm' => $contactObj->id,
+                'rfc' => $contactObj->RFC,
+                'sex' => $contactObj->Sexo,
+                'country' => $contactObj->Pais,
+                'phone' => $contactObj->Phone,
+                'validate' => $contactObj->Validador,
+                'fiscal_regime' => $contactObj->R_gimen_fiscal,
+                'postal_code' => $contactObj->Mailing_Zip,
+                'address' => $contactObj->Mailing_Street,
+                'date_of_birth' => $contactObj->Date_of_Birth
+            ]);
 
             $contactArrayObj = (array)$contactObj;
             $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
@@ -79,7 +79,7 @@ class ZohoWorkflowController extends Controller
                 
                 foreach ($formCourseProgress as $formCPstdClass) {
                     $formCP = (array)$formCPstdClass;
-                    Log::info("salesForCRM-foreach: " . print_r($formCP, true));
+                    // Log::info("salesForCRM-foreach: " . print_r($formCP, true));
                     
                     $mskObjDBCourseProgress = null;
                     $mskObjDBCourseProgress = [
@@ -102,42 +102,42 @@ class ZohoWorkflowController extends Controller
                         'Fecha_de_ltima_sesi_n' => $formCP['Fecha_de_ltima_sesi_n'],
                     ];
                    
-                    Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
+                    // Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
 
                     CourseProgress::updateOrCreate([
                         'entity_id_crm' => $formCP['id'],
-                        // 'contact_id' => $contact->id
+                        'contact_id' => $contact->id
                     ], $mskObjDBCourseProgress);
 
                 }
             }
 
-            // $contract = Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
-            //     'contact_id' => $contact->id,
-            //     'entity_id_crm' => $saleObj->id,
-            //     'so_crm' => $saleObj->SO_Number,
-            //     'status' => $saleObj->Status,
-            //     'status_payment' => $saleObj->Estado_de_cobro,
-            //     'country' => $saleObj->Pais_de_facturaci_n,
-            //     'currency' => $saleObj->Currency,
-            // ]);
+            $contract = Contract::updateOrCreate(['entity_id_crm' => $saleObj->id], [
+                'contact_id' => $contact->id,
+                'entity_id_crm' => $saleObj->id,
+                'so_crm' => $saleObj->SO_Number,
+                'status' => $saleObj->Status,
+                'status_payment' => $saleObj->Estado_de_cobro,
+                'country' => $saleObj->Pais_de_facturaci_n,
+                'currency' => $saleObj->Currency,
+            ]);
 
-            // $productDetails = $saleObj->Product_Details;
+            $productDetails = $saleObj->Product_Details;
 
-            // foreach ($productDetails as $pd) {
-            //     Product::updateOrCreate([
-            //         'entity_id_crm' => $pd->id,
-            //         'contract_entity_id' => $saleObj->id
-            //     ], [
-            //             'entity_id_crm' => $pd->id,
-            //             'contract_id' => $contract->id,
-            //             'contract_entity_id' => $saleObj->id,
-            //             'quantity' => $pd->quantity,
-            //             'discount' => $pd->Discount,
-            //             'price' => $pd->total,
-            //             'product_code' => (int) $pd->product->Product_Code
-            //         ]);
-            // }
+            foreach ($productDetails as $pd) {
+                Product::updateOrCreate([
+                    'entity_id_crm' => $pd->id,
+                    'contract_entity_id' => $saleObj->id
+                ], [
+                        'entity_id_crm' => $pd->id,
+                        'contract_id' => $contract->id,
+                        'contract_entity_id' => $saleObj->id,
+                        'quantity' => $pd->quantity,
+                        'discount' => $pd->Discount,
+                        'price' => $pd->total,
+                        'product_code' => (int) $pd->product->Product_Code
+                    ]);
+            }
 
             return response()->json([
                 // 'user' => $user, 'contact' => $contact
