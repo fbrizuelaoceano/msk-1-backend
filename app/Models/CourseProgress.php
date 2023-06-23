@@ -26,6 +26,7 @@ class CourseProgress extends Model
         'entity_id_crm',
         'Enrollamiento',
         'Fecha_de_ltima_sesi_n',
+        'contact_id'
     ];
     public static $formAttributes = [
         'Fecha_finalizaci_n',
