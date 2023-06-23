@@ -329,6 +329,8 @@ class ZohoController extends Controller
 
         $response = $this->Create('Leads', $data);
 
+        Log::channel('zoho-leads')->info(print_r($response, true));
+
         if (!empty($request->Profesion))
             $profession = Profession::where(['name' => $request->Profesion])->first();
         if (!empty($request->Especialidad))
@@ -348,6 +350,9 @@ class ZohoController extends Controller
             "entity_id_crm" => $response['data'][0]['details']['id'], //Hay que asociar el id del crm
             // "Message" => $request->Message,//Crear un campo para esto
         ]);
+
+        Log::channel('zoho-leads')->notice(print_r($newLead, true));
+
 
         return response()->json([
             "crm" => $response,
@@ -479,7 +484,7 @@ class ZohoController extends Controller
     public function GetByIdAllDetails($module, $id)
     {
         $this->AccessTokenDB();
-        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id ;
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id;
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
@@ -543,7 +548,7 @@ class ZohoController extends Controller
                 ->json();
         return $response;
     }
-    
+
     public function GetCursadaService($id)
     {
         try {
