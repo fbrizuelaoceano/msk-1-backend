@@ -31,7 +31,6 @@ class ZohoController extends Controller
     private $ZOHO_REFRESH_TOKEN_RESET = '';
     private $ZOHO_ACCESS_TOKEN_RESET = '';
 
-
     private $URL_ZOHO = '';
 
     public function __construct()
@@ -476,6 +475,20 @@ class ZohoController extends Controller
 
         return $response;
     }
+
+    public function GetByIdAllDetails($module, $id)
+    {
+        $this->AccessTokenDB();
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id ;
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
+        ])
+            ->get($URL_ZOHO)
+            ->json();
+
+        return $response;
+    }
     public function GetById($module, $id)
     {
         $this->AccessTokenDB();
@@ -530,7 +543,23 @@ class ZohoController extends Controller
                 ->json();
         return $response;
     }
+    
+    public function GetCursadaService($id)
+    {
+        try {
+            $this->AccessTokenDB();
+            $URL_ZOHO = env('URL_ZOHO') . '/Contacts/' . $id;
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
+            ])
+                ->get($URL_ZOHO)->json();
 
+            return $response;
+
+        } catch (Exception $e) {
+            Log::error($e);
+        }
+    }
     public function GetByEmailService($module, $email)
     {
         try {
