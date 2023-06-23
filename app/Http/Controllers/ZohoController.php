@@ -329,8 +329,6 @@ class ZohoController extends Controller
 
         $response = $this->Create('Leads', $data);
 
-        Log::channel('zoho-leads')->info(print_r($response, true));
-
         if (!empty($request->Profesion))
             $profession = Profession::where(['name' => $request->Profesion])->first();
         if (!empty($request->Especialidad))
@@ -341,18 +339,14 @@ class ZohoController extends Controller
         $newLead = Lead::Create([
             "email" => $request->Email,
             "last_name" => $request->Last_Name,
-            "name" => $request->Name,
+            "name" => $request->First_Name,
             "profession" => isset($profession->id) ? $profession->id : '',
             "speciality" => isset($specialty->id) ? $specialty->id : '',
             "phone" => $request->Phone,
             "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
-
             "entity_id_crm" => $response['data'][0]['details']['id'], //Hay que asociar el id del crm
-            // "Message" => $request->Message,//Crear un campo para esto
+
         ]);
-
-        Log::channel('zoho-leads')->notice(print_r($newLead, true));
-
 
         return response()->json([
             "crm" => $response,
