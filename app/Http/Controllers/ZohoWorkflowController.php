@@ -153,7 +153,7 @@ class ZohoWorkflowController extends Controller
                 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en salesForCRM: " . $e->getMessage(), $err);
+            Log::error("Error en salesForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
             
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
