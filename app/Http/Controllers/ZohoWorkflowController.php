@@ -52,6 +52,7 @@ class ZohoWorkflowController extends Controller
                 'email' => $contactObj->Usuario,
                 'password' => Hash::make($contactObj->Password),
             ]);
+            Log::info("salesForCRM-user: " . print_r($user, true));
 
             $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
                 'name' => $contactObj->First_Name,
@@ -71,7 +72,8 @@ class ZohoWorkflowController extends Controller
                 'address' => $contactObj->Mailing_Street,
                 'date_of_birth' => $contactObj->Date_of_Birth
             ]);
-
+            Log::info("salesForCRM-contact: " . print_r($contact, true));
+            
             $contactArrayObj = (array)$contactObj;
             $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
             // Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
