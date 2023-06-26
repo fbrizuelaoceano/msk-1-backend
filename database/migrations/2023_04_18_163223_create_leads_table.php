@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,6 +21,7 @@ return new class extends Migration
             $table->string('last_name')->nullable()->default(null);
             $table->string('email')->nullable()->default(null);
             $table->string('phone')->nullable()->default(null);
+            $table->string('country')->nullable()->default(null);
 
             $table->foreignId('profession')->nullable()->default(null)
                 ->references('id')
