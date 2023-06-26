@@ -306,7 +306,6 @@ class ZohoController extends Controller
         $data = [
             "data" => [
                 [
-
                     "Phone" => $request->Phone,
                     "Description" => $request->Description,
                     "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
