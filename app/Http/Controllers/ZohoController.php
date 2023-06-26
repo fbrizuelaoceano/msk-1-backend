@@ -350,7 +350,6 @@ class ZohoController extends Controller
             "entity_id_crm" => $response['data'][0]['details']['id'], //Hay que asociar el id del crm
         ]);
 
-        dd($newLead);
         return response()->json([
             "crm" => $response,
             "msk" => $newLead
