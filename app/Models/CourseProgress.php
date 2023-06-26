@@ -27,7 +27,7 @@ class CourseProgress extends Model
         'Enrollamiento',
         'Fecha_de_ltima_sesi_n',
         'contact_id',
-        'course_progress',
+        'Product_Code',
     ];
     public static $formAttributes = [
         'Fecha_finalizaci_n',
@@ -44,7 +44,7 @@ class CourseProgress extends Model
         'Fecha_de_compra',
         'Enrollamiento',
         'Fecha_de_ltima_sesi_n',
-        'course_progress',
+        'Product_Code',
     ];
     public function contact()
     {
