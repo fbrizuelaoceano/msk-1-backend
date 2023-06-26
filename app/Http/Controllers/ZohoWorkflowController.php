@@ -38,22 +38,23 @@ class ZohoWorkflowController extends Controller
             $contactObj = json_decode($_POST['contact']);
             $saleObj = json_decode($_POST['sale']);
             
-            //$dos = [ $contactObj, $saleObj ];Log::info("salesForCRM-dos: " . print_r($dos, true));
+            $dosObj = [ $contactObj, $saleObj ];Log::info("salesForCRM-dosObj: " . print_r($dosObj, true));
             
             /*  
                 Log::info(print_r($contactObj, true));
                 Log::info(print_r($saleObj, true));
             */
             //dd($contactObj->Usuario);
-            Log::info("salesForCRM-contactObj: " . print_r($contactObj, true));
+            // Log::info("salesForCRM-contactObj: " . print_r($contactObj, true));
 
             $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
                 'name' => $contactObj->Full_Name,
                 'email' => $contactObj->Usuario,
                 'password' => Hash::make($contactObj->Password),
             ]);
-            Log::info("salesForCRM-user: " . print_r($user, true));
-
+            // Log::info("salesForCRM-user: " . print_r($user, true));
+            
+            
             $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
                 'name' => $contactObj->First_Name,
                 'last_name' => $contactObj->Last_Name,
@@ -72,7 +73,7 @@ class ZohoWorkflowController extends Controller
                 'address' => $contactObj->Mailing_Street,
                 'date_of_birth' => $contactObj->Date_of_Birth
             ]);
-            Log::info("salesForCRM-contact: " . print_r($contact, true));
+            // Log::info("salesForCRM-contact: " . print_r($contact, true));
             
             $contactArrayObj = (array)$contactObj;
             $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
@@ -127,7 +128,8 @@ class ZohoWorkflowController extends Controller
             ]);
 
             $productDetails = $saleObj->Product_Details;
-
+            Log::info("salesForCRM-$productDetails: " . print_r($productDetails, true));
+            dd($productDetails);
             foreach ($productDetails as $pd) {
                 Product::updateOrCreate([
                     'entity_id_crm' => $pd->id,
@@ -144,7 +146,7 @@ class ZohoWorkflowController extends Controller
             }
 
             return response()->json([
-                // 'user' => $user, 'contact' => $contact
+                'user' => $user, 'contact' => $contact
             ]);
         } catch (\Exception $e) {
             $err = [
