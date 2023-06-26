@@ -38,7 +38,7 @@ class ZohoWorkflowController extends Controller
             $contactObj = json_decode($_POST['contact']);
             $saleObj = json_decode($_POST['sale']);
             
-            $dosObj = [ $contactObj, $saleObj ];Log::info("salesForCRM-dosObj: " . print_r($dosObj, true));
+            // $dosObj = [ $contactObj, $saleObj ];Log::info("salesForCRM-dosObj: " . print_r($dosObj, true));
             
             /*  
                 Log::info(print_r($contactObj, true));
@@ -128,14 +128,16 @@ class ZohoWorkflowController extends Controller
             ]);
 
             $productDetails = $saleObj->Product_Details;
-            Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
-            dd($productDetails);
+            // Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
+
             foreach ($productDetails as $pd) {
+                // Log::info("salesForCRM-pd: " . print_r($pd, true));
+
                 Product::updateOrCreate([
                     'entity_id_crm' => $pd->id,
                     'contract_entity_id' => $saleObj->id
                 ], [
-                        'entity_id_crm' => $pd->id,
+                        'entity_id_crm' => $pd->product->id,
                         'contract_id' => $contract->id,
                         'contract_entity_id' => $saleObj->id,
                         'quantity' => $pd->quantity,
@@ -143,6 +145,8 @@ class ZohoWorkflowController extends Controller
                         'price' => $pd->total,
                         'product_code' => (int) $pd->product->Product_Code
                     ]);
+
+
             }
 
             return response()->json([
