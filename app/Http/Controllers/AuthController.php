@@ -276,10 +276,9 @@ class AuthController extends Controller
 
     public function GetProfile(Request $request, $email)
     {
-        // Me pide contaaacto tacto tacto
-        $user = User::with('contact.contracts.products')
-            ->where('email', $email)
-            ->first();
+        $user = User::with('contact.contracts.products', 'contact.courses_progress')
+        ->where('email', $email)
+        ->first();
 
         $contracts = $user->contact->contracts;
 
