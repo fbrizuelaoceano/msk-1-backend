@@ -47,4 +47,8 @@ class Contact extends Model
     {
         return $this->hasMany(Contract::class);
     }
+    public function courses_progress()
+    {
+        return $this->hasMany(CourseProgress::class);
+    }
 }

@@ -44,4 +44,8 @@ class CourseProgress extends Model
         'Enrollamiento',
         'Fecha_de_ltima_sesi_n',
     ];
+    public function contact()
+    {
+        return $this->hasOne(Contact::class);
+    }
 }
