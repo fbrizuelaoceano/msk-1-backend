@@ -128,7 +128,7 @@ class ZohoWorkflowController extends Controller
             ]);
 
             $productDetails = $saleObj->Product_Details;
-            Log::info("salesForCRM-$productDetails: " . print_r($productDetails, true));
+            Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
             dd($productDetails);
             foreach ($productDetails as $pd) {
                 Product::updateOrCreate([
