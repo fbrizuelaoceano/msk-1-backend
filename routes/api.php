@@ -1,6 +1,7 @@
 <?php
 
 // use Illuminate\Http\Request;
+use App\Http\Controllers\SSOController;
 use App\Http\Controllers\Webhooks\RebillController;
 use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
@@ -37,7 +38,7 @@ Route::post('/ValidatedUser', [ZohoWorkflowController::class, 'ValidatedUser']);
 Route::prefix('ZohoWorkFlow')->group(function () {
     // Usar el prefix para el zo (reglas de trabajo)
     Route::post('UpdateQuotes', [ZohoWorkflowController::class, 'UpdateQuotes']);
-    
+
 });
 
 Route::get('GetByIdAllDetails/{module}/{id}', [ZohoController::class, 'GetByIdAllDetails']);
@@ -58,8 +59,8 @@ Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
 
 Route::prefix('CoursesProgress')->group(function () {
-    Route::get('/', [CourseProgressController::class,'GetAll']);
-    Route::post('/', [CourseProgressController::class,'Create']);
+    Route::get('/', [CourseProgressController::class, 'GetAll']);
+    Route::post('/', [CourseProgressController::class, 'Create']);
 
 });
 
@@ -261,8 +262,8 @@ Route::prefix('webhook/rebill')->group(function () {
 Route::get("omApiPayments", function () {
 
     $apiPayments = DB::connection('omApiPayments')->select('SELECT * FROM payment_links');
-    
+
     return response()->json($apiPayments);
 });
 
-
+Route::post("sso/link", [SSOController::class, "getLMSLink"]);

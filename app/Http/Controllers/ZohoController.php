@@ -320,16 +320,17 @@ class ZohoController extends Controller
                     "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
                     "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
                     "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
+                    "Pais" => $request->Pais
 
                 ]
             ]
         ];
 
-        Log::channel('zoho-leads')->info("data: " . print_r($data, true));
+        //Log::channel('zoho-leads')->info("data: " . print_r($data, true));
 
         $response = $this->Create('Leads', $data);
 
-        Log::channel('zoho-leads')->info("data: " . print_r($response, true));
+        //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
 
         if (!empty($request->Profesion))
             $profession = Profession::where(['name' => $request->Profesion])->first();
@@ -346,7 +347,8 @@ class ZohoController extends Controller
             "speciality" => isset($specialty->id) ? $specialty->id : '',
             "phone" => $request->Phone,
             "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
-            "entity_id_crm" => $response['data'][0]['details']['id'], //Hay que asociar el id del crm
+            "entity_id_crm" => $response['data'][0]['details']['id'],
+            'country' => $request->Pais
         ]);
 
         return response()->json([
