@@ -106,6 +106,8 @@ class ZohoWorkflowController extends Controller
                         'Fecha_de_ltima_sesi_n' => $formCP['Fecha_de_ltima_sesi_n'],
                         'contact_id' => $contact->id,
                         'Product_Code' => $formCP['Product_Code'],
+                        'C_digo_de_Curso_Cedente' => $formCP['C_digo_de_Curso_Cedente'],
+                        'Plataforma_enrolamiento' => $formCP['Plataforma_enrolamiento'],
                     ];
                    
                     // Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));

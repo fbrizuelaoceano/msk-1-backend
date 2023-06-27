@@ -28,6 +28,8 @@ class CourseProgress extends Model
         'Fecha_de_ltima_sesi_n',
         'contact_id',
         'Product_Code',
+        'C_digo_de_Curso_Cedente',
+        'Plataforma_enrolamiento',
     ];
     public static $formAttributes = [
         'Fecha_finalizaci_n',
@@ -45,6 +47,8 @@ class CourseProgress extends Model
         'Enrollamiento',
         'Fecha_de_ltima_sesi_n',
         'Product_Code',
+        'C_digo_de_Curso_Cedente',
+        'Plataforma_enrolamiento',
     ];
     public function contact()
     {
