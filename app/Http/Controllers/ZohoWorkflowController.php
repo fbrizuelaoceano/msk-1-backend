@@ -137,7 +137,7 @@ class ZohoWorkflowController extends Controller
                 // Log::info("salesForCRM-pd: " . print_r($pd, true));
 
                 Product::updateOrCreate([
-                    'entity_id_crm' => $pd->id,
+                    'entity_id_crm' => $pd->product->id,
                     'contract_entity_id' => $saleObj->id
                 ], [
                         'entity_id_crm' => $pd->product->id,
@@ -255,4 +255,7 @@ class ZohoWorkflowController extends Controller
     }
    
 }
+
+
+
 
