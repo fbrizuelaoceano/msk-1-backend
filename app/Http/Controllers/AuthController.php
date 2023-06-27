@@ -276,19 +276,45 @@ class AuthController extends Controller
 
     public function GetProfile(Request $request, $email)
     {
-        $user = User::with('contact.contracts.products', 'contact.courses_progress')
-        ->where('email', $email)
-        ->first();
+        try { 
 
-        $contracts = $user->contact->contracts;
+            Log::info("GetProfile-email: " . print_r($email, true));
 
-        $contracts->each(function ($contract) {
-            $contract->setAttribute('products', $contract->products);
-        });
+            $user = User::with('contact.contracts.products', 'contact.courses_progress')
+            ->where('email', $email)
+            ->first();
+            
+            Log::info("GetProfile-user: " . print_r($user, true));
 
-        return response()->json([
-            'user' => $user,
-        ]);
+            $contracts = $user->contact->contracts;
+            Log::info("GetProfile-contracts: " . print_r($contracts, true));
+
+            $contracts->each(function ($contract) {
+                $contract->setAttribute('products', $contract->products);
+            });
+
+            Log::info("GetProfile-user2: " . print_r($user, true));
+
+
+            return response()->json([
+                'user' => $user,
+            ]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en salesForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+            ], 500);
+        }
     }
 
     public function PutProfile(Request $request, $email)
