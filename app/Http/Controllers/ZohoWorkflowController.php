@@ -264,10 +264,7 @@ class ZohoWorkflowController extends Controller
             //prueba desde postman
             // $quoteObj = $request->quote["context"];
 
-            $mskObjDBContact = Contact::updateOrCreate(
-                [
-                    'entity_id_crm' => $contactObj["id"]
-                ], [
+            $mskObjDBContact = [
                 'name' => $contactObj["First_Name"],
                 'last_name' => $contactObj["Last_Name"],
                 'email' => $contactObj["Usuario"],
@@ -283,9 +280,11 @@ class ZohoWorkflowController extends Controller
                 'postal_code' => $contactObj["Mailing_Zip"],
                 'address' => $contactObj["Mailing_Street"],
                 'date_of_birth' => $contactObj["Date_of_Birth"]
-            ]);
+            ];
 
             Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
+           
+            // $newContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactObj["id"] ], $mskObjDBContact );
 
             // $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
             // if ($contact) { //rober 
