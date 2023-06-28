@@ -305,11 +305,12 @@ class ZohoWorkflowController extends Controller
 
             Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
-            // $newContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactObj["id"] ], $mskObjDBContact );
+            $newContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactObj["id"] ], $mskObjDBContact );
+            Log::info("UpdateContact-newContact: " . print_r($newContact, true));
         
             return response()->json([
-                $mskObjDBContact,
-                // $newContact,
+                //$mskObjDBContact,
+                $newContact,
             ]);
 
         } catch (\Exception $e) {
