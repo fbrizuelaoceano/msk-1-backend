@@ -253,7 +253,75 @@ class ZohoWorkflowController extends Controller
             ], 500);
         }
     }
-   
+    
+    function UpdateContact(Request $request){
+        try {
+            $contactObjstdClass = json_decode($_POST['contact']);
+            Log::info("UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
+            $contactObj = (array)$contactObjstdClass;
+            // Log::info("OnDev-contactObj: " . print_r($contactObj, true));
+
+            //prueba desde postman
+            // $quoteObj = $request->quote["context"];
+
+            $mskObjDBContact = Contact::updateOrCreate(
+                [
+                    'entity_id_crm' => $contactObj["id"]
+                ], [
+                'name' => $contactObj["First_Name"],
+                'last_name' => $contactObj["Last_Name"],
+                'email' => $contactObj["Usuario"],
+                'profession' => $contactObj["Profesi_n"],
+                'specialty' => $contactObj["Especialidad"],
+                'entity_id_crm' => $contactObj["id"],
+                'rfc' => $contactObj["RFC"],
+                'sex' => $contactObj["Sexo"],
+                'country' => $contactObj["Pais"],
+                'phone' => $contactObj["Phone"],
+                'validate' => $contactObj["Validador"],
+                'fiscal_regime' => $contactObj["R_gimen_fiscal"],
+                'postal_code' => $contactObj["Mailing_Zip"],
+                'address' => $contactObj["Mailing_Street"],
+                'date_of_birth' => $contactObj["Date_of_Birth"]
+            ]);
+
+            Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
+
+            // $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
+            // if ($contact) { //rober 
+            //     $mskObjDBQuote["contact_id"] = $contact->id;
+            // }
+            // $quote = Quote::updateOrCreate(
+            //     [
+            //         'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
+            //     ],
+            //     $mskObjDBQuote
+            // );        
+            // Log::info("UpdateContact: " . print_r($quote, true));
+        
+            return response()->json([
+                $mskObjDBContact,
+                // $quote,
+            ]);
+
+        } catch (\Exception $e) {
+
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en UpdateContact: " . $e->getMessage(), $err);
+            
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+            ], 500);
+        }
+    }
 }
 
 
