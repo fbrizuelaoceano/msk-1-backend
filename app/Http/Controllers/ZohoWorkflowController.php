@@ -267,7 +267,8 @@ class ZohoWorkflowController extends Controller
             $mskObjDBContact = [
                 'name' => $contactObj["First_Name"],
                 'last_name' => $contactObj["Last_Name"],
-                'email' => $contactObj["Usuario"],
+                'email' => $contactObj["Email"],
+                // 'email' => $contactObj["Usuario"],
                 'profession' => $contactObj["Profesi_n"],
                 'specialty' => $contactObj["Especialidad"],
                 'entity_id_crm' => $contactObj["id"],
@@ -279,28 +280,36 @@ class ZohoWorkflowController extends Controller
                 'fiscal_regime' => $contactObj["R_gimen_fiscal"],
                 'postal_code' => $contactObj["Mailing_Zip"],
                 'address' => $contactObj["Mailing_Street"],
-                'date_of_birth' => $contactObj["Date_of_Birth"]
+                'date_of_birth' => $contactObj["Date_of_Birth"],
+                'other_profession' => $contactObj["Otra_profesi_n"],
+                'other_speciality' => $contactObj["Otra_especialidad"],
+                // 'state' => $contactObj["Mailing_City"],//no tenemos en db-backend el state
             ];
+
+            // {
+            //   "name": "Eva2",                        [First_Name] => Eva
+            //   "last_name": "Marmolejo2",             [Last_Name] => Marmolejo
+            //   "email": "emarmolejo2@msklatam.com",   [Email] => emarmolejo@msklatam.com
+            //   "phone": "+34 222 22 22 22",           [Phone] => +34 619 96 13 17
+            //   "profession": "Abogado",               [Profesi_n] =>
+            //   "other_profession": null,              [Otra_profesi_n] =>
+            //   "speciality": "Derecho penal",         [Especialidad] => Bioquímica
+            //   "other_speciality": null,              [Otra_especialidad] =>
+            //   "address": "Calle 1123",               [Mailing_Street] => Calle 1123
+            //   "country": "Chile",                    [Pais] => México
+            //   "state": "Ciudad de México",           [Mailing_City] => Ciudad de México
+            //   "postal_code": "03100",                [Mailing_Zip] => 03100
+            //   "rfc": "XAXX010101000",                [RFC] => XAXX010101000
+            //   "fiscal_regime": "General"             [R_gimen_fiscal] => 616 Sin obligaciones fiscales
+            // }
 
             Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
             // $newContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactObj["id"] ], $mskObjDBContact );
-
-            // $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
-            // if ($contact) { //rober 
-            //     $mskObjDBQuote["contact_id"] = $contact->id;
-            // }
-            // $quote = Quote::updateOrCreate(
-            //     [
-            //         'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
-            //     ],
-            //     $mskObjDBQuote
-            // );        
-            // Log::info("UpdateContact: " . print_r($quote, true));
         
             return response()->json([
                 $mskObjDBContact,
-                // $quote,
+                // $newContact,
             ]);
 
         } catch (\Exception $e) {
