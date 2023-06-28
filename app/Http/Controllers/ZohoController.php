@@ -529,6 +529,13 @@ class ZohoController extends Controller
         ])
             ->put($URL_ZOHO, $requestArray)
             ->json();
+        
+        $body = [
+            $URL_ZOHO,
+            $response,
+            $requestArray
+        ];
+        Log::info("ZohoController-Update-body: " . print_r($body, true));
 
         return response()->json($response, );
     }

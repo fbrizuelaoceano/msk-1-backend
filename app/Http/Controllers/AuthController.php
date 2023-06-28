@@ -325,8 +325,9 @@ class AuthController extends Controller
             // $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
             $contactData = $request->only(UpdateProfileRequest::$formAttributes);
             
-            $dataForCRM = [
+            $data = [
                 'data' => [
+                   [ 
                     'First_Name' => $contactData['name'],
                     'Last_Name' => $contactData['last_name'],
                     'Email' => $contactData['email'],
@@ -339,19 +340,20 @@ class AuthController extends Controller
                     'Pais' => $contactData['country'],
                     'Mailing_State' => $contactData['state'],
                     'Mailing_Zip' => $contactData['postal_code'],
-                    
+                   
                     'RFC' => $contactData['rfc'],// Mexico
-                    // 'RUT' => $contactData['rut'],// Chile
-                    // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ? 
-                    // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
-                    
+                   // 'RUT' => $contactData['rut'],// Chile
+                   // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ? 
+                   // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
+                   
                     'R_gimen_fiscal' => $contactData['fiscal_regime'],
                     'Mailing_Street' => $contactData['address'],
+                   ]
                 ]
             ];
 
             $zohoService = new ZohoController();
-            $response = $zohoService->Update('Contacts', $dataForCRM, $request->entity_id_crm);
+            $response = $zohoService->Update('Contacts', $data, $request->entity_id_crm);
 
             return response()->json([
                 'updateCRM' => $response
