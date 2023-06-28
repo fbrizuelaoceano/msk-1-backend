@@ -341,9 +341,9 @@ class AuthController extends Controller
                     'Mailing_Zip' => $contactData['postal_code'],
                     
                     'RFC' => $contactData['rfc'],// Mexico
-                    'RUT' => $contactData['rut'],// Chile
+                    // 'RUT' => $contactData['rut'],// Chile
                     // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ? 
-                    'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
+                    // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
                     
                     'R_gimen_fiscal' => $contactData['fiscal_regime'],
                     'Mailing_Street' => $contactData['address'],
