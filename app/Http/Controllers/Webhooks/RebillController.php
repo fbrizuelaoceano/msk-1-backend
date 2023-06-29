@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Webhooks;
 
+use App\Http\Controllers\ZohoController;
+use App\Services\ZohoCRMService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -10,6 +12,13 @@ use Illuminate\Support\Facades\Http;
 
 class RebillController extends Controller
 {
+    private $zohoService;
+
+    public function __construct(ZohoCRMService $service)
+    {
+        $this->zohoService = $service;
+    }
+
     public function newPayment(Request $request)
     {
         $jsonPayload = file_get_contents('php://input');
@@ -43,6 +52,8 @@ class RebillController extends Controller
         ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
 
         Log::info("response rebill newPayment: " . print_r($response, true));
+
+
 
 
 
@@ -90,6 +101,11 @@ class RebillController extends Controller
         $setPaymentLink_Api_Payments->status = $mapping_Status[$newStatusWebhook];
 
         $setPaymentLink_Api_Payments->save();
+
+        $leads = $this->zohoService->get("Leads");
+
+        Log::info("changeStatusPayment", ["leads" => $leads]);
+
     }
 
 }
