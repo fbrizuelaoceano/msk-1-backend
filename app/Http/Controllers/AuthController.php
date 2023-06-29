@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -316,36 +317,63 @@ class AuthController extends Controller
         }
     }
 
-    public function PutProfile(Request $request, $email)
+    // public function PutProfile(Request $request, $email)
+    public function PutProfile(UpdateProfileRequest $request, $email)
     {
-        $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
+        try { 
 
-        $dataForCRM = [
-            'data' => [
-                'First_Name' => $contactData['name'],
-                'Last_Name' => $contactData['last_name'],
-                'Email' => $contactData['email'],
-                'Usuario' => $contactData['email'],
-                'Phone' => $contactData['phone'],
-                'Profesi_n' => $contactData['profession'],
-                'Otra_profesi_n' => $contactData['other_profession'],
-                'Especialidad' => $contactData['speciality'],
-                'Otra_especialidad' => $contactData['other_speciality'],
-                'Pais' => $contactData['country'],
-                'Mailing_State' => $contactData['state'],
-                'Mailing_Zip' => $contactData['postal_code'],
-                'RFC' => $contactData['rfc'],
-                'R_gimen_fiscal' => $contactData['fiscal_regime'],
-                'Mailing_Street' => $contactData['address'],
-            ]
-        ];
+            // $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
+            $contactData = $request->only(UpdateProfileRequest::$formAttributes);
+            
+            $data = [
+                'data' => [
+                   [ 
+                    'First_Name' => $contactData['name'],
+                    'Last_Name' => $contactData['last_name'],
+                    'Email' => $contactData['email'],
+                    'Usuario' => $contactData['email'],
+                    'Phone' => $contactData['phone'],
+                    'Profesi_n' => $contactData['profession'],
+                    'Otra_profesi_n' => $contactData['other_profession'],
+                    'Especialidad' => $contactData['speciality'],
+                    'Otra_especialidad' => $contactData['other_speciality'],
+                    'Pais' => $contactData['country'],
+                    'Mailing_State' => $contactData['state'],
+                    'Mailing_Zip' => $contactData['postal_code'],
+                   
+                    'RFC' => $contactData['rfc'],// Mexico
+                   // 'RUT' => $contactData['rut'],// Chile
+                   // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ? 
+                   // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
+                   
+                    'R_gimen_fiscal' => $contactData['fiscal_regime'],
+                    'Mailing_Street' => $contactData['address'],
+                   ]
+                ]
+            ];
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $dataForCRM, $request->entity_id_crm);
+            $zohoService = new ZohoController();
+            $response = $zohoService->Update('Contacts', $data, $request->entity_id_crm);
 
-        return response()->json([
-            'updateCRM' => $response
-        ]);
+            return response()->json([
+                'updateCRM' => $response
+            ]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en PutProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+            ], 500);
+        }
     }
     public function RequestPasswordChange(Request $request)
     {
