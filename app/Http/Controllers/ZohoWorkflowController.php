@@ -269,21 +269,21 @@ class ZohoWorkflowController extends Controller
                 'last_name' => $contactObj["Last_Name"],//ok
                 'email' => $contactObj["Email"],//ok
                 // 'email' => $contactObj["Usuario"],
-                'profession' => $contactObj["Profesi_n"],
+                'profession' => $contactObj["Profesi_n"],//ok
                 'speciality' => $contactObj["Especialidad"],//quedo en blanco 
-                'entity_id_crm' => $contactObj["id"],
+                'entity_id_crm' => $contactObj["id"],//no esta en el form de Datos personales
                 'rfc' => $contactObj["RFC"],//ok
-                'sex' => $contactObj["Sexo"],
                 'country' => $contactObj["Pais"],//ok
                 'phone' => $contactObj["Phone"],//ok
-                'validate' => $contactObj["Validador"],
                 'fiscal_regime' => $contactObj["R_gimen_fiscal"],//ok
                 'postal_code' => $contactObj["Mailing_Zip"],//ok
                 'address' => $contactObj["Mailing_Street"],//ok
-                'date_of_birth' => $contactObj["Date_of_Birth"],
                 'other_profession' => $contactObj["Otra_profesi_n"],
                 'other_speciality' => $contactObj["Otra_especialidad"],
                 // 'state' => $contactObj["Mailing_City"],//no tenemos en db-backend el state
+                // 'date_of_birth' => $contactObj["Date_of_Birth"],//no esta en el form de Datos personales
+                // 'sex' => $contactObj["Sexo"],//no esta en el form de Datos personales
+                // 'validate' => $contactObj["Validador"],//no esta en el form de Datos personales
             ];
 
             // {
