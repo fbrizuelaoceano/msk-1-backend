@@ -104,7 +104,7 @@ class RebillController extends Controller
 
         $leads = $this->zohoService->get("Leads");
 
-        Log::channel('wh')->info("changeStatusPayment", ["leads" => $leads]);
+        Log::channel('wh')->info("changeStatusPayment" . print_r($leads, true));
 
     }
 
