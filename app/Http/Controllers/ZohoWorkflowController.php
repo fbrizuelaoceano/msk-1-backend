@@ -261,9 +261,6 @@ class ZohoWorkflowController extends Controller
             $contactObj = (array)$contactObjstdClass;
             // Log::info("OnDev-contactObj: " . print_r($contactObj, true));
 
-            //prueba desde postman
-            // $quoteObj = $request->quote["context"];
-
             $mskObjDBContact = [
                 'name' => $contactObj["First_Name"],//ok
                 'last_name' => $contactObj["Last_Name"],//ok
