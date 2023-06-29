@@ -254,10 +254,32 @@ class ZohoWorkflowController extends Controller
         }
     }
     
+
+    
+    /**
+    *    Datos desde postman                        Datos desde api con api-names.
+    *   {                                
+    *       "entity_id_crm": "5344455000004398022",
+    *       "name": "Eva2",                         [First_Name] => Eva
+    *       "last_name": "Marmolejo2",              [Last_Name] => Marmolejo
+    *       "email": "emarmolejo2@msklatam.com",    [Email] => emarmolejo@msklatam.com
+    *       "phone": "+34 222 22 22 22",            [Phone] => +34 619 96 13 17
+    *       "profession": "Abogado2",               [Profesi_n] =>
+    *       "other_profession": null,               [Otra_profesi_n] =>
+    *       "speciality": "Derecho penal2",         [Especialidad] => Bioquímica
+    *       "other_speciality": null,               [Otra_especialidad] =>
+    *       "address": "Calle 2222",                [Mailing_Street] => Calle 1123
+    *       "country": "Chile2",                    [Pais] => México
+    *       "state": "Ciudad de México2",           [Mailing_City] => Ciudad de México
+    *       "postal_code": "22222",                 [Mailing_Zip] => 03100
+    *       "rfc": "XAXX020202000",                 [RFC] => XAXX010101000
+    *       "fiscal_regime": "General2"             [R_gimen_fiscal] => 616 Sin obligaciones fiscales
+    *   }
+    */
     function UpdateContact(Request $request){
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
-            Log::info("UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
+            // Log::info("UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
             $contactObj = (array)$contactObjstdClass;
             // Log::info("OnDev-contactObj: " . print_r($contactObj, true));
 
@@ -282,46 +304,10 @@ class ZohoWorkflowController extends Controller
                 // 'sex' => $contactObj["Sexo"],//no esta en el form de Datos personales
                 // 'validate' => $contactObj["Validador"],//no esta en el form de Datos personales
             ];
-
-            // {
-            //   "name": "Eva2",                        [First_Name] => Eva
-            //   "last_name": "Marmolejo2",             [Last_Name] => Marmolejo
-            //   "email": "emarmolejo2@msklatam.com",   [Email] => emarmolejo@msklatam.com
-            //   "phone": "+34 222 22 22 22",           [Phone] => +34 619 96 13 17
-            //   "profession": "Abogado2",               [Profesi_n] =>
-            //   "other_profession": null,              [Otra_profesi_n] =>
-            //   "speciality": "Derecho penal2",         [Especialidad] => Bioquímica
-            //   "other_speciality": null,              [Otra_especialidad] =>
-            //   "address": "Calle 2222",               [Mailing_Street] => Calle 1123
-            //   "country": "Chile2",                    [Pais] => México
-            //   "state": "Ciudad de México2",           [Mailing_City] => Ciudad de México
-            //   "postal_code": "22222",                [Mailing_Zip] => 03100
-            //   "rfc": "XAXX020202000",                [RFC] => XAXX010101000
-            //   "fiscal_regime": "General2"             [R_gimen_fiscal] => 616 Sin obligaciones fiscales
-            // }
-
-            // {
-            //   "name": "Eva2",                         
-            //   "last_name": "Marmolejo2",             
-            //   "email": "emarmolejo2@msklatam.com",   
-            //   "phone": "+34 222 22 22 22",           
-            //   "profession": "Abogado2",              
-            //   "other_profession": null,              
-            //   "speciality": "Derecho penal2",        
-            //   "other_speciality": null,              
-            //   "address": "Calle 2222",               
-            //   "country": "Chile2",           
-            //   "state": "Ciudad de México2",     
-            //   "postal_code": "22222",            
-            //   "rfc": "XAXX020202000",          
-            //   "fiscal_regime": "General2"          
-            // }
-
-            Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
+            // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
             $newContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactObj["id"] ], $mskObjDBContact );
-
-            Log::info("UpdateContact-newContact: " . print_r($newContact, true));
+            // Log::info("UpdateContact-newContact: " . print_r($newContact, true));
         
             return response()->json([
                 //$mskObjDBContact,
