@@ -50,10 +50,12 @@ class UpdateProfileRequest extends FormRequest
             'email' => "required|email|min:8|",
             'phone' => "required",
             
-            'profession' => 'nullable|required_if:speciality,null',
+            // 'profession' => 'nullable|required_if:speciality,null',
+            'profession' => "required",
             'other_profession' => 'required_if:profession,Otra profesión',
             
-            'speciality' => 'nullable|required_if:profession,null',
+            'speciality' => "required",
+            // 'speciality' => 'nullable|required_if:profession,null',
             'other_speciality' => 'required_if:speciality,Otra Especialidad',
             
             'address' => "required", 

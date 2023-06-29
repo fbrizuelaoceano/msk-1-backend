@@ -114,7 +114,7 @@ class ZohoWorkflowController extends Controller
 
                     CourseProgress::updateOrCreate([
                         'entity_id_crm' => $formCP['id'],
-                        // 'contact_id' => $contact->id
+                        'contact_id' => $contact->id
                     ], $mskObjDBCourseProgress);
 
                 }
@@ -148,7 +148,6 @@ class ZohoWorkflowController extends Controller
                         'price' => $pd->total,
                         'product_code' => (int) $pd->product->Product_Code
                     ]);
-
 
             }
 
@@ -274,42 +273,90 @@ class ZohoWorkflowController extends Controller
     *       "fiscal_regime": "General2"             [R_gimen_fiscal] => 616 Sin obligaciones fiscales
     *   }
     */
+    // Esto recibe lo de la regla
     function UpdateContact(Request $request){
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
-            // Log::info("UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
-            $contactObj = (array)$contactObjstdClass;
-            // Log::info("OnDev-contactObj: " . print_r($contactObj, true));
+            Log::info("ZohoWorkflowController-UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
+            $contactArrayObj = (array)$contactObjstdClass;
+            // Log::info("OnDev-contactArrayObj: " . print_r($contactArrayObj, true));
 
             $mskObjDBContact = [
-                'name' => $contactObj["First_Name"],//ok
-                'last_name' => $contactObj["Last_Name"],//ok
-                'email' => $contactObj["Email"],//ok
-                // 'email' => $contactObj["Usuario"],
-                'profession' => $contactObj["Profesi_n"],//ok
-                'speciality' => $contactObj["Especialidad"],//ok
-                'entity_id_crm' => $contactObj["id"],//no esta en el form de Datos personales
-                'rfc' => $contactObj["RFC"],//ok
-                'country' => $contactObj["Pais"],//ok
-                'phone' => $contactObj["Phone"],//ok
-                'fiscal_regime' => $contactObj["R_gimen_fiscal"],//ok
-                'postal_code' => $contactObj["Mailing_Zip"],//ok
-                'address' => $contactObj["Mailing_Street"],//ok
-                'other_profession' => $contactObj["Otra_profesi_n"],//ok
-                'other_speciality' => $contactObj["Otra_especialidad"],//ok
-                'state' => $contactObj["Mailing_City"],//ok
-                // 'date_of_birth' => $contactObj["Date_of_Birth"],//no esta en el form de Datos personales
-                // 'sex' => $contactObj["Sexo"],//no esta en el form de Datos personales
-                // 'validate' => $contactObj["Validador"],//no esta en el form de Datos personales
+                'name' => $contactArrayObj["First_Name"],//ok
+                'last_name' => $contactArrayObj["Last_Name"],//ok
+                'email' => $contactArrayObj["Email"],//ok
+                // 'email' => $contactArrayObj["Usuario"],
+                'profession' => $contactArrayObj["Profesi_n"],//ok
+                'speciality' => $contactArrayObj["Especialidad"],//ok
+                'entity_id_crm' => $contactArrayObj["id"],//no esta en el form de Datos personales
+                'rfc' => $contactArrayObj["RFC"],//ok
+                'country' => $contactArrayObj["Pais"],//ok
+                'phone' => $contactArrayObj["Phone"],//ok
+                'fiscal_regime' => $contactArrayObj["R_gimen_fiscal"],//ok
+                'postal_code' => $contactArrayObj["Mailing_Zip"],//ok
+                'address' => $contactArrayObj["Mailing_Street"],//ok
+                'other_profession' => $contactArrayObj["Otra_profesi_n"],//ok
+                'other_speciality' => $contactArrayObj["Otra_especialidad"],//ok
+                'state' => $contactArrayObj["Mailing_City"],//ok
+                // 'date_of_birth' => $contactArrayObj["Date_of_Birth"],//no esta en el form de Datos personales
+                // 'sex' => $contactArrayObj["Sexo"],//no esta en el form de Datos personales
+                // 'validate' => $contactArrayObj["Validador"],//no esta en el form de Datos personales
             ];
             // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
-            $newContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactObj["id"] ], $mskObjDBContact );
-            // Log::info("UpdateContact-newContact: " . print_r($newContact, true));
+            $updatedContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactArrayObj["id"] ], $mskObjDBContact );
+            // Log::info("UpdateContact-newCo[ntact: " . print_r($newContact, true));
         
+            //traer contact con buscar courses_progress
+            //actualizar los datos de cursadas
+           
+            $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
+            Log::info("ZohoWorkflowController-UpdateContact-formCourseProgress: " . print_r($formCourseProgress, true));
+
+            if($formCourseProgress){
+                
+                foreach ($formCourseProgress as $formCPstdClass) {
+                    $arrayFormCP = (array)$formCPstdClass;
+                    Log::info("ZohoWorkflowController-UpdateContact-foreach formCPstdClass: " . print_r($formCPstdClass, true));
+                    
+                    $mskObjDBCourseProgress = null;
+                    $mskObjDBCourseProgress = [
+                        'entity_id_crm' => $arrayFormCP['id'],
+                        'Fecha_finalizaci_n' => $arrayFormCP['Fecha_finalizaci_n'],
+                        // 'Nombre_de_curso' => $arrayFormCP['Nombre_de_curso']['name'].' id:'.$arrayFormCP['Nombre_de_curso']['id'],
+                        'Nombre_de_curso' => $arrayFormCP['Nombre_de_curso']->name,
+                        'Estado_de_OV' => $arrayFormCP['Estado_de_OV'],
+                        'field_states' => $arrayFormCP['$field_states'],
+                        'Created_Time' => $arrayFormCP['Created_Time'],
+                        // 'Parent_Id' => $arrayFormCP['Parent_Id']['name'].' id:'.$arrayFormCP['Parent_Id']['id'],
+                        'Parent_Id' => $arrayFormCP['Parent_Id']->id,
+                        'Nota' => $arrayFormCP['Nota'],
+                        'Estado_cursada' => $arrayFormCP['Estado_cursada'],
+                        'Avance' => $arrayFormCP['Avance'],
+                        'Fecha_de_expiraci_n' => $arrayFormCP['Fecha_de_expiraci_n'],
+                        'in_merge' => $arrayFormCP['$in_merge'],
+                        'Fecha_de_compra' => $arrayFormCP['Fecha_de_compra'],
+                        'Enrollamiento' => $arrayFormCP['Enrollamiento'],
+                        'Fecha_de_ltima_sesi_n' => $arrayFormCP['Fecha_de_ltima_sesi_n'],
+                        'contact_id' => $updatedContact->id,
+                        'Product_Code' => $arrayFormCP['Product_Code'],
+                        'C_digo_de_Curso_Cedente' => $arrayFormCP['C_digo_de_Curso_Cedente'],
+                        'Plataforma_enrolamiento' => $arrayFormCP['Plataforma_enrolamiento'],
+                    ];
+                    Log::info("ZohoWorkflowController-UpdateContact-foreach mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
+
+                    CourseProgress::updateOrCreate([
+                        'entity_id_crm' => $arrayFormCP['id'],
+                        'contact_id' => $updatedContact->id
+                    ], $mskObjDBCourseProgress);
+
+                }
+
+            }
+
             return response()->json([
                 //$mskObjDBContact,
-                $newContact,
+                $updatedContact,
             ]);
 
         } catch (\Exception $e) {
