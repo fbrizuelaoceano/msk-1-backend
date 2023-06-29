@@ -91,6 +91,9 @@ class RebillController extends Controller
 
         Log::channel('wh')->info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink_Api_Payments, true));
 
+        $leads = $this->zohoService->get("Leads");
+
+        Log::channel('wh')->info("changeStatusPayment" . print_r($leads, true));
         $setPaymentLink_Api_Payments = $paymentLink_Api_Payments[0];
 
         $mapping_Status = [
