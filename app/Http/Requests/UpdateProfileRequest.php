@@ -49,10 +49,13 @@ class UpdateProfileRequest extends FormRequest
             'last_name' => "required",
             'email' => "required|email|min:8|",
             'phone' => "required",
-            'profession' => "required",
-            'other_profession' => 'required_if:profession,Otra',
-            'speciality' => "required", 
-            'other_speciality' => 'required_if:speciality,Otra',
+            
+            'profession' => 'nullable|required_if:speciality,null',
+            'other_profession' => 'required_if:profession,Otra profesión',
+            
+            'speciality' => 'nullable|required_if:profession,null',
+            'other_speciality' => 'required_if:speciality,Otra Especialidad',
+            
             'address' => "required", 
             'country' => "required",
             'state' => "required",
