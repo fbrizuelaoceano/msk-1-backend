@@ -71,7 +71,7 @@ class RebillController extends Controller
         $jsonPayload = file_get_contents('php://input');
         $dataWebhook = json_decode($jsonPayload, true);
 
-        Log::info("changeStatusPayment: " . print_r($dataWebhook, true));
+        Log::channel('wh')->info("changeStatusPayment: " . print_r($dataWebhook, true));
 
         $idWebhook = $dataWebhook['payment']['id'];
         $prevStatusWebhook = $dataWebhook['payment']['previousStatus'];
@@ -84,12 +84,12 @@ class RebillController extends Controller
             'Authorization' => 'Bearer ' . $token
         ])->get('https://api.rebill.to/v2/payments/' . $idWebhook)->json();
 
-        Log::info("responsePaymentById getPaymentById,changeStatusPayment: " . print_r($responsePaymentById, true));
+        Log::channel('wh')->info("responsePaymentById getPaymentById,changeStatusPayment: " . print_r($responsePaymentById, true));
 
         $emailPaymentById = $responsePaymentById['payment']['customer']['email'];
         $paymentLink_Api_Payments = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $emailPaymentById]);
 
-        Log::info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink_Api_Payments, true));
+        Log::channel('wh')->info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink_Api_Payments, true));
 
         $setPaymentLink_Api_Payments = $paymentLink_Api_Payments[0];
 
@@ -104,7 +104,7 @@ class RebillController extends Controller
 
         $leads = $this->zohoService->get("Leads");
 
-        Log::info("changeStatusPayment", ["leads" => $leads]);
+        Log::channel('wh')->info("changeStatusPayment", ["leads" => $leads]);
 
     }
 
