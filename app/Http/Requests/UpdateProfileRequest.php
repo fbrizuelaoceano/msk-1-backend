@@ -35,9 +35,6 @@ class UpdateProfileRequest extends FormRequest
             'email' => 'Debe ingresar una dirección de correo válida.',
             'min' => 'El campo debe tener :min o más caracteres.',
             'required_if' => 'El campo es obligatorio.',
-
-            // 'other_profession.required' => 'El campo "Otra profesión" es obligatorio.',
-            // 'other_speciality.required' => 'El campo "Otra especialidad" es obligatorio.',
         ];
     }
     /**
@@ -47,28 +44,6 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-
-        /*
-            [
-                'name',
-                'last_name',
-                'email',
-                'phone',
-                'profession',
-                'other_profession',
-                'speciality', 
-                'other_speciality',
-                'address', 
-                'country',
-                'state',
-                'postal_code',
-                'rfc',
-                'rute',
-                'mui',
-                'dni',
-                'fiscal_regime'
-            ]
-        */
         return [
             'name' => "required",
             'last_name' => "required",
