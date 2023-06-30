@@ -323,7 +323,7 @@ class AuthController extends Controller
         try { 
 
             // $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
-            $contactData = $request->only(UpdateProfileRequest::$formAttributes);
+            $contactData = $request->only(UpdateProfileRequest::$formAttributes);//pasar el formAttributes al contacto
             
             $data = [
                 'data' => [
