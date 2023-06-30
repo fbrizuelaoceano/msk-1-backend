@@ -258,6 +258,7 @@ Route::prefix('webhook/rebill')->group(function () {
     Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
     Route::any('/newSubscription', [RebillController::class, 'newSubscription']);
     Route::any('/changeStatusSubscription', [RebillController::class, 'changeStatusSubscription']);
+    Route::any('/test', [RebillController::class, 'test']);
 });
 
 Route::get("omApiPayments", function () {

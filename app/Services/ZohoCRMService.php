@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Http;
 class ZohoCRMService
 {
     private $accessToken;
+    private $accessTokenReset;
     private $apiBaseUrl;
     private $clientId;
     private $clientSecret;
@@ -32,25 +33,31 @@ class ZohoCRMService
         $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
 
         if (isset($accessToken)) {
+            $tokenValidated = $this->isValidToken($accessToken);
 
-            if (empty($this->accessToken)) {
-                $this->accessToken = $accessToken->token;
+            if (empty($this->accessTokenReset) && !$tokenValidated['isExpired']) {
+                $this->accessTokenReset = $tokenValidated['token'];
                 return;
             }
 
-            $createdAt = Carbon::parse($accessToken->created_at);
-            $expiresAt = $createdAt->addHours($accessToken->hours_duration);
-            $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
-
-            if ($timeLeft <= 300) { /*300seg = 5min | El token expira en menos de 5 minutos*/
-                $this->generateAccessToken();
-                return;
-            }
-
+            $this->accessTokenReset = $tokenValidated['token'];
         }
 
         //Lo cargo por primera vez
         $this->generateAccessToken();
+    }
+
+    private function isValidToken($accessToken)
+    {
+        $createdAt = Carbon::parse($accessToken->created_at);
+        $expiresAt = $createdAt->addHours($accessToken->hours_duration);
+        $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
+
+        if ($timeLeft <= 300) { /*300seg = 5min | El token expira en menos de 5 minutos*/
+            return ['isExpired' => ($timeLeft <= 300), 'token' => $this->generateAccessToken()];
+        }
+
+        return ['isExpired' => ($timeLeft <= 300), 'token' => $accessToken->token];
     }
 
     private function generateAccessToken()
@@ -71,17 +78,18 @@ class ZohoCRMService
 
         TokenPassport::create($tokenData);
 
-        $this->accessToken = $response['token'];
+        $this->accessToken = $tokenData['token'];
 
-        return $response['token'];
+        return $tokenData['token'];
     }
 
-    public function get($module)
+
+    public function getByEntityId($module, $id)
     {
-        $URL_ZOHO = $this->urlZoho . '/' . $module;
+        $URL_ZOHO = $this->urlZoho . '/' . $module . '/' . $id;
 
         $response = Http::withHeaders([
-            'Authorization' => 'Zoho-oauthtoken ' . $this->accessToken,
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
         ])->get($URL_ZOHO)->json();
 
         return $response;

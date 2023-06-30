@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
@@ -28,7 +29,7 @@ class ProductController extends Controller
     {
         return response()->json([
             "redirect" => "vistacreate",
-        ]);    
+        ]);
     }
     // Post
     public function Create(Request $request)
@@ -41,7 +42,7 @@ class ProductController extends Controller
         $product->save();
 
         return response()->json(
-             $product
+            $product
         );
     }
 

@@ -91,9 +91,6 @@ class RebillController extends Controller
 
         Log::channel('wh')->info("paymentLink getByemail,changeStatusPayment: " . print_r($paymentLink_Api_Payments, true));
 
-        $leads = $this->zohoService->get("Leads");
-
-        Log::channel('wh')->info("changeStatusPayment" . print_r($leads, true));
         $setPaymentLink_Api_Payments = $paymentLink_Api_Payments[0];
 
         $mapping_Status = [
@@ -105,9 +102,30 @@ class RebillController extends Controller
 
         $setPaymentLink_Api_Payments->save();
 
-        $leads = $this->zohoService->get("Leads");
+    }
 
-        Log::channel('wh')->info("changeStatusPayment" . print_r($leads, true));
+    public function test()
+    {
+
+
+        $contract = $this->zohoService->getByEntityId("Sales_Orders", "5344455000004398120");
+        $token = env('REBILL_TOKEN_DEV');
+
+        $responsePaymentById = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ])->get('https://api.rebill.to/v2/payments/207a57ae-9dfb-4518-8efa-a1bdbb5cd337')->json();
+
+
+        $responseSuscriptionById = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ])->get('https://api.rebill.to/v2/subscriptions/' . $responsePaymentById['billingSchedulesId'][0])->json();
+
+        return response()->json([
+            "wh" => $responsePaymentById,
+            "sale" => $contract
+        ]);
 
     }
 
