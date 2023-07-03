@@ -11,10 +11,16 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Contact;
+use App\Services\ZohoCRMService;
 
 class AuthController extends Controller
 {
+    private $zohoService;
 
+    public function __construct(ZohoCRMService $service)
+    {
+        $this->zohoService = $service;
+    }
     /**
      * Register a new user.
      *
@@ -64,8 +70,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users',
         ]);
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->GetByEmailService('Contacts', $request["email"]);
+        // $zohoService = new ZohoCRMService();
+        $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
 
         if ($response != null) { //A -> Esta en CRM
             if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
@@ -78,7 +84,6 @@ class AuthController extends Controller
                     ]);
 
                     $user->save();
-
 
                     return response()->json([
                         'message' => 'Successfully created user!'
@@ -104,7 +109,7 @@ class AuthController extends Controller
                 ]
             ];
 
-            $response = $zohoService->Create('Contacts', $data);
+            $response = $this->zohoService->Create('Contacts', $data);
             /*Al crear usuario en crm productivo se ejecuta un flow que crea user y password.
             Despues de craer los usuarios llama a la api msk productivo para hacer el registro de usuario en la base de msk
             Con esto, ej:
@@ -119,7 +124,7 @@ class AuthController extends Controller
             // // Validar si se creo o no
             // Cuando se cree el contacto.
             if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
-                $response = $zohoService->GetById('Contacts', $response['data'][0]['details']['id']);
+                $response = $this->zohoService->GetById('Contacts', $response['data'][0]['details']['id']);
                 $contactCreated = $response['data'][0];
 
                 if (isset($contactCreated['Usuario']) && isset($contactCreated['Password'])) {
@@ -130,7 +135,6 @@ class AuthController extends Controller
                     ]);
 
                     $newContact = Contact::Create([
-
 
                         'name' => $contactCreated['First_Name'],
                         'phone' => $contactCreated['Phone'],
@@ -246,8 +250,7 @@ class AuthController extends Controller
         ];
         $contact = Contact::where(["email" => $request->email])->first();
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
         //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json($response, 201);
@@ -352,8 +355,7 @@ class AuthController extends Controller
                 ]
             ];
 
-            $zohoService = new ZohoController();
-            $response = $zohoService->Update('Contacts', $data, $request->entity_id_crm);
+            $response = $this->zohoService->Update('Contacts', $data, $request->entity_id_crm);
 
             return response()->json([
                 'updateCRM' => $response
@@ -387,8 +389,7 @@ class AuthController extends Controller
         ];
         $contact = Contact::where(["email" => $request->email])->first();
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
         //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json([

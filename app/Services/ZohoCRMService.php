@@ -1,9 +1,13 @@
 <?php
 namespace App\Services;
 
+use App\Models\Profession;
+use App\Models\Speciality;
 use App\Models\TokenPassport;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ZohoCRMService
 {
@@ -83,7 +87,6 @@ class ZohoCRMService
         return $tokenData['token'];
     }
 
-
     public function getByEntityId($module, $id)
     {
         $URL_ZOHO = $this->urlZoho . '/' . $module . '/' . $id;
@@ -92,6 +95,134 @@ class ZohoCRMService
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
         ])->get($URL_ZOHO)->json();
 
+        return $response;
+    }
+
+    public function CreateLeadFunction($leadAttributes)
+    {
+        $profession = Profession::where('id', $leadAttributes->profession)->first()->name;
+        $speciality = Speciality::where('id', $leadAttributes->speciality)->first()->name;
+
+        $leadData = [
+            'data' => [
+                [
+                    'First_Name' => $leadAttributes->name,
+                    'Last_Name' => $leadAttributes->last_name,
+                    'Phone' => $leadAttributes->phone,
+                    'Email' => $leadAttributes->email,
+                    'Profesion' => $profession,
+                    'Especialidad' => $speciality
+                ]
+            ]
+        ];
+
+        $URL_ZOHO = env('URL_ZOHO') . '/Leads';
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessToken,
+            'Content-Type' => 'application/json'
+        ])
+            ->post($URL_ZOHO, $leadData)
+            ->json();
+
+        return $response;
+    }
+    public function GetByEmailService($module, $email)
+    {
+        try {
+            $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/search?email=' . $email;
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+            ])
+            ->get($URL_ZOHO)->json();
+
+            return $response;
+
+        } catch (Exception $e) {
+            Log::error($e);
+        }
+    }
+
+
+
+
+
+
+    public function Get($module)
+    {
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+        ])
+            ->get($URL_ZOHO)->json();
+
+        return $response;
+    }
+
+    public function GetByIdAllDetails($module, $id)
+    {
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id;
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+        ])
+            ->get($URL_ZOHO)
+            ->json();
+
+        return $response;
+    }
+    public function GetById($module, $id)
+    {
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/search?criteria=(id:equals:' . $id . ')';
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+        ])
+            ->get($URL_ZOHO)
+            ->json();
+
+        return $response;
+    }
+    public function Create($module, $requestArray)
+    {
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+            'Content-Type' => 'application/json'
+        ])
+            ->post($URL_ZOHO, $requestArray)
+            ->json();
+
+        return $response;
+    }
+    public function Update($module, $requestArray, $id)
+    {
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id;
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+        ])
+            ->put($URL_ZOHO, $requestArray)
+            ->json();
+        
+        $body = [
+            $URL_ZOHO,
+            $response,
+            $requestArray
+        ];
+        Log::info("ZohoCRMService-Update-body: " . print_r($body, true));
+
+        return response()->json($response, );
+    }
+    public function Delete($module, $ids)
+    {
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '?ids=' . $ids . '&wf_trigger=true';
+        if ($ids)
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+            ])
+                ->delete($URL_ZOHO)
+                ->json();
         return $response;
     }
 }
