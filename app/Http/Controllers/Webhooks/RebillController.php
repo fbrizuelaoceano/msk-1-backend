@@ -126,6 +126,12 @@ class RebillController extends Controller
             "sale" => $contract
         ]);
 
+        $paymentQuote = count($contract['Paso_5_Detalle_pagos']) + 1; // 1 + 1 = 2
+
+
+
+        $this->zohoService->updateSalePayments()
+
     }
 
 }
