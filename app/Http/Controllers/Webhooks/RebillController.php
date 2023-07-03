@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Webhooks;
 
-use App\Http\Controllers\ZohoController;
 use App\Services\ZohoCRMService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
