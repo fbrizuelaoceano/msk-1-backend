@@ -79,6 +79,11 @@ return [
             'level' => 'debug',
         ],
 
+        'wh' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/webhooks.log'),
+            'level' => 'debug',
+        ],
 
         'slack' => [
             'driver' => 'slack',

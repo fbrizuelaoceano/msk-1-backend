@@ -28,6 +28,8 @@ class Contact extends Model
         "country",
         "postal_code",
         "address",
+        "other_speciality",
+        "other_profession",
     ];
 
     private static $formAttributes = [

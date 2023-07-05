@@ -39,6 +39,7 @@ Route::post('/ValidatedUser', [ZohoWorkflowController::class, 'ValidatedUser']);
 Route::prefix('ZohoWorkFlow')->group(function () {
     // Usar el prefix para el zo (reglas de trabajo)
     Route::post('UpdateQuotes', [ZohoWorkflowController::class, 'UpdateQuotes']);
+    Route::post('UpdateContact', [ZohoWorkflowController::class, 'UpdateContact']);
 
 });
 
@@ -258,6 +259,7 @@ Route::prefix('webhook/rebill')->group(function () {
     Route::any('/changeStatusPayment', [RebillController::class, 'changeStatusPayment']);
     Route::any('/newSubscription', [RebillController::class, 'newSubscription']);
     Route::any('/changeStatusSubscription', [RebillController::class, 'changeStatusSubscription']);
+    Route::any('/test', [RebillController::class, 'test']);
 });
 
 Route::get("omApiPayments", function () {

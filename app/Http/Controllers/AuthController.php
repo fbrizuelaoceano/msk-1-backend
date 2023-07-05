@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -10,10 +11,16 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Contact;
+use App\Services\ZohoCRMService;
 
 class AuthController extends Controller
 {
+    private $zohoService;
 
+    public function __construct(ZohoCRMService $service)
+    {
+        $this->zohoService = $service;
+    }
     /**
      * Register a new user.
      *
@@ -63,8 +70,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users',
         ]);
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->GetByEmailService('Contacts', $request["email"]);
+        // $zohoService = new ZohoCRMService();
+        $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
 
         if ($response != null) { //A -> Esta en CRM
             if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
@@ -77,7 +84,6 @@ class AuthController extends Controller
                     ]);
 
                     $user->save();
-
 
                     return response()->json([
                         'message' => 'Successfully created user!'
@@ -103,7 +109,7 @@ class AuthController extends Controller
                 ]
             ];
 
-            $response = $zohoService->Create('Contacts', $data);
+            $response = $this->zohoService->Create('Contacts', $data);
             /*Al crear usuario en crm productivo se ejecuta un flow que crea user y password.
             Despues de craer los usuarios llama a la api msk productivo para hacer el registro de usuario en la base de msk
             Con esto, ej:
@@ -118,7 +124,7 @@ class AuthController extends Controller
             // // Validar si se creo o no
             // Cuando se cree el contacto.
             if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
-                $response = $zohoService->GetById('Contacts', $response['data'][0]['details']['id']);
+                $response = $this->zohoService->GetById('Contacts', $response['data'][0]['details']['id']);
                 $contactCreated = $response['data'][0];
 
                 if (isset($contactCreated['Usuario']) && isset($contactCreated['Password'])) {
@@ -129,7 +135,6 @@ class AuthController extends Controller
                     ]);
 
                     $newContact = Contact::Create([
-
 
                         'name' => $contactCreated['First_Name'],
                         'phone' => $contactCreated['Phone'],
@@ -245,8 +250,7 @@ class AuthController extends Controller
         ];
         $contact = Contact::where(["email" => $request->email])->first();
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
         //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json($response, 201);
@@ -316,36 +320,62 @@ class AuthController extends Controller
         }
     }
 
-    public function PutProfile(Request $request, $email)
+    // public function PutProfile(Request $request, $email)
+    public function PutProfile(UpdateProfileRequest $request, $email)
     {
-        $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
+        try { 
 
-        $dataForCRM = [
-            'data' => [
-                'First_Name' => $contactData['name'],
-                'Last_Name' => $contactData['last_name'],
-                'Email' => $contactData['email'],
-                'Usuario' => $contactData['email'],
-                'Phone' => $contactData['phone'],
-                'Profesi_n' => $contactData['profession'],
-                'Otra_profesi_n' => $contactData['other_profession'],
-                'Especialidad' => $contactData['speciality'],
-                'Otra_especialidad' => $contactData['other_speciality'],
-                'Pais' => $contactData['country'],
-                'Mailing_State' => $contactData['state'],
-                'Mailing_Zip' => $contactData['postal_code'],
-                'RFC' => $contactData['rfc'],
-                'R_gimen_fiscal' => $contactData['fiscal_regime'],
-                'Mailing_Street' => $contactData['address'],
-            ]
-        ];
+            // $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
+            $contactData = $request->only(UpdateProfileRequest::$formAttributes);//pasar el formAttributes al contacto
+            
+            $data = [
+                'data' => [
+                   [ 
+                    'First_Name' => $contactData['name'],
+                    'Last_Name' => $contactData['last_name'],
+                    'Email' => $contactData['email'],
+                    'Usuario' => $contactData['email'],
+                    'Phone' => $contactData['phone'],
+                    'Profesi_n' => $contactData['profession'],
+                    'Otra_profesi_n' => $contactData['other_profession'],
+                    'Especialidad' => $contactData['speciality'],
+                    'Otra_especialidad' => $contactData['other_speciality'],
+                    'Pais' => $contactData['country'],
+                    'Mailing_State' => $contactData['state'],
+                    'Mailing_Zip' => $contactData['postal_code'],
+                   
+                    'RFC' => $contactData['rfc'],// Mexico
+                   // 'RUT' => $contactData['rut'],// Chile
+                   // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ? 
+                   // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
+                   
+                    'R_gimen_fiscal' => $contactData['fiscal_regime'],
+                    'Mailing_Street' => $contactData['address'],
+                   ]
+                ]
+            ];
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $dataForCRM, $request->entity_id_crm);
+            $response = $this->zohoService->Update('Contacts', $data, $request->entity_id_crm);
 
-        return response()->json([
-            'updateCRM' => $response
-        ]);
+            return response()->json([
+                'updateCRM' => $response
+            ]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en PutProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+            ], 500);
+        }
     }
     public function RequestPasswordChange(Request $request)
     {
@@ -359,8 +389,7 @@ class AuthController extends Controller
         ];
         $contact = Contact::where(["email" => $request->email])->first();
 
-        $zohoService = new ZohoController();
-        $response = $zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+        $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
         //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
         return response()->json([
