@@ -20,40 +20,57 @@ class RebillController extends Controller
 
     public function newPayment(Request $request)
     {
-        $jsonPayload = file_get_contents('php://input');
-        $data = json_decode($jsonPayload, true);
+        try{
+            $jsonPayload = file_get_contents('php://input');
+            $data = json_decode($jsonPayload, true);
 
-        Log::info("newPayment: " . print_r($data, true));
+            Log::info("newPayment: " . print_r($data, true));
 
-        $id = $data['payment']['id'];
-        $email = $data['payment']['customer']['email'];
-        $status = $data['payment']['status'];
+            $id = $data['payment']['id'];
+            $email = $data['payment']['customer']['email'];
+            $status = $data['payment']['status'];
 
-        $paymentLink = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $email]);
+            $paymentLink = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $email]);
 
-        // Log::info("paymentLink get by email: " . print_r($paymentLink, true));
+            // Log::info("paymentLink get by email: " . print_r($paymentLink, true));
 
-        $setPaymentLink = $paymentLink[0];
+            $setPaymentLink = $paymentLink[0];
 
-        $statusPaymentLink = [
-            ["PENDING" => "pending"],
-            ["SUCCEEDED" => "Contrato Efectivo"],
-            ["FAILED" => "Pago Rechazado"]
-        ];
-        $setPaymentLink->status = $statusPaymentLink[$status];
+            $statusPaymentLink = [
+                ["PENDING" => "pending"],
+                ["SUCCEEDED" => "Contrato Efectivo"],
+                ["FAILED" => "Pago Rechazado"]
+            ];
+            $setPaymentLink->status = $statusPaymentLink[$status];
 
-        $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
+            $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
 
-        if($status === "SUCCEEDED"){
-            $this->payloadZohoCRMMSK($token,$id);
+            if($status === "SUCCEEDED"){
+                $this->payloadZohoCRMMSK($token,$id);
+            }
+
+            $response = Http::withHeaders([
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
+
+            Log::info("response rebill newPayment: " . print_r($response, true));
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en GetProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+            ], 500);
         }
-
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $token
-        ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
-
-        Log::info("response rebill newPayment: " . print_r($response, true));
     }
     public function newSubscription(Request $request)
     {
@@ -126,11 +143,11 @@ class RebillController extends Controller
         // $responsePaymentById["id"] = "2";
         // //limpiar campo 
         // $data = [
-            // "data" => [
-                // [
-                    // "Paso_5_Detalle_pagos" => []
-                // ]
-            // ]
+        //     "data" => [
+        //         [
+        //             "Paso_5_Detalle_pagos" => []
+        //         ]
+        //     ]
         // ];
         // $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, "5344455000004398120");
         // *#endregion*
@@ -155,6 +172,7 @@ class RebillController extends Controller
         //Actualizacion de sale order en zrmzohomsk
         $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, $getSalesOrdersById['data'][0]["id"]);
         Log::info("newPayment-payloadZohoCRMMSK-responseUdateSaleOrder: " . print_r($responseUdateSaleOrder, true));
+    
     }
     
     public function test()
