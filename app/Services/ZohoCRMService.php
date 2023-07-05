@@ -143,11 +143,7 @@ class ZohoCRMService
         }
     }
 
-
-
-
-
-
+    /* Administracion de tokens */
     public function Get($module)
     {
         $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
@@ -158,7 +154,6 @@ class ZohoCRMService
 
         return $response;
     }
-
     public function GetByIdAllDetails($module, $id)
     {
         $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/' . $id;
@@ -225,4 +220,6 @@ class ZohoCRMService
                 ->json();
         return $response;
     }
+    /* End Administracion de tokens */
+    
 }
