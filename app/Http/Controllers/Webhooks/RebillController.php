@@ -110,7 +110,7 @@ class RebillController extends Controller
     }
     public function payloadZohoCRMMSK($apiToken,$idPayment){
     // public function payloadZohoCRMMSK(Request $request){
-        Log::info("newPayment-payloadZohoCRMMSK-idPayment: " . print_r($idPayment, true));
+        Log::info("payloadZohoCRMMSK-idPayment: " . print_r($idPayment, true));
 
         // $idPayment = "5cf7da17-3d17-4912-b45f-fa26da5a7e7b";
         // $apiToken = env('APP_DEBUG') ? env('REBILL_TOKEN_DEV') : env('REBILL_TOKEN_PRD');
@@ -119,20 +119,20 @@ class RebillController extends Controller
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $apiToken
         ])->get($url)->json();
-        Log::info("newPayment-payloadZohoCRMMSK-responsePaymentById: " . print_r($responsePaymentById, true));
-        Log::info("newPayment-payloadZohoCRMMSK-billingSchedulesId: " . print_r($responsePaymentById["billingSchedulesId"][0], true));
+        Log::info("payloadZohoCRMMSK-responsePaymentById: " . print_r($responsePaymentById, true));
+        Log::info("payloadZohoCRMMSK-billingSchedulesId: " . print_r($responsePaymentById["billingSchedulesId"][0], true));
         
         $responseSuscriptionById = Http::withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $apiToken
         ])->get("https://api.rebill.to/v2/subscriptions/".$responsePaymentById["billingSchedulesId"][0])->json();
-        Log::info("newPayment-payloadZohoCRMMSK-responseSuscriptionById: " . print_r($responseSuscriptionById, true));
+        Log::info("payloadZohoCRMMSK-responseSuscriptionById: " . print_r($responseSuscriptionById, true));
         
         $soNumber = isset($responseSuscriptionById["metadataObject"]["so_number"]) ? str_replace("x", "", $responseSuscriptionById["metadataObject"]["so_number"]) : "";
         $query = "Sales_Orders/search?criteria=(otro_so:equals:".$soNumber.")";
         $getSalesOrdersBySO_OM = $this->zohoService->get($query);
         $getSalesOrdersById = $this->zohoService->GetByIdAllDetails('Sales_Orders',$getSalesOrdersBySO_OM['data'][0]["id"]);
-        Log::info("newPayment-payloadZohoCRMMSK-getSalesOrdersById: " . print_r($getSalesOrdersById, true));
+        Log::info("payloadZohoCRMMSK-getSalesOrdersById: " . print_r($getSalesOrdersById, true));
         $paso5DetalleDePagos=$getSalesOrdersById['data'][0]["Paso_5_Detalle_pagos"];
         // *#region* Depuracion
         // $responsePaymentById["id"] = "2";
@@ -163,11 +163,11 @@ class RebillController extends Controller
                 ];
         array_push($data["data"][0]["Paso_5_Detalle_pagos"],$paymentData);
         // *#endregion*
-        Log::info("newPayment-payloadZohoCRMMSK-data: " . print_r($data, true));
+        Log::info("payloadZohoCRMMSK-data: " . print_r($data, true));
         
         //Actualizacion de sale order en zrmzohomsk
         $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, $getSalesOrdersById['data'][0]["id"]);
-        Log::info("newPayment-payloadZohoCRMMSK-responseUdateSaleOrder: " . print_r($responseUdateSaleOrder, true));
+        Log::info("payloadZohoCRMMSK-responseUdateSaleOrder: " . print_r($responseUdateSaleOrder, true));
     
     }
     
