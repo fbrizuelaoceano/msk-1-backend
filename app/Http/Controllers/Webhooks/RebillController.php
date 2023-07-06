@@ -132,11 +132,15 @@ class RebillController extends Controller
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $apiToken
         ])->get('https://api.rebill.to/v2/payments/'.$idPayment)->json();
+        Log::info("newPayment-payloadZohoCRMMSK-responsePaymentById: " . print_r($responsePaymentById, true));
+        Log::info("newPayment-payloadZohoCRMMSK-billingSchedulesId: " . print_r($responsePaymentById["billingSchedulesId"][0], true));
+        
         $responseSuscriptionById = Http::withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $apiToken
         ])->get("https://api.rebill.to/v2/subscriptions/".$responsePaymentById["billingSchedulesId"][0])->json();
-
+        Log::info("newPayment-payloadZohoCRMMSK-responseSuscriptionById: " . print_r($responseSuscriptionById, true));
+        
         $soNumber = isset($responseSuscriptionById["metadataObject"]["so_number"]) ? str_replace("x", "", $responseSuscriptionById["metadataObject"]["so_number"]) : "";
         $query = "Sales_Orders/search?criteria=(otro_so:equals:".$soNumber.")";
         $getSalesOrdersBySO_OM = $this->zohoService->get($query);
