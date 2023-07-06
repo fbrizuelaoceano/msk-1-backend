@@ -39,9 +39,9 @@ class RebillController extends Controller
                 $setPaymentLink = $paymentLink[0];
 
                 $statusPaymentLink = [
-                    ["PENDING" => "pending"],
-                    ["SUCCEEDED" => "Contrato Efectivo"],
-                    ["FAILED" => "Pago Rechazado"]
+                    "PENDING" => "pending",
+                    "SUCCEEDED" => "Contrato Efectivo",
+                    "FAILED" => "Pago Rechazado"
                 ];
                 $setPaymentLink->status = $statusPaymentLink[$status];
     
