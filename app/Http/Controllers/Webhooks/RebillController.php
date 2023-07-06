@@ -30,21 +30,6 @@ class RebillController extends Controller
             $email = $data['payment']['customer']['email'];
             $status = $data['payment']['status'];
 
-            $paymentLink = DB::connection('omApiPayments')->select("SELECT * FROM rebill_customers AS rebill_c INNER JOIN payment_links AS pay_l ON rebill_c.id = pay_l.rebill_customer_id WHERE rebill_c.email = :email ORDER BY rebill_c.created_at DESC LIMIT 1;", ["email" => $email]);
-            Log::info("paymentLink-status: " . print_r($status, true));
-
-            Log::info("paymentLink get by email: " . print_r($paymentLink, true));
-
-            if(count($paymentLink)>0){
-                $setPaymentLink = $paymentLink[0];
-
-                $statusPaymentLink = [
-                    "PENDING" => "pending",
-                    "SUCCEEDED" => "Contrato Efectivo",
-                    "FAILED" => "Pago Rechazado"
-                ];
-                $setPaymentLink->status = $statusPaymentLink[$status];
-    
                 $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
     
                 if($status == "SUCCEEDED"){
@@ -57,7 +42,6 @@ class RebillController extends Controller
                 ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
     
                 Log::info("response rebill newPayment: " . print_r($response, true));
-            }
             
         } catch (\Exception $e) {
             $err = [
