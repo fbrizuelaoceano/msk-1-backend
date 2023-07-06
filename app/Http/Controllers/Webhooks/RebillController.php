@@ -80,6 +80,9 @@ class RebillController extends Controller
         $newStatusWebhook = $dataWebhook['payment']['newStatus'];
 
         $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
+        if($newStatusWebhook == "SUCCEEDED"){
+            $this->payloadZohoCRMMSK($token,$idWebhook);
+        }
 
         $responsePaymentById = Http::withHeaders([
             'Accept' => 'application/json',
@@ -141,7 +144,7 @@ class RebillController extends Controller
         //         ]
         //     ]
         // ];
-        // $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, $getSalesOrdersById['data'][0]["id"]);
+        // $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, "5344455000004398120");
         // *#endregion*
         // *#region* Carga de data para actualizar cobros en crm zoho msk
         $data = [
@@ -155,7 +158,8 @@ class RebillController extends Controller
                 $paymentData = [
                     "Fecha_Cobro" => $fechaRecortada,
                     "Cobro_ID" => $responsePaymentById["id"],
-                    "Numero_de_cobro" => count($paso5DetalleDePagos) < 1 ? 1 : count($paso5DetalleDePagos) + 1
+                    "Numero_de_cobro" => count($paso5DetalleDePagos) < 1 ? 1 : count($paso5DetalleDePagos) + 1,
+                    "Origen_Pago" => "Rebill",
                 ];
         array_push($data["data"][0]["Paso_5_Detalle_pagos"],$paymentData);
         // *#endregion*
