@@ -35,7 +35,7 @@ class RebillController extends Controller
 
             Log::info("paymentLink get by email: " . print_r($paymentLink, true));
 
-            if($paymentLink[0]){
+            if(count($paymentLink)>0){
                 $setPaymentLink = $paymentLink[0];
 
                 $statusPaymentLink = [
