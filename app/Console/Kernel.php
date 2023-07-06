@@ -2,12 +2,17 @@
 
 namespace App\Console;
 
+use App\Console\Commands\GitPullAndCleanLaravelLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Http;
 
 class Kernel extends ConsoleKernel
 {
+
+    protected $commands = [
+        GitPullAndCleanLaravelLog::class
+    ];
     /**
      * Define the application's command schedule.
      */
