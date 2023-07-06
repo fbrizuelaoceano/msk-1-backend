@@ -30,7 +30,7 @@ class RebillController extends Controller
             $email = $data['payment']['customer']['email'];
             $status = $data['payment']['status'];
 
-                $token = env('APP_DEBUG') ? env('REBILL_TOKEN_PRD') : env('REBILL_TOKEN_PRD');
+                $token = env('APP_DEBUG') ? env('REBILL_TOKEN_DEV') : env('REBILL_TOKEN_PRD');
     
                 if($status == "SUCCEEDED"){
                     $this->payloadZohoCRMMSK($token,$id);
@@ -38,10 +38,10 @@ class RebillController extends Controller
     
                 $response = Http::withHeaders([
                     'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $token
+                    'Authorization' => 'Bearer '.$token
                 ])->get('https://api.rebill.to/v2/payments/' . $id)->json();
     
-                Log::info("response rebill newPayment: " . print_r($response, true));
+                Log::info("response rebill response: " . print_r($response, true));
             
         } catch (\Exception $e) {
             $err = [
@@ -111,11 +111,11 @@ class RebillController extends Controller
 
         // $idPayment = "5cf7da17-3d17-4912-b45f-fa26da5a7e7b";
         // $apiToken = env('APP_DEBUG') ? env('REBILL_TOKEN_DEV') : env('REBILL_TOKEN_PRD');
-        
+        $url = 'https://api.rebill.to/v2/payments/'.$idPayment;
         $responsePaymentById = Http::withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $apiToken
-        ])->get('https://api.rebill.to/v2/payments/'.$idPayment)->json();
+        ])->get($url)->json();
         Log::info("newPayment-payloadZohoCRMMSK-responsePaymentById: " . print_r($responsePaymentById, true));
         Log::info("newPayment-payloadZohoCRMMSK-billingSchedulesId: " . print_r($responsePaymentById["billingSchedulesId"][0], true));
         
@@ -141,7 +141,7 @@ class RebillController extends Controller
         //         ]
         //     ]
         // ];
-        // $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, "5344455000004398120");
+        // $responseUdateSaleOrder = $this->zohoService->Update('Sales_Orders', $data, $getSalesOrdersById['data'][0]["id"]);
         // *#endregion*
         // *#region* Carga de data para actualizar cobros en crm zoho msk
         $data = [
