@@ -82,7 +82,7 @@ class SSOController extends Controller
                                     $fechaActual = Carbon::now() ;
                                     $horaActual = $fechaActual->format('H:i:s');
                                     // Combina la fecha actual, la hora actual y el desplazamiento horario
-                                    $fechaExpiracion = $fechaActual->toDateString() . "T" . $horaActual . "-03:00";
+                                    $fechaExpiracion = $fechaActual->toDateString() . "T" . $horaActual; //. "-03:00";
                                     $formCourseProgress[$index]['Fecha_de_ltima_sesi_n'] = $fechaExpiracion;
                                 }
                                 // $formCP['Fecha_de_ltima_sesi_n'] = ;
