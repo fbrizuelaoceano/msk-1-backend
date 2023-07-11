@@ -32,6 +32,11 @@ class ZohoCRMService
         $this->getAccessToken();
     }
 
+    public function listContactsCrm($page = 1, $limit = 200)
+    {
+
+    }
+
     private function getAccessToken()
     {
         $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
@@ -134,7 +139,7 @@ class ZohoCRMService
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
             ])
-            ->get($URL_ZOHO)->json();
+                ->get($URL_ZOHO)->json();
 
             return $response;
 
@@ -149,8 +154,7 @@ class ZohoCRMService
         $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
-        ])
-            ->get($URL_ZOHO)->json();
+        ])->get($URL_ZOHO)->json();
 
         return $response;
     }
@@ -199,7 +203,7 @@ class ZohoCRMService
         ])
             ->put($URL_ZOHO, $requestArray)
             ->json();
-        
+
         $body = [
             $URL_ZOHO,
             $response,
@@ -221,5 +225,5 @@ class ZohoCRMService
         return $response;
     }
     /* End Administracion de tokens */
-    
+
 }
