@@ -305,19 +305,19 @@ class ZohoWorkflowController extends Controller
             // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
             $updatedContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactArrayObj["id"] ], $mskObjDBContact );
-            // Log::info("UpdateContact-newCo[ntact: " . print_r($newContact, true));
+             Log::info("UpdateContact-newCo[ntact: " . print_r($newContact, true));
         
             //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
            
             $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
-            Log::info("ZohoWorkflowController-UpdateContact-formCourseProgress: " . print_r($formCourseProgress, true));
+            // Log::info("ZohoWorkflowController-UpdateContact-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if($formCourseProgress){
                 
                 foreach ($formCourseProgress as $formCPstdClass) {
                     $arrayFormCP = (array)$formCPstdClass;
-                    Log::info("ZohoWorkflowController-UpdateContact-foreach formCPstdClass: " . print_r($formCPstdClass, true));
+                    // Log::info("ZohoWorkflowController-UpdateContact-foreach formCPstdClass: " . print_r($formCPstdClass, true));
                     
                     $mskObjDBCourseProgress = null;
                     $mskObjDBCourseProgress = [
@@ -343,7 +343,7 @@ class ZohoWorkflowController extends Controller
                         'C_digo_de_Curso_Cedente' => $arrayFormCP['C_digo_de_Curso_Cedente'],
                         'Plataforma_enrolamiento' => $arrayFormCP['Plataforma_enrolamiento'],
                     ];
-                    Log::info("ZohoWorkflowController-UpdateContact-foreach mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
+                    // Log::info("ZohoWorkflowController-UpdateContact-foreach mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
 
                     CourseProgress::updateOrCreate([
                         'entity_id_crm' => $arrayFormCP['id'],
