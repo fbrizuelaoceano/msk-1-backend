@@ -305,7 +305,7 @@ class ZohoWorkflowController extends Controller
             // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
             $updatedContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactArrayObj["id"] ], $mskObjDBContact );
-             Log::info("UpdateContact-newCo[ntact: " . print_r($newContact, true));
+             Log::info("UpdateContact-updatedContact: " . print_r($updatedContact, true));
         
             //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
@@ -378,6 +378,7 @@ class ZohoWorkflowController extends Controller
         }
     }
 }
+
 
 
 
