@@ -242,6 +242,7 @@ Route::get('newsletter/specialities', function () {
 
 Route::get('professions', function () {
     $professions = Profession::all();
+    dump($professions);
     return response()->json($professions);
 });
 Route::get('specialities', function () {
