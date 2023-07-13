@@ -302,7 +302,7 @@ class ZohoWorkflowController extends Controller
                 // 'sex' => $contactArrayObj["Sexo"],//no esta en el form de Datos personales
                 // 'validate' => $contactArrayObj["Validador"],//no esta en el form de Datos personales
             ];
-            // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
+            Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
            
             $updatedContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactArrayObj["id"] ], $mskObjDBContact );
              Log::info("UpdateContact-updatedContact: " . print_r($updatedContact, true));
