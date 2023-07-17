@@ -420,7 +420,7 @@ class ZohoController extends Controller
     /* Administracion de token */
     function AccessTokenDB()
     {
-        $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
+        // $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
         if (isset($accessToken)) {
             if (empty($this->ZOHO_ACCESS_TOKEN_RESET)) {
                 $this->ZOHO_ACCESS_TOKEN_RESET = $accessToken->token;
@@ -529,7 +529,7 @@ class ZohoController extends Controller
         ])
             ->put($URL_ZOHO, $requestArray)
             ->json();
-        
+
         $body = [
             $URL_ZOHO,
             $response,
