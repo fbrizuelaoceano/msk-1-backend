@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TopicInterest extends Model
 {
     use HasFactory;
-
+    protected $table = 'topic_interests';
     protected $fillable = ['name'];
 }
