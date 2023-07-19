@@ -4,6 +4,8 @@ namespace App\Console;
 
 use App\Console\Commands\GitPullAndCleanLaravelLog;
 use App\Console\Commands\PopulateUsersWithContacts;
+use App\Console\Commands\PopulateContactsWithContractsAndCourses;
+
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +15,8 @@ class Kernel extends ConsoleKernel
 
     protected $commands = [
         GitPullAndCleanLaravelLog::class,
-        PopulateUsersWithContacts::class
+        PopulateUsersWithContacts::class,
+        PopulateContactsWithContractsAndCourses::class
     ];
     /**
      * Define the application's command schedule.
