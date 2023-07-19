@@ -39,21 +39,26 @@ class ZohoCRMService
 
     private function getAccessToken()
     {
-        $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
+        try {
 
-        if (isset($accessToken)) {
-            $tokenValidated = $this->isValidToken($accessToken);
+            $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
 
-            if (empty($this->accessTokenReset) && !$tokenValidated['isExpired']) {
+            if (isset($accessToken)) {
+                $tokenValidated = $this->isValidToken($accessToken);
+
+                if (empty($this->accessTokenReset) && !$tokenValidated['isExpired']) {
+                    $this->accessTokenReset = $tokenValidated['token'];
+                    return;
+                }
+
                 $this->accessTokenReset = $tokenValidated['token'];
-                return;
             }
 
-            $this->accessTokenReset = $tokenValidated['token'];
-        }
+            //Lo cargo por primera vez
+            $this->generateAccessToken();
+        } catch (Exception $e) {
 
-        //Lo cargo por primera vez
-        $this->generateAccessToken();
+        }
     }
 
     private function isValidToken($accessToken)
