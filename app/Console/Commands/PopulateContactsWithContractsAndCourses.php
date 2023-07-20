@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 
 use App\Models\Contract;
 use App\Models\Contact;
+use App\Models\Product;
+use App\Models\CourseProgress;
 use App\Services\ZohoCRMService;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,13 +66,73 @@ class PopulateContactsWithContractsAndCourses extends Command
                             'country' => $saleOrder["Pais_de_facturaci_n"],
                             'currency' => $saleOrder["Currency"],
                         ]);
+
+                        $productDetails = $saleOrder["Product_Details"];
+                        // Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
+            
+                        foreach ($productDetails as $pd) {
+                            // Log::info("salesForCRM-pd: " . print_r($pd, true));
+            
+                            Product::updateOrCreate([
+                                'entity_id_crm' => $pd["product"]["id"],
+                                'contract_entity_id' => $saleOrder["id"]
+                            ], [
+                                    'entity_id_crm' => $pd["product"]["id"],
+                                    'contract_id' => $contract->id,
+                                    'contract_entity_id' => $saleOrder["id"],
+                                    'quantity' => $pd["quantity"],
+                                    'discount' => $pd["Discount"],
+                                    'price' => $pd["total"],
+                                    'product_code' => (int) $pd["product"]["Product_Code"]
+                                ]);
+                        }
+                    }
+                }
+            }
+            
+            $contacts = Contact::all();
+            foreach ($contacts as $index => $contact) {
+                if (isset($contact)){
+                    $contactZoho = $this->zohoService->GetByIdAllDetails('Contacts',$contact->entity_id_crm);
+                    // Log::info("PopulateContactsWithContractsAndCourses-execute-contact: " . print_r($contact, true));
+                    // Log::info("PopulateContactsWithContractsAndCourses-execute-contactsZoho: " . print_r($contactZoho, true));
+                    if(isset($contactZoho['data'][0])){
+                        $coursesProgressZoho = $contactZoho['data'][0]["Formulario_de_cursada"];
+                        foreach($coursesProgressZoho as $index => $cpZoho){
+                            $dataProductZoho = $this->zohoService->GetByIdAllDetails('Products',$cpZoho["Nombre_de_curso"]["id"]);
+                            // Log::info("PopulateContactsWithContractsAndCourses-execute-productsZoho: " . print_r($productsZoho, true));
+                            $productZoho = $dataProductZoho["data"][0];
+                            CourseProgress::updateOrCreate([
+                                'entity_id_crm' => $cpZoho['id'],
+                                'contact_id' => $contact->id
+                            ], [
+                                'entity_id_crm' => $cpZoho['id'],
+                                'Fecha_finalizaci_n' => $cpZoho['Fecha_finalizaci_n'],
+                                // 'Nombre_de_curso' => $formCP['Nombre_de_curso']['name'].' id:'.$formCP['Nombre_de_curso']['id'],
+                                'Nombre_de_curso' => $cpZoho['Nombre_de_curso']["name"],
+                                'Estado_de_OV' => $cpZoho['Estado_de_OV'],
+                                'field_states' => $cpZoho['$field_states'],
+                                'Created_Time' => $cpZoho['Created_Time'],
+                                // 'Parent_Id' => $formCP['Parent_Id']['name'].' id:'.$formCP['Parent_Id']['id'],
+                                'Parent_Id' => $cpZoho['Parent_Id']["id"],
+                                'Nota' => $cpZoho['Nota'],
+                                'Estado_cursada' => $cpZoho['Estado_cursada'],
+                                'Avance' => $cpZoho['Avance'],
+                                'Fecha_de_expiraci_n' => $cpZoho['Fecha_de_expiraci_n'],
+                                'in_merge' => $cpZoho['$in_merge'],
+                                'Fecha_de_compra' => $cpZoho['Fecha_de_compra'],
+                                'Enrollamiento' => $cpZoho['Enrollamiento'],
+                                'Fecha_de_ltima_sesi_n' => $cpZoho['Fecha_de_ltima_sesi_n'],
+                                'contact_id' => $contact->id,
+                                'Product_Code' => $productZoho['Product_Code'],
+                                'C_digo_de_Curso_Cedente' => $productZoho['C_digo_de_Curso_Cedente'],
+                                'Plataforma_enrolamiento' => $productZoho['Plataforma_enrolamiento'],
+                            ]);
+                        }
                     }
                 }
             }
 
-            $contacts = Contact::all();
-
-        
         } catch (\Exception $e) {
             $err = [
                 'message' => $e->getMessage(),
@@ -86,3 +148,4 @@ class PopulateContactsWithContractsAndCourses extends Command
         return 0;
     }
 }
+

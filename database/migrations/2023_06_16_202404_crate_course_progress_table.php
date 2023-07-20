@@ -29,9 +29,9 @@ return new class extends Migration
             $table->string('entity_id_crm')->nullable()->default(null);             // "id": "5344455000004413001",
             $table->string('Enrollamiento')->nullable()->default(null);             // "Enrollamiento": "2023-05-24T11:10:00-03:00",
             $table->string('Fecha_de_ltima_sesi_n')->nullable()->default(null);     // "Fecha_de_ltima_sesi_n": null
-            $table->integer('Product_Code', false, true);
-            $table->string('C_digo_de_Curso_Cedente')->nullable()->default(null); 
-            $table->string('Plataforma_enrolamiento')->nullable()->default(null); 
+            $table->integer('Product_Code', false, true);                           //sale del producto
+            $table->string('C_digo_de_Curso_Cedente')->nullable()->default(null);   //sale del producto
+            $table->string('Plataforma_enrolamiento')->nullable()->default(null);   //sale del producto
             
             $table->foreignId('contact_id')->nullable()->default(null)
                 ->references('id')
