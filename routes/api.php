@@ -16,6 +16,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourseProgressController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CountryController;
 
 
 Route::post('signup', [AuthController::class, 'signup']);
@@ -155,3 +156,4 @@ Route::get("omApiPayments", function () {
 });
 
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
+Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
