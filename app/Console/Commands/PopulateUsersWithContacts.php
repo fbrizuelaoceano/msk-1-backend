@@ -45,9 +45,11 @@ class PopulateUsersWithContacts extends Command
         try {
             $limit = $input->getArgument('limit');
             $page = $input->getArgument('page');
+     
             $output->writeln(" - Executing " . __CLASS__ . " " . $page . " " . $limit);
 
-            $result = $this->service->Get('Contacts');
+            // $result = $this->service->Get('Contacts');
+            $result = $this->service->Get('Contacts'.'?per_page='.$limit);
 
             // Log::info("PopulateUsersWithContacts-execute-result: " . print_r($result, true));
 
@@ -59,45 +61,67 @@ class PopulateUsersWithContacts extends Command
             if (isset($result['data'])) {
 
                 $contacts = $result['data'];
-
+                $requeridos = [
+                    'id',
+                    'First_Name',
+                    'Last_Name',
+                    'Phone',
+                    'Usuario',
+                    'Sexo',
+                    'Pais'
+                ];
                 foreach ($contacts as $cntc) {
-                    $newUser = User::UpdateOrCreate(
-                        [
-                            'email' => $cntc['Usuario']
-                        ],
-                        [
-                            'name' => $cntc['Full_Name'],
-                            'email' => $cntc['Usuario'],
-                            'password' => Hash::make($cntc['Password']),
-                        ]
-                    );
+                    $isNull = false;
+                    foreach ($requeridos as $campo) {
+                        if (!isset($cntc[$campo]) || $cntc[$campo] === null) {//si el campo es null lo imprimo para que no rompa
+                            // El campo es null o no está definido en $cntc
+                            $output->writeln("Uno de los campos requeridos por la base de datos viene vacio desde la api zoho. Id de la entidad en crm: ".$cntc["id"]);
+                            Log::info("PopulateUsersWithContacts-execute-contacto de zoho sin los datos requeridos: " . print_r($cntc, true));
+                            $isNull=true;
+                            break;
+                        }
+                    }
 
-                    Contact::UpdateOrCreate(
-                        [
-                            'email' => $cntc['Usuario']
-                        ],
-                        [
-                            'name' => $cntc['First_Name'],
-                            'last_name' => $cntc['Last_Name'],
-                            'email' => $cntc['Usuario'],
-                            'entity_id_crm' => $cntc['id'],
-                            'phone' => $cntc['Phone'],
-                            'user_id' => $newUser->id,
-                            'profession' => $cntc["Profesi_n"],
-                            'speciality' => $cntc["Especialidad"],
-                            'rfc' => $cntc["RFC"],
-                            'country' => $cntc["Pais"],
-                            'fiscal_regime' => $cntc["R_gimen_fiscal"],
-                            'postal_code' => $cntc["Mailing_Zip"],
-                            'address' => $cntc["Mailing_Street"],
-                            'other_profession' => $cntc["Otra_profesi_n"],
-                            'other_speciality' => $cntc["Otra_especialidad"],
-                            'state' => $cntc["Mailing_City"],
-                            'sex' => $cntc["Sexo"],
-                            'validate' => $cntc["Validador"],
-                            'date_of_birth' => $cntc["Date_of_Birth"]
-                        ]
-                    );
+                    if(!$isNull){
+                        $newUser = User::UpdateOrCreate(
+                            [
+                                'email' => $cntc['Usuario']
+                            ],
+                            [
+                                'name' => $cntc['Full_Name'],
+                                'email' => $cntc['Usuario'],
+                                'password' => Hash::make($cntc['Password']),
+                            ]
+                        );
+                        
+                        Contact::UpdateOrCreate(
+                            [
+                                'email' => $cntc['Usuario']
+                            ],
+                            [
+                                'name' => $cntc['First_Name'],
+                                'last_name' => $cntc['Last_Name'],
+                                'email' => $cntc['Usuario'],
+                                'entity_id_crm' => $cntc['id'],
+                                'phone' => $cntc['Phone'],
+                                'user_id' => $newUser->id,
+                                'profession' => $cntc["Profesi_n"],
+                                'speciality' => $cntc["Especialidad"],
+                                'rfc' => $cntc["RFC"],
+                                'country' => $cntc["Pais"],
+                                'fiscal_regime' => $cntc["R_gimen_fiscal"],
+                                'postal_code' => $cntc["Mailing_Zip"],
+                                'address' => $cntc["Mailing_Street"],
+                                'other_profession' => $cntc["Otra_profesi_n"],
+                                'other_speciality' => $cntc["Otra_especialidad"],
+                                'state' => $cntc["Mailing_City"],
+                                'sex' => $cntc["Sexo"],
+                                'validate' => $cntc["Validador"],
+                                'date_of_birth' => $cntc["Date_of_Birth"]
+                            ]
+                        );
+                    }
+                   
                 }
             }
 
@@ -109,10 +133,10 @@ class PopulateUsersWithContacts extends Command
                 'file' => $e->getFile(),
                 'trace' => $e->getTraceAsString(),
             ];
-
+            $output->writeln("Hubo un error al ejecutar el codigo del comando y no pudo terminar. Para mas detalles revice el archivo de log.");
             Log::error("Error en PopulateUsersWithContacts: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
         }
-
+        $output->writeln("Carga de contactos y usuarios completa.");
         return 0;
     }
 }

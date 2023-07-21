@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class PopulateContactsWithContractsAndCourses extends Command
 {
+    // protected $name = 'populate:contracts-products-courses-progress';
     protected $name = 'populate:contacts-contracts';
     /**
      * The name and signature of the console command.
@@ -27,7 +28,7 @@ class PopulateContactsWithContractsAndCourses extends Command
      *
      * @var string
      */
-    protected $description = 'Toma contratos del crm y mapea con los contactos que tiene la base de msk latam.';
+    protected $description = 'Toma los contactos traidos del comando que populariza msk db y busca con querys all de contratos y sus productos asociados. Tambien trae las cursadas.';
     private ZohoCRMService $zohoService;
     public function __construct(ZohoCRMService $service)
     {
@@ -52,7 +53,7 @@ class PopulateContactsWithContractsAndCourses extends Command
             if (isset($salesOrders['data'])) {
                 $salesOrdersArray = (array)$salesOrders["data"];
                 // Log::info("PopulateContactsWithContractsAndCourses-execute-salesOrdersArray: " . print_r($salesOrdersArray, true));
-                foreach ($salesOrdersArray as $saleOrder) {
+                foreach ($salesOrdersArray as $index => $saleOrder) {
                     $contact = Contact::where(["entity_id_crm" => $saleOrder["Contact_Name"]["id"]])->first();
                     if (isset($contact)){
                         // Log::info("PopulateContactsWithContractsAndCourses-execute-contactId: " . print_r($contact->id, true));
