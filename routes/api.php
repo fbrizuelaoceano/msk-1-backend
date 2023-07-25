@@ -157,3 +157,4 @@ Route::get("omApiPayments", function () {
 
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
 Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
+Route::get("/crm/products", [ZohoController::class, 'getProductsCRM']);

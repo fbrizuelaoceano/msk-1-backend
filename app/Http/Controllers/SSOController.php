@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Models\CourseProgress;
+use App\Models\ProductCRM;
 use App\Services\ZohoCRMService;
 use Illuminate\Http\{Request, Response};
 use Illuminate\Support\Facades\Validator;
@@ -22,9 +23,65 @@ class SSOController extends Controller
         $this->zohoService = $service;
     }
 
+    private function makeSSOTropos($data)
+    {
+        $secret = env("SSO_TROPOS_SECRET");
+        //$secret = "contraseña sso";
+
+        $timestamp = time();
+        //$timestamp = 1686668709;
+
+        $identifier = urlencode($data['email']);
+        //$identifier = "correo%40dominio.com";
+
+        $cadena = "sso_identifier=$identifier&sso_timestamp=$timestamp&secret=$secret";
+        //$cadena = "sso_identifier=correo%40dominio.com&sso_timestamp=1686668709&secret=contraseña ss";
+
+        $hash_cadena = md5($cadena);
+        //$hash_cadena = "3beea8cb022146a06c399245c2001dfd";
+
+        $cadenaGET = "?sso_identifier=$identifier&sso_timestamp=$timestamp&sso_hash=$hash_cadena";
+        //$cadenaGET="?sso_identifier=correo%40dominio.com&sso_timestamp=1686668709&sso_hash=3beea8cb022146a06c399245c2001dfd";
+
+        if (isset($data['cod_curso'])) {
+            $cadenaGET .= "&codcurso=" . $data['cod_curso'];
+        }
+
+        // $cadenaGET.="&codcurso=C23796";
+        return env('SSO_TROPOS_URL') . $cadenaGET;
+    }
+
+    private function makeSSOMoodle($data)
+    {
+        $secret = env("SSO_MOODLE_SECRET");
+        $identifier = $data['email'];
+
+        $hash = password_hash($identifier . $secret, PASSWORD_BCRYPT, array("cost" => 12));
+        $identifier = urlencode($identifier);
+
+        $cadenaGET = "?mail=" . $identifier . "&secret=" . $hash;
+        // $cadenaGET.="&codcurso=C23796";
+        return env('SSO_MOODLE_URL') . $cadenaGET;
+    }
+
+    private function makeSSOLink($data)
+    {
+
+        $course = ProductCRM::where('cedente_code', $data['cod_curso'])->first();
+        $coursePlatform = $course->platform;
+
+        switch ($coursePlatform) {
+            case 'Moodle MSK':
+                return $this->makeSSOMoodle($data);
+            default: //Tropos
+                return $this->makeSSOTropos($data);
+        }
+
+    }
+
     public function getLMSLink(Request $request)
     {
-        try{
+        try {
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'cod_curso' => 'required'
@@ -36,30 +93,7 @@ class SSOController extends Controller
             }
 
             $data = $request->only(['email', 'cod_curso']);
-            $secret = env("SSO_SECRET");
-            //$secret = "contraseña sso";
-
-            $timestamp = time();
-            //$timestamp = 1686668709;
-
-            $identifier = urlencode($data['email']);
-            //$identifier = "correo%40dominio.com";
-
-            $cadena = "sso_identifier=$identifier&sso_timestamp=$timestamp&secret=$secret";
-            //$cadena = "sso_identifier=correo%40dominio.com&sso_timestamp=1686668709&secret=contraseña ss";
-
-            $hash_cadena = md5($cadena);
-            //$hash_cadena = "3beea8cb022146a06c399245c2001dfd";
-
-            $cadenaGET = "?sso_identifier=$identifier&sso_timestamp=$timestamp&sso_hash=$hash_cadena";
-            //$cadenaGET="?sso_identifier=correo%40dominio.com&sso_timestamp=1686668709&sso_hash=3beea8cb022146a06c399245c2001dfd";
-
-            if (isset($data['cod_curso'])) {
-                $cadenaGET .= "&codcurso=" . $data['cod_curso'];
-            }
-
-            // $cadenaGET.="&codcurso=C23796";
-            $sso = env('SSO_URL') . $cadenaGET;
+            $sso = $this->makeSSOLink($data);
 
             // Contact::where('email', 'emarmolejo@msklatam.com')->get();
             $contacto = Contact::where('email', $data['email'])->get()->first();
@@ -68,27 +102,27 @@ class SSOController extends Controller
                 'C_digo_de_Curso_Cedente' => $data['cod_curso']
             ])->get()->first();
             // $formCourseProgressMSKDB = CourseProgress::all();
-            if($formCourseProgressMSKDB){
-                if($formCourseProgressMSKDB["C_digo_de_Curso_Cedente"] == $data["cod_curso"]){
+            if ($formCourseProgressMSKDB) {
+                if ($formCourseProgressMSKDB["C_digo_de_Curso_Cedente"] == $data["cod_curso"]) {
                     $contactZohoCRM = $this->zohoService->GetByIdAllDetails("Contacts", $contacto->entity_id_crm);
 
-                    $formCourseProgress = (array)$contactZohoCRM["data"][0]["Formulario_de_cursada"];
-                    if($formCourseProgress){
+                    $formCourseProgress = (array) $contactZohoCRM["data"][0]["Formulario_de_cursada"];
+                    if ($formCourseProgress) {
                         foreach ($formCourseProgress as $index => $formCPstdClass) {
-                            $formCP = (array)$formCPstdClass;
+                            $formCP = (array) $formCPstdClass;
                             $idDB = $formCourseProgressMSKDB["entity_id_crm"];
-                            $idZoho = $formCP['id']; 
-                                if($idZoho == $idDB){
-                                    $fechaActual = Carbon::now() ;
-                                    $horaActual = $fechaActual->format('H:i:s');
-                                    // Combina la fecha actual, la hora actual y el desplazamiento horario
-                                    $fechaExpiracion = $fechaActual->toDateString() . "T" . $horaActual; //. "-03:00";
-                                    $formCourseProgress[$index]['Fecha_de_ltima_sesi_n'] = $fechaExpiracion;
-                                }
-                                // $formCP['Fecha_de_ltima_sesi_n'] = ;
-                                // $formCP['Product_Code'] = ;
-                                // $formCP['C_digo_de_Curso_Cedente'] = ;
-                        
+                            $idZoho = $formCP['id'];
+                            if ($idZoho == $idDB) {
+                                $fechaActual = Carbon::now();
+                                $horaActual = $fechaActual->format('H:i:s');
+                                // Combina la fecha actual, la hora actual y el desplazamiento horario
+                                $fechaExpiracion = $fechaActual->toDateString() . "T" . $horaActual; //. "-03:00";
+                                $formCourseProgress[$index]['Fecha_de_ltima_sesi_n'] = $fechaExpiracion;
+                            }
+                            // $formCP['Fecha_de_ltima_sesi_n'] = ;
+                            // $formCP['Product_Code'] = ;
+                            // $formCP['C_digo_de_Curso_Cedente'] = ;
+
                         }
                     }
                     $dataZoho = [
@@ -101,7 +135,7 @@ class SSOController extends Controller
                     $contactZohoCRM = $this->zohoService->update("Contacts", $dataZoho, $contacto->entity_id_crm);
                 }
             }
-        
+
 
             return response()->json([
                 "done" => true,
@@ -122,7 +156,7 @@ class SSOController extends Controller
             ];
 
             Log::error("Error en getLMSLink: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
-            
+
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
                 $err,

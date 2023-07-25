@@ -154,9 +154,9 @@ class ZohoCRMService
     }
 
     /* Administracion de tokens */
-    public function Get($module)
+    public function Get($module, $page = 1)
     {
-        $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '?page=' . $page;
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
         ])->get($URL_ZOHO)->json();
