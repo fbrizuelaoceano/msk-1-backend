@@ -1,0 +1,79 @@
+[18-May-2023 17:47:12 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/composer/platform_check.php on line 24
+[17-Jul-2023 19:36:23 UTC] PHP Fatal error:  Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.1.0". You are running 7.4.33. in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/composer/platform_check.php on line 24
+[17-Jul-2023 16:37:46 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
+[17-Jul-2023 16:38:47 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
+[17-Jul-2023 16:41:09 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
+[17-Jul-2023 16:41:32 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
+[17-Jul-2023 16:44:31 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
+[17-Jul-2023 16:47:48 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
+[17-Jul-2023 17:06:27 America/Argentina/Buenos_Aires] PHP Fatal error:  Uncaught Error: Class "Sentry\Laravel\Integration" not found in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php:46
+Stack trace:
+#0 [internal function]: App\Exceptions\Handler->App\Exceptions\{closure}(Object(Error))
+#1 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/ReportableHandler.php(45): call_user_func(Object(Closure), Object(Error))
+#2 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(256): Illuminate\Foundation\Exceptions\ReportableHandler->__invoke(Object(Error))
+#3 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/nunomaduro/collision/src/Adapters/Laravel/ExceptionHandler.php(46): Illuminate\Foundation\Exceptions\Handler->report(Object(Error))
+#4 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(182): NunoMaduro\Collision\Adapters\Laravel\ExceptionHandler->report(Object(Error))
+#5 /home/customer/www/dev.msklatam.com/public_html/msk-laravel/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(254): Illuminate\Foundation\Bootstrap\HandleExceptions->handleException(Object(Error))
+#6 [internal function]: Illuminate\Foundation\Bootstrap\HandleExceptions->Illuminate\Foundation\Bootstrap\{closure}(Object(Error))
+#7 {main}
+  thrown in /home/customer/www/dev.msklatam.com/public_html/msk-laravel/app/Exceptions/Handler.php on line 46
