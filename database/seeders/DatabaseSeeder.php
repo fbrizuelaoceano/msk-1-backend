@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ProfessionSeeder::class,
             SpecialitySeeder::class,
             MethodContactSeeder::class,
+            TopicInterestSeeder::class,
         ]);
     }
 }

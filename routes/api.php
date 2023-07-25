@@ -8,7 +8,7 @@ use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
 use App\Models\Profession;
 use App\Models\Speciality;
-use App\Models\User;
+use App\Models\TopicInterest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -16,19 +16,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourseProgressController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LikeController;
-use App\Models\Like;
-use GuzzleHttp\Psr7\Request;
+use App\Http\Controllers\CountryController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
@@ -130,112 +119,7 @@ Route::get('store/professions', function () {
 
 Route::get('newsletter/specialities', function () {
 
-    $specialties = [
-        [
-            'id' => 1,
-            'name' => 'Cardiología'
-        ],
-        [
-            'id' => 2,
-            'name' => 'Ginecología'
-        ],
-        [
-            'id' => 3,
-            'name' => 'Diabetes'
-        ],
-        [
-            'id' => 4,
-            'name' => 'Psicología'
-        ],
-        [
-            'id' => 5,
-            'name' => 'Cirugía'
-        ],
-        [
-            'id' => 6,
-            'name' => 'Medicina general'
-        ],
-        [
-            'id' => 7,
-            'name' => 'Nutrición'
-        ],
-        [
-            'id' => 8,
-            'name' => 'Infectología'
-        ],
-        [
-            'id' => 9,
-            'name' => 'Obstetricia'
-        ],
-        [
-            'id' => 10,
-            'name' => 'Hematología'
-        ],
-        [
-            'id' => 11,
-            'name' => 'Emergentología'
-        ],
-        [
-            'id' => 12,
-            'name' => 'Oncología'
-        ],
-        [
-            'id' => 13,
-            'name' => 'Gastroenterología'
-        ],
-        [
-            'id' => 14,
-            'name' => 'Medicina intensiva'
-        ],
-        [
-            'id' => 15,
-            'name' => 'Anestesiología y dolor'
-        ],
-        [
-            'id' => 16,
-            'name' => 'Pediatría'
-        ],
-        [
-            'id' => 17,
-            'name' => 'Dermatología'
-        ],
-        [
-            'id' => 18,
-            'name' => 'Geriatría'
-        ],
-        [
-            'id' => 19,
-            'name' => 'Psiquiatría'
-        ],
-        [
-            'id' => 20,
-            'name' => 'Diagnóstico por imágenes'
-        ],
-        [
-            'id' => 21,
-            'name' => 'Endocrinología'
-        ],
-        [
-            'id' => 22,
-            'name' => 'Medicina interna'
-        ],
-        [
-            'id' => 23,
-            'name' => 'Neurología'
-        ],
-        [
-            'id' => 24,
-            'name' => 'Oftalmología'
-        ],
-        [
-            'id' => 25,
-            'name' => 'Traumatología'
-        ],
-        [
-            'id' => 26,
-            'name' => 'Otorrinolaringología'
-        ]
-    ];
+    $specialties = TopicInterest::all();
 
     return response()->json($specialties);
 });
@@ -272,3 +156,5 @@ Route::get("omApiPayments", function () {
 });
 
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
+Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
+Route::get("/crm/products", [ZohoController::class, 'getProductsCRM']);

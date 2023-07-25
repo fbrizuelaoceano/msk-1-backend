@@ -32,23 +32,33 @@ class ZohoCRMService
         $this->getAccessToken();
     }
 
+    public function listContactsCrm($page = 1, $limit = 200)
+    {
+
+    }
+
     private function getAccessToken()
     {
-        $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
+        try {
 
-        if (isset($accessToken)) {
-            $tokenValidated = $this->isValidToken($accessToken);
+            $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
 
-            if (empty($this->accessTokenReset) && !$tokenValidated['isExpired']) {
+            if (isset($accessToken)) {
+                $tokenValidated = $this->isValidToken($accessToken);
+
+                if (empty($this->accessTokenReset) && !$tokenValidated['isExpired']) {
+                    $this->accessTokenReset = $tokenValidated['token'];
+                    return;
+                }
+
                 $this->accessTokenReset = $tokenValidated['token'];
-                return;
             }
 
-            $this->accessTokenReset = $tokenValidated['token'];
-        }
+            //Lo cargo por primera vez
+            $this->generateAccessToken();
+        } catch (Exception $e) {
 
-        //Lo cargo por primera vez
-        $this->generateAccessToken();
+        }
     }
 
     private function isValidToken($accessToken)
@@ -134,7 +144,7 @@ class ZohoCRMService
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
             ])
-            ->get($URL_ZOHO)->json();
+                ->get($URL_ZOHO)->json();
 
             return $response;
 
@@ -144,13 +154,12 @@ class ZohoCRMService
     }
 
     /* Administracion de tokens */
-    public function Get($module)
+    public function Get($module, $page = 1)
     {
-        $URL_ZOHO = env('URL_ZOHO') . '/' . $module;
+        $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '?page=' . $page;
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
-        ])
-            ->get($URL_ZOHO)->json();
+        ])->get($URL_ZOHO)->json();
 
         return $response;
     }
@@ -199,7 +208,7 @@ class ZohoCRMService
         ])
             ->put($URL_ZOHO, $requestArray)
             ->json();
-        
+
         $body = [
             $URL_ZOHO,
             $response,
@@ -221,5 +230,5 @@ class ZohoCRMService
         return $response;
     }
     /* End Administracion de tokens */
-    
+
 }
