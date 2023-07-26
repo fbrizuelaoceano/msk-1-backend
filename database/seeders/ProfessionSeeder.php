@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 
 class ProfessionSeeder extends Seeder
 {
-
     public $data = [
         ['name' => "Personal médico"],
+        ['name' => "Residentes"],
+        ['name' => "Lic. en salud"],
         ['name' => "Licenciado de la salud"],
         ['name' => "Personal de enfermería"],
         ['name' => "Auxiliar de enfermería"],
