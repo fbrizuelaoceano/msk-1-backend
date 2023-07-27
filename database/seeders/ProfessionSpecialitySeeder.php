@@ -210,7 +210,7 @@ class ProfessionSpecialitySeeder extends Seeder
             ['profession' => 'Fuerza pública', 'speciality'=> 'Guardavidas / Rescatista'],
             ['profession' => 'Fuerza pública', 'speciality'=> 'Paramédico'],
             ['profession' => 'Fuerza pública', 'speciality'=> 'Otra profesión'],
-//            'profession' => 'x', 'speciality'=> 'x',
+//          'profession' => 'x', 'speciality'=> 'x',
         ];
 
         $professionsDB = Profession::all();
@@ -224,7 +224,6 @@ class ProfessionSpecialitySeeder extends Seeder
             foreach ($relationshipsArray as $rsArray) {
                 // [Personal médico - Alergia e inmunología]
                 if($pDB->name === $rsArray["profession"]){
-                    
                     foreach ($specialitiesDB as $spDB) {
                         // Alergia e inmunología
                         if($rsArray["speciality"] === $spDB->name) {
