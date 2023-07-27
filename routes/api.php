@@ -42,7 +42,6 @@ Route::get('/GetQuotes', [ZohoController::class, 'GetQuotes']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:api');
-Route::get('/profile/{email}', [AuthController::class, 'GetProfile']);
 Route::get('/profile/{email}', [AuthController::class, 'GetProfile'])->middleware("auth:api");
 Route::put('/profile/{email}', [AuthController::class, 'PutProfile']);
 Route::post('/ValidatePasswordChange', [AuthController::class, 'ValidatePasswordChange']);
@@ -134,99 +133,27 @@ Route::get('professions', function () {
     $professions = Profession::all();
     return response()->json($professions);
 });
-Route::get('specialities-old', function () {
-    $specialities = Speciality::all();
-    return response()->json($specialities);
-});
 Route::get('specialities', function () {
-//////Request solicitado
-    // {
-    //     "specialities_group": { // esto listaria las solapas de excel
-    //         "profession_id" : [
-    //             {"id":1,"name":"epecialidad_1"},
-    //             {"id":2,"name":"epecialidad_2"}
-    //         ],
-    //     }
-    // }
-
-//////Opcion tres
-    $professions = Profession::with('specialities')->get();
+    $professions = Profession::with('specialities','careers')->get();
     $specialities_group = [];
-    foreach( $professions as $p){
+    foreach( $professions as $p ){
         $spData = [];
-        foreach($p->specialities as $sp){
-            array_push($spData, [ "id" => $sp->id, "name" => $sp->name ]);
+        if($p->name === "Estudiante"){
+            foreach($p->careers as $c){
+                array_push($spData, [ "id" => $c->id, "name" => $c->name ]);
+            }
+        }else{
+            foreach($p->specialities as $sp){
+                array_push($spData, [ "id" => $sp->id, "name" => $sp->name ]);
+            }
         }
+        
         $newgroup = [ $p->id => $spData ];
         array_push($specialities_group, $newgroup);
     }
     return response()->json([
         "specialities_group" => $specialities_group
     ]);
-    
-//////Opcion uno que esta genial
-    // $professions = Profession::with('specialities')->get();
-    // return response()->json($professions);
-  
-    // $professionSpecialities = ProfessionSpeciality::with('profession')->get();
-
-//////Opcion dos
-    // $professionSpecialities = ProfessionSpeciality::all();
-    // $data = [];
-    // foreach ($professionSpecialities as $ps) {
-    //     $data[] = [
-    //         'id' => $ps->id,
-    //         'profession_name' => $ps->profession->name,
-    //         'speciality_name' => $ps->speciality->name,
-    //     ];
-    // }
-    // return response()->json($data);
-    //respuesta
-    // [
-    //     {
-    //         "id": 1,
-    //         "profession_name": "Personal médico",
-    //         "speciality_name": "Alergia e inmunología"
-    //     },
-    //     {
-    //         "id": 2,
-    //         "profession_name": "Personal médico",
-    //         "speciality_name": "Anatomía patológica"
-    //     },
-    //     {
-    //         "id": 3,
-    //         "profession_name": "Personal médico",
-    //         "speciality_name": "Anestesiología"
-    //     },
-    //     {
-    //         "id": 4,
-    //         "profession_name": "Personal médico",
-    //         "speciality_name": "Auditoría y administración sanitaria"
-    //     },
-    // ]
-
-//////prueba
-    // $ids = [ 
-    //     "asdasd",
-    //     "dasdasdasdasdasd"
-    // ];
-    // $specialities_group = [ 
-    //         $ids[0] => [
-    //             [ "id" => 1, "name" => "epecialidad_1" ],
-    //             [ "id" => 2, "name" => "epecialidad_2" ]
-
-    //         ],
-    //         $ids[1] => [
-    //             [ "id" => 1, "name" => "epecialidad_3" ],
-    //             [ "id" => 2, "name" => "epecialidad_4" ]
-
-    //         ],
-    //     ];
-
-    
-    // return response()->json([
-    //     "specialities_group" => $specialities_group
-    // ]);
 });
 
 Route::prefix('products')->group(function () {
