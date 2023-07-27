@@ -10,7 +10,6 @@ use App\Models\Speciality;
 class ProfessionSpeciality extends Model
 {
     use HasFactory;
-    use HasFactory;
     
     protected $timestamp = true;
     protected $table = 'profession_speciality';
