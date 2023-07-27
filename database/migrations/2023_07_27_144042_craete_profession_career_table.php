@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('careers', function (Blueprint $table) {
+        Schema::create('profession_career', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-
+            $table->unsignedBigInteger('profession_id');
+            $table->unsignedBigInteger('career_id');
             $table->timestamps();
+    
+            $table->foreign('profession_id')->references('id')->on('professions');
+            $table->foreign('career_id')->references('id')->on('careers');
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('careers');
+        Schema::dropIfExists('profession_career');
     }
 };
