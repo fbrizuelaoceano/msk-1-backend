@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Speciality;
 
 class Profession extends Model
 {
@@ -15,5 +16,9 @@ class Profession extends Model
     public function getName(){
         $name = $this->name;
         return $name;
+    }
+    public function specialities()
+    {
+        return $this->belongsToMany(Speciality::class, 'profession_speciality', 'profession_id', 'speciality_id');
     }
 }
