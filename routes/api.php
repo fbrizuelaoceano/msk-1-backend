@@ -7,9 +7,7 @@ use App\Http\Controllers\ZohoOMController;
 use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
 use App\Models\Profession;
-use App\Models\Speciality;
 use App\Models\TopicInterest;
-use App\Models\ProfessionSpeciality;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -135,7 +133,6 @@ Route::get('professions', function () {
 });
 Route::get('specialities', function () {
     $professions = Profession::with('specialities', 'careers')->get();
-    $specialities = Speciality::all();
     $specialities_group = [];
 
     foreach ($professions as $p) {
@@ -154,7 +151,6 @@ Route::get('specialities', function () {
     }
 
     return response()->json([
-        "specialities" => $specialities,
         "specialities_group" => $specialities_group
     ]);
 });
