@@ -9,6 +9,8 @@ use App\Http\Controllers\ZohoWorkflowController;
 use App\Models\Profession;
 use App\Models\Speciality;
 use App\Models\TopicInterest;
+use App\Models\ProfessionSpeciality;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -91,6 +93,9 @@ Route::prefix('crm')->group(function () {
     Route::delete('DeleteContacts/{id}', [ZohoController::class, 'DeleteContacts']);
 
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
+    // Route::get('Products', [ZohoController::class, 'GetContracts']);
+    // Route::get('Contracts', [ZohoController::class, 'GetContracts']);
+
 
     Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
 
@@ -129,8 +134,26 @@ Route::get('professions', function () {
     return response()->json($professions);
 });
 Route::get('specialities', function () {
-    $specialities = Speciality::all();
-    return response()->json($specialities);
+    $professions = Profession::with('specialities','careers')->get();
+    $specialities_group = [];
+    foreach( $professions as $p ){
+        $spData = [];
+        if($p->name === "Estudiante"){
+            foreach($p->careers as $c){
+                array_push($spData, [ "id" => $c->id, "name" => $c->name ]);
+            }
+        }else{
+            foreach($p->specialities as $sp){
+                array_push($spData, [ "id" => $sp->id, "name" => $sp->name ]);
+            }
+        }
+        
+        $newgroup = [ $p->id => $spData ];
+        array_push($specialities_group, $newgroup);
+    }
+    return response()->json([
+        "specialities_group" => $specialities_group
+    ]);
 });
 
 Route::prefix('products')->group(function () {
@@ -158,3 +181,4 @@ Route::get("omApiPayments", function () {
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
 Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
 Route::get("/crm/products", [ZohoController::class, 'getProductsCRM']);
+
