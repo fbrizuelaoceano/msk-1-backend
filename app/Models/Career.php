@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Profession;
 
-class Speciality extends Model
+class Career extends Model
 {
     use HasFactory;
     protected $timestamp = true;
-    protected $fillable = ['name'];
+    protected $fillable = ['id','name'];
     protected $hidden = ['created_at','updated_at'];
-
+    public function getName(){
+        $name = $this->name;
+        return $name;
+    }
     public function professions()
     {
-        return $this->belongsToMany(Profession::class, 'profession_speciality', 'speciality_id', 'profession_id');
+        return $this->belongsToMany(Profession::class, 'profession_career', 'career_id', 'profession_id');
     }
-    
 }
