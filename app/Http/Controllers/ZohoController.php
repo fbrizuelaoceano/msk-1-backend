@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lead;
-use App\Models\MethodContact;
-use App\Models\ProductCRM;
-use App\Models\Profession;
-use App\Models\Speciality;
-use App\Models\TokenPassport;
+use App\Models\{
+    Career,Lead,MethodContact,ProductCRM,Profession,Speciality,TokenPassport
+};
 use App\Services\ZohoCRMService;
 use Carbon\Carbon;
 use Exception;
@@ -295,69 +292,16 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeContactUs(Request $request)
     {
-
-        // $request->validate([
-        //     'Email' => 'required|string|email',
-        //     'Last_Name' => 'required|string',
-        // ]);
-
-        // // $lead = Lead::where(['Email'=> $request->Email ])->first();
-        // // $response = $this->GetByEmailService('Leads',$request->Email);
-        // // if ($response == null ) {//No esta en CRM
-        // $data = [
-        //     "data" => [
-        //         [
-        //             "Email" => $request->Email,
-        //             "Last_Name" => $request->Last_Name,
-        //             "Name" => $request->Name,
-        //             "Profesion" => $request->Profesion,
-        //             "Especialidad" => $request->Especialidad,
-        //             "Phone" => $request->Phone,
-        //             "Description" => $request->Description,
-        //             "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
-        //         ]
-        //     ]
-        // ];
-
-        // if (!empty($request->Otra_profesion)) {
-        //     $data['data'][0]['Otra_profesion'] = $request->Otra_profesion;
-        // }
-
-        // if (!empty($request->Otra_especialidad)) {
-        //     $data['data'][0]['Otra_especialidad'] = $request->Otra_especialidad;
-        // }
-
-        // $response = $this->Create('Leads', $data);
-        // // }
-
-        // if (!empty($request->Profesion))
-        //     $profession = Profession::where(['name' => $request->Profesion])->first();
-        // if (!empty($request->Especialidad))
-        //     $specialty = Speciality::where(['name' => $request->Especialidad])->first();
-        // if (!empty($request->Preferencia_de_contactaci_n))
-        //     $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
-
-        // $newLead = Lead::Create([
-        //     "email" => $request->Email,
-        //     "last_name" => $request->Last_Name,
-        //     "name" => $request->Name,
-        //     "profession" => isset($profession->id) ? $profession->id : '',
-        //     "speciality" => isset($specialty->id) ? $specialty->id : '',
-        //     "phone" => $request->Phone,
-        //     "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
-
-        //     // "entity_id_crm" => $response->id,//Hay que asociar el id del crm
-        //     // "Message" => $request->Message,//Crear un campo para esto
-        // ]);
         $request->validate([
             'Email' => 'required|string|email',
+            
+            'A_o_de_estudio' => 'required_if:Profesion,Estudiante',//string
             'Last_Name' => 'required|string',
         ]);
 
         // $lead = Lead::where(['Email'=> $request->Email ])->first();
         // $response = $this->GetByEmailService('Leads',$request->Email);
         // if ($response == null ) {//No esta en CRM
-
 
         $data = [
             "data" => [
@@ -376,9 +320,10 @@ class ZohoController extends Controller
                     "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
                     "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
                     "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
-                    "Pais" => $request->Pais
-
-                ]
+                    "Pais" => $request->Pais,
+                    "A_o_de_estudio" => $request->A_o_de_estudio,
+                    "Carrera_de_estudio" => ($request->Profesion === "Estudiante")? $request->Especialidad : null,
+                    ]
             ]
         ];
 
@@ -390,21 +335,30 @@ class ZohoController extends Controller
 
         if (!empty($request->Profesion))
             $profession = Profession::where(['name' => $request->Profesion])->first();
-        if (!empty($request->Especialidad))
-            $specialty = Speciality::where(['name' => $request->Especialidad])->first();
+        $specialty = null;
+        $career = null;
+        if (!empty($request->Especialidad)){
+            if($request->Profesion === "Estudiante")
+                $career = Career::where(['name' => $request->Especialidad])->first();
+            else
+                $specialty = Career::where(['name' => $request->Especialidad])->first();
+        }
         if (!empty($request->Preferencia_de_contactaci_n))
             $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
+
 
         $newLead = Lead::create([
             "email" => $request->Email,
             "last_name" => $request->Last_Name,
             "name" => $request->First_Name,
-            "profession" => isset($profession->id) ? $profession->id : '',
-            "speciality" => isset($specialty->id) ? $specialty->id : '',
+            "profession" => isset($profession->id) ? $profession->id : null,
+            "speciality" => isset($specialty->id) ? $specialty->id : null,
             "phone" => $request->Phone,
             "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
             "entity_id_crm" => $response['data'][0]['details']['id'],
-            'country' => $request->Pais
+            'country' => $request->Pais,
+            'year' => $request->A_o_de_estudio,
+            'career' => isset($career->id) ? $career->id : null,
         ]);
 
         return response()->json([
@@ -417,6 +371,7 @@ class ZohoController extends Controller
 
         $request->validate([
             'Email' => 'required|string|email',
+            'A_o_de_estudio' => 'required_if:Profesion,Estudiante',//string
         ]);
 
         $data = [
@@ -435,7 +390,8 @@ class ZohoController extends Controller
                     "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
                     "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
                     "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
-
+                    "A_o_de_estudio" => $request->A_o_de_estudio,
+                    "Carrera_de_estudio" => ($request->Profesion === "Estudiante")? $request->Especialidad : null,
                 ]
             ]
         ];

@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->foreignId('speciality')->nullable()->default(null)
                 ->references('id')
                 ->on('specialities');
-
+            
             $table->foreignId('method_contact')->nullable()->default(null)
                 ->references('id')
                 ->on('method_contacts');

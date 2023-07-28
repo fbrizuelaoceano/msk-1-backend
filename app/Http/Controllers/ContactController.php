@@ -77,7 +77,7 @@ class ContactController extends Controller
         $newOrUpdatedContact = Contact::updateOrCreate([
             'email' => $contact["email"]
         ], $contact->toArray());
-
+        
         return response()->json([
             'contacts' => $newOrUpdatedContact,
         ]);
