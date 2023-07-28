@@ -137,6 +137,7 @@ Route::get('specialities', function () {
     $professions = Profession::with('specialities', 'careers')->get();
     $specialities = Speciality::all();
     $specialities_group = [];
+
     foreach ($professions as $p) {
         $spData = [];
         if ($p->name === "Estudiante") {
@@ -149,9 +150,9 @@ Route::get('specialities', function () {
             }
         }
 
-        $newgroup = [$p->id => $spData];
-        array_push($specialities_group, $newgroup);
+        $specialities_group[$p->id] = $spData;
     }
+
     return response()->json([
         "specialities" => $specialities,
         "specialities_group" => $specialities_group
