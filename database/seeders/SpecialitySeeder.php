@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Speciality;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
 class SpecialitySeeder extends Seeder
 {
     public $data = [
@@ -127,6 +129,9 @@ class SpecialitySeeder extends Seeder
      */
     public function run()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0;'); // Desactivamos la revisión de claves foráneas
+        DB::table('specialities')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1;'); // Reactivamos la revisión de claves foráneas
         foreach ($this->data as $d) {
             Speciality::create($d);
         }
