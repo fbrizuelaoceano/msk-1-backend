@@ -26,3 +26,5 @@ ZCRMClientLibrary.log
 .rnd
 docker-compose.yml
 mysql
+php_errorlog
+/public/php_errorlog
