@@ -134,24 +134,26 @@ Route::get('professions', function () {
     return response()->json($professions);
 });
 Route::get('specialities', function () {
-    $professions = Profession::with('specialities','careers')->get();
+    $professions = Profession::with('specialities', 'careers')->get();
+    $specialities = Speciality::all();
     $specialities_group = [];
-    foreach( $professions as $p ){
+    foreach ($professions as $p) {
         $spData = [];
-        if($p->name === "Estudiante"){
-            foreach($p->careers as $c){
-                array_push($spData, [ "id" => $c->id, "name" => $c->name ]);
+        if ($p->name === "Estudiante") {
+            foreach ($p->careers as $c) {
+                array_push($spData, ["id" => $c->id, "name" => $c->name]);
             }
-        }else{
-            foreach($p->specialities as $sp){
-                array_push($spData, [ "id" => $sp->id, "name" => $sp->name ]);
+        } else {
+            foreach ($p->specialities as $sp) {
+                array_push($spData, ["id" => $sp->id, "name" => $sp->name]);
             }
         }
-        
-        $newgroup = [ $p->id => $spData ];
+
+        $newgroup = [$p->id => $spData];
         array_push($specialities_group, $newgroup);
     }
     return response()->json([
+        "specialities" => $specialities,
         "specialities_group" => $specialities_group
     ]);
 });
@@ -181,4 +183,3 @@ Route::get("omApiPayments", function () {
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
 Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
 Route::get("/crm/products", [ZohoController::class, 'getProductsCRM']);
-
