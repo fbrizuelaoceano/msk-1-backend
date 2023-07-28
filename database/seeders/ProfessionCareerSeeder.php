@@ -11,41 +11,38 @@ use App\Models\ProfessionCareer;
 
 class ProfessionCareerSeeder extends Seeder
 {
-   
+
     /**
      * Run the database seeds.
      */
     public function run(): void
-    { 
+    {
         $relationshipsArray = [
-            ['profession' => 'Estudiante', 'career'=> 'Medicina'],
-            ['profession' => 'Estudiante', 'career'=> 'Enfermería'],
-            ['profession' => 'Estudiante', 'career'=> 'Lic. en salud'],
-            ['profession' => 'Estudiante', 'career'=> 'Técnico en salud'],
-            ['profession' => 'Estudiante', 'career'=> 'Otra'],
+            ['profession' => 'Estudiante', 'career' => 'Medicina'],
+            ['profession' => 'Estudiante', 'career' => 'Enfermería'],
+            ['profession' => 'Estudiante', 'career' => 'Lic. en salud'],
+            ['profession' => 'Estudiante', 'career' => 'Técnico en salud'],
+            ['profession' => 'Estudiante', 'career' => 'Otra'],
         ];
         $professionsDB = Profession::all();
         $carrersDB = Career::all();
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0;'); // Desactivamos la revisión de claves foráneas
-        DB::table('profession_speciality')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1;'); // Reactivamos la revisión de claves foráneas
-        
+
         foreach ($professionsDB as $pDB) {
             // Estudiante
             foreach ($relationshipsArray as $rsArray) {
                 // [Personal médico - Alergia e inmunología]
-                if($pDB->name === $rsArray["profession"]){
+                if ($pDB->name === $rsArray["profession"]) {
                     foreach ($carrersDB as $csDB) {
                         // Alergia e inmunología
-                        if($rsArray["career"] === $csDB->name) {
+                        if ($rsArray["career"] === $csDB->name) {
                             ProfessionCareer::create([
                                 "profession_id" => $pDB->id,
                                 "career_id" => $csDB->id,
                             ]);
-                        } 
+                        }
                     }
                 }
-            }    
+            }
         }
     }
 }
