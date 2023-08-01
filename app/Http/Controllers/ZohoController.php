@@ -182,7 +182,24 @@ class ZohoController extends Controller
         return response()->json($response);
     }
 
-
+    function GetProducts()
+    {
+        $response = $this->Get('Products');
+        return response()->json(
+            $response,
+        );
+    }
+    function GetByIdProducts($id)
+    {
+        // byid
+        // {
+        //     "Avales": null,
+        // }
+        $response = $this->GetById('Products', $id);
+        return response()->json(
+            $response,
+        );
+    }
     function GetContracts()
     {
         $response = $this->Get('Contracts');
@@ -542,8 +559,8 @@ class ZohoController extends Controller
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
         ])
-            ->get($URL_ZOHO)
-            ->json();
+        ->get($URL_ZOHO)
+        ->json();
 
         return $response;
     }

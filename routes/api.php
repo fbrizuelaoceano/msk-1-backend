@@ -32,6 +32,7 @@ Route::prefix('ZohoWorkFlow')->group(function () {
 
 });
 
+Route::get('GetProductsAll', [ZohoController::class, 'GetProducts']);
 Route::get('GetByIdAllDetails/{module}/{id}', [ZohoController::class, 'GetByIdAllDetails']);
 Route::get('GetCursadas/{id}', [ZohoController::class, 'GetCursadaService']);
 Route::get('GetByEmail/{module}/{email}', [ZohoController::class, 'GetByEmailService']);
@@ -158,3 +159,4 @@ Route::get("omApiPayments", function () {
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
 Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
 Route::get("/crm/products", [ZohoController::class, 'getProductsCRM']);
+
