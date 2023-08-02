@@ -85,7 +85,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                                     'discount' => $pd["Discount"],
                                     'price' => $pd["total"],
                                     'product_code' => (int) $pd["product"]["Product_Code"]
-                                ]);
+                            ]);
                         }
                     }
                 }
