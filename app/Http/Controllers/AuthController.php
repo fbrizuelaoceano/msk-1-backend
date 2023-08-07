@@ -85,13 +85,29 @@ class AuthController extends Controller
 
                     $user->save();
 
+                    //aca se podria agregar que cree al contacto si no lo tiene. Ver si no es un errorde vulnerabiliad.
+                    $newContact = Contact::updateOrCreate(
+                        [
+                            'email' => $response['Usuario'],
+                        ],
+                        [
+                        'name' => $response['First_Name'],
+                        'phone' => $response['Phone'],
+                        'last_name' => $response['Last_Name'],
+                        'email' => $response['Usuario'],
+                        'user_id' => $user->id,
+                        'entity_id_crm' => $response['id'],
+                        'country' => $response['Pais']
+                    ]);
+
+                    //No le podes devolver un token de sesion porque yo podria poner cualquier email y la pagina me estaria dejando logearme desde la creacion de usuario. Por eso le digo que revise su email o el contacto en crm para logearse.
                     return response()->json([
-                        'message' => 'Successfully created user!'
+                        'message' => 'El usuario ya esta registrado en CRM. Le actualizamos la informacion en nuestra base de datos, intente nuevamente. '
                     ], 201);
                 }
             } else {
                 return response()->json([
-                    'message' => "Error consultar por email en api CRM",
+                    'message' => "El usuario ya esta registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
                     'responseCRM' => $response
                 ]);
             }
@@ -104,7 +120,8 @@ class AuthController extends Controller
                         "First_Name" => $request->first_name,
                         "Phone" => $request->phone,
                         "usuario_prueba" => env("APP_DEBUG"),
-                        "Caracter_stica_contacto" => "Experiencia MSK"
+                        "Caracter_stica_contacto" => "Experiencia MSK",
+                        "Pais" => $request->country
                     ]
                 ]
             ];
@@ -115,9 +132,9 @@ class AuthController extends Controller
             Con esto, ej:
             result2 = invokeurl
             [
-            url :"https://msklatam.com/msk-laravel/public/api/signupForCRM"
-            type :POST
-            parameters:new
+                url : "https://msklatam.com/msk-laravel/public/api/signupForCRM"
+                type : POST
+                parameters : new
             ];
             */
             // return response()->json($response,);
@@ -141,7 +158,8 @@ class AuthController extends Controller
                         'last_name' => $contactCreated['Last_Name'],
                         'email' => $contactCreated['Usuario'],
                         'user_id' => $user->id,
-                        'entity_id_crm' => $contactCreated['id']
+                        'entity_id_crm' => $contactCreated['id'],
+                        'country' => $contactCreated['Pais']
                     ]);
 
                     // Revoca todos los tokens activos del usuario
