@@ -101,9 +101,9 @@ class AuthController extends Controller
                     [
                         "Last_Name" => $request->last_name,
                         "Email" => $request->email,
-                        "First_Name" => $request->name,
+                        "First_Name" => $request->first_name,
                         "Phone" => $request->phone,
-                        "usuario_prueba" => true,
+                        "usuario_prueba" => env("APP_DEBUG"),
                         "Caracter_stica_contacto" => "Experiencia MSK"
                     ]
                 ]
