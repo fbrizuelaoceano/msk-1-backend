@@ -102,12 +102,27 @@ class AuthController extends Controller
 
                     //No le podes devolver un token de sesion porque yo podria poner cualquier email y la pagina me estaria dejando logearme desde la creacion de usuario. Por eso le digo que revise su email o el contacto en crm para logearse.
                     return response()->json([
-                        'message' => 'El usuario ya esta registrado en CRM. Le actualizamos la informacion en nuestra base de datos, intente nuevamente. '
+                        'message' => 'El usuario ya esta registradoba en CRM. Le actualizamos la informacion en nuestra base de datos, intente nuevamente. '
                     ], 201);
                 }
             } else {
+                $user = User::where(["email" => $response->email])->first();
+                $newContact = Contact::updateOrCreate(
+                    [
+                        'email' => $response['Usuario'],
+                    ],
+                    [
+                    'name' => $response['First_Name'],
+                    'phone' => $response['Phone'],
+                    'last_name' => $response['Last_Name'],
+                    'email' => $response['Usuario'],
+                    'user_id' => $user->id,
+                    'entity_id_crm' => $response['id'],
+                    'country' => $response['Pais']
+                ]);
+
                 return response()->json([
-                    'message' => "El usuario ya esta registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
+                    'message' => "El usuario ya estaba registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
                     'responseCRM' => $response
                 ]);
             }
