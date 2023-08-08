@@ -68,7 +68,7 @@ class AuthController extends Controller
         $request->validate([
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-        ],[
+        ], [
             'last_name.required' => 'El campo Apellido es obligatorio.',
             'last_name.string' => 'El campo Apellido debe ser una cadena de caracteres.',
             'email.required' => 'El campo Email es obligatorio.',
@@ -97,14 +97,15 @@ class AuthController extends Controller
                             'email' => $response['Usuario'],
                         ],
                         [
-                        'name' => $response['First_Name'],
-                        'phone' => $response['Phone'],
-                        'last_name' => $response['Last_Name'],
-                        'email' => $response['Usuario'],
-                        'user_id' => $user->id,
-                        'entity_id_crm' => $response['id'],
-                        'country' => $response['Pais']
-                    ]);
+                            'name' => $response['First_Name'],
+                            'phone' => $response['Phone'],
+                            'last_name' => $response['Last_Name'],
+                            'email' => $response['Usuario'],
+                            'user_id' => $user->id,
+                            'entity_id_crm' => $response['id'],
+                            'country' => $response['Pais']
+                        ]
+                    );
 
                     //No le podes devolver un token de sesion porque yo podria poner cualquier email y la pagina me estaria dejando logearme desde la creacion de usuario. Por eso le digo que revise su email o el contacto en crm para logearse.
                     return response()->json([
@@ -121,20 +122,22 @@ class AuthController extends Controller
                         'name' => $response['Usuario'],
                         'email' => $response['Usuario'],
                         'password' => Hash::make($response['Password']),
-                ]);
+                    ]
+                );
                 $newContact = Contact::createOrUpdate(
                     [
                         'email' => $response['Usuario'],
                     ],
                     [
-                    'name' => $response['First_Name'],
-                    'phone' => $response['Phone'],
-                    'last_name' => $response['Last_Name'],
-                    'email' => $response['Usuario'],
-                    'user_id' => $user->id,
-                    'entity_id_crm' => $response['id'],
-                    'country' => $response['Pais']
-                ]);
+                        'name' => $response['First_Name'],
+                        'phone' => $response['Phone'],
+                        'last_name' => $response['Last_Name'],
+                        'email' => $response['Usuario'],
+                        'user_id' => $user->id,
+                        'entity_id_crm' => $response['id'],
+                        'country' => $response['Pais']
+                    ]
+                );
 
                 return response()->json([
                     'message' => "El usuario ya estaba registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
@@ -211,7 +214,7 @@ class AuthController extends Controller
                 return response()->json([
                     'message' => 'Error al crear el usuario en ZohoCRM',
                     'resposneCRM' => $response,
-                ], 201);
+                ], 500);
             }
         }
     }
@@ -328,13 +331,13 @@ class AuthController extends Controller
 
     public function GetProfile(Request $request, $email)
     {
-        try { 
+        try {
             Log::info("GetProfile-email: " . print_r($email, true));
 
             $user = User::with('contact.contracts.products', 'contact.courses_progress')
-            ->where('email', $email)
-            ->first();
-            
+                ->where('email', $email)
+                ->first();
+
             Log::info("GetProfile-user: " . print_r($user, true));
 
             $contracts = $user->contact->contracts;
@@ -360,7 +363,7 @@ class AuthController extends Controller
             ];
 
             Log::error("Error en GetProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
-            
+
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
                 $err,
@@ -371,35 +374,35 @@ class AuthController extends Controller
     // public function PutProfile(Request $request, $email)
     public function PutProfile(UpdateProfileRequest $request, $email)
     {
-        try { 
+        try {
 
             // $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
-            $contactData = $request->only(UpdateProfileRequest::$formAttributes);//pasar el formAttributes al contacto
-            
+            $contactData = $request->only(UpdateProfileRequest::$formAttributes); //pasar el formAttributes al contacto
+
             $data = [
                 'data' => [
-                   [ 
-                    'First_Name' => $contactData['name'],
-                    'Last_Name' => $contactData['last_name'],
-                    'Email' => $contactData['email'],
-                    'Usuario' => $contactData['email'],
-                    'Phone' => $contactData['phone'],
-                    'Profesi_n' => $contactData['profession'],
-                    'Otra_profesi_n' => $contactData['other_profession'],
-                    'Especialidad' => $contactData['speciality'],
-                    'Otra_especialidad' => $contactData['other_speciality'],
-                    'Pais' => $contactData['country'],
-                    'Mailing_State' => $contactData['state'],
-                    'Mailing_Zip' => $contactData['postal_code'],
-                   
-                    'RFC' => $contactData['rfc'],// Mexico
-                   // 'RUT' => $contactData['rut'],// Chile
-                   // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ? 
-                   // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
-                   
-                    'R_gimen_fiscal' => $contactData['fiscal_regime'],
-                    'Mailing_Street' => $contactData['address'],
-                   ]
+                    [
+                        'First_Name' => $contactData['name'],
+                        'Last_Name' => $contactData['last_name'],
+                        'Email' => $contactData['email'],
+                        'Usuario' => $contactData['email'],
+                        'Phone' => $contactData['phone'],
+                        'Profesi_n' => $contactData['profession'],
+                        'Otra_profesi_n' => $contactData['other_profession'],
+                        'Especialidad' => $contactData['speciality'],
+                        'Otra_especialidad' => $contactData['other_speciality'],
+                        'Pais' => $contactData['country'],
+                        'Mailing_State' => $contactData['state'],
+                        'Mailing_Zip' => $contactData['postal_code'],
+
+                        'RFC' => $contactData['rfc'], // Mexico
+                        // 'RUT' => $contactData['rut'],// Chile
+                        // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ?
+                        // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
+
+                        'R_gimen_fiscal' => $contactData['fiscal_regime'],
+                        'Mailing_Street' => $contactData['address'],
+                    ]
                 ]
             ];
 
@@ -418,7 +421,7 @@ class AuthController extends Controller
             ];
 
             Log::error("Error en PutProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
-            
+
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
                 $err,

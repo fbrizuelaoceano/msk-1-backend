@@ -143,13 +143,13 @@ class ZohoCRMService
             $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/search?email=' . $email;
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
-            ])
-                ->get($URL_ZOHO)->json();
+            ])->get($URL_ZOHO)->json();
 
             return $response;
 
         } catch (Exception $e) {
             Log::error($e);
+            return null;
         }
     }
 
