@@ -45,16 +45,15 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-
             Contact::updateOrCreate(['email' => $request->email], [
                 'name' => $contactObj->First_Name,
                 'last_name' => $contactObj->Last_Name,
-                'email' => $request->email,
+                'email' => $request->Email,
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
-                'phone' => $contactObj->phone
+                'phone' => $contactObj->Phone
             ]);
-
+           
             // Crea un nuevo token de acceso
             $tokenResult = $user->createToken($request->email);
             $token = $tokenResult->token;
@@ -83,6 +82,7 @@ class AuthController extends Controller
     }
     public function signup(Request $request)
     { //devolver el el token para que quede logeado
+        try{
         $request->validate([
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:users',
@@ -266,6 +266,20 @@ class AuthController extends Controller
                 ], 500);
             }
         }
+    } catch (\Exception $e) {
+        $err = [
+            'message' => $e->getMessage(),
+            'exception' => get_class($e),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            // 'trace' => $e->getTraceAsString(),
+        ];
+
+        Log::error("Error en signup: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+        return response()->json([
+            'error' => $e,
+        ], 500);
+    }
     }
 
     /**
