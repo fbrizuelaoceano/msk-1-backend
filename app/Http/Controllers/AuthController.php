@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Contact;
+use App\Models\Profession;
+use App\Models\Speciality;
 use App\Services\ZohoCRMService;
 
 class AuthController extends Controller
@@ -21,6 +23,7 @@ class AuthController extends Controller
     {
         $this->zohoService = $service;
     }
+
     /**
      * Register a new user.
      *
@@ -104,7 +107,12 @@ class AuthController extends Controller
                             'email' => $response['Usuario'],
                             'user_id' => $user->id,
                             'entity_id_crm' => $response['id'],
-                            'country' => $response['Pais']
+                            'country' => $response['Pais'],
+                            "profession" => $response['Profesi_n'],
+                            "speciality" => $response['Especialidad'],
+                            'other_profession' => $response['Otra_profesi_n'],
+                            'other_speciality' => $response['Otra_especialidad'],
+
                         ]
                     );
 
@@ -136,7 +144,11 @@ class AuthController extends Controller
                         'email' => $response['Usuario'],
                         'user_id' => $user->id,
                         'entity_id_crm' => $response['id'],
-                        'country' => $response['Pais']
+                        'country' => $response['Pais'],
+                        "profession" => $response['Profesi_n'],
+                        "speciality" => $response['Especialidad'],
+                        'other_profession' => $response['Otra_profesi_n'],
+                        'other_speciality' => $response['Otra_especialidad'],
                     ]
                 );
 
@@ -155,7 +167,13 @@ class AuthController extends Controller
                         "Phone" => $request->phone,
                         "usuario_prueba" => env("APP_DEBUG"),
                         "Caracter_stica_contacto" => "Experiencia MSK",
-                        "Pais" => $request->country
+                        "Pais" => $request->country,
+                    
+                        "Especialidad" => isset($request->Especialidad) ? $request->Especialidad : null, 
+                        "Profesi_n" => isset($request->Otra_profesi_n) ? $request->Profesi_n : null,
+                                            
+                        "Otra_especialidad" => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null, 
+                        "Otra_profesi_n" => isset($request->Otra_profesi_n) ? $request->Otra_profesi_n : null
                     ]
                 ]
             ];
@@ -193,7 +211,11 @@ class AuthController extends Controller
                         'email' => $contactCreated['Usuario'],
                         'user_id' => $user->id,
                         'entity_id_crm' => $contactCreated['id'],
-                        'country' => $contactCreated['Pais']
+                        'country' => $contactCreated['Pais'],
+                        "profession" => $contactCreated['Profesi_n'],
+                        "speciality" => $contactCreated['Especialidad'],
+                        'other_profession' => $contactCreated['Otra_profesi_n'],
+                        'other_speciality' => $contactCreated['Otra_especialidad'],
                     ]);
 
                     // Revoca todos los tokens activos del usuario
