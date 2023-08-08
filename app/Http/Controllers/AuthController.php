@@ -121,7 +121,7 @@ class AuthController extends Controller
                     ], 201);
                 }
             } else {
-               Log::info("if ($response != null) { //A -> Esta en CRM: ".print_r($response, true));
+               Log::info("if (response != null) { //A -> Esta en CRM: ".print_r($response, true));
 
                 if(isset($response->data[0])){
                     $contact = $response->data[0];
