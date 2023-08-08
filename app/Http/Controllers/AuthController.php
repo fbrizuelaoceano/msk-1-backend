@@ -174,11 +174,11 @@ class AuthController extends Controller
                         "Pais" => $request->country,
                     
                         
-                        "Especialidad" => "esp", 
-                        "Profesi_n" => "prof",
+                        "Especialidad" => "Otra Especialidad", 
+                        "Profesi_n" => "Otra Profesión",
                                             
-                        "Otra_especialidad" => "otra eps", 
-                        "Otra_profesi_n" => "otra prof"
+                        "Otra_especialidad" => "otra epsasdsad", 
+                        "Otra_profesi_n" => "otra profasdasdas"
 
                         // "Especialidad" => isset($request->Especialidad) ? $request->Especialidad : null, 
                         // "Profesi_n" => isset($request->Otra_profesi_n) ? $request->Profesi_n : null,
