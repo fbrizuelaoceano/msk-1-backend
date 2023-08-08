@@ -78,6 +78,7 @@ class AuthController extends Controller
 
         // $zohoService = new ZohoCRMService();
         $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
+        Log::info(print_r($response, true));
 
         if ($response != null) { //A -> Esta en CRM
             if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
@@ -395,7 +396,8 @@ class AuthController extends Controller
                         'Mailing_State' => $contactData['state'],
                         'Mailing_Zip' => $contactData['postal_code'],
 
-                        'RFC' => $contactData['rfc'], // Mexico
+                        'RFC' => $contactData['rfc'],
+                        // Mexico
                         // 'RUT' => $contactData['rut'],// Chile
                         // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ?
                         // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
