@@ -31,40 +31,55 @@ class AuthController extends Controller
      */
     public function signupForCRM(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email|',
-            'password' => 'required|string',
-        ]);
+        try {
+            $request->validate([
+                'email' => 'required|string|email|',
+                'password' => 'required|string',
+            ]);
 
-        $contact = collect($_POST['contact'])->toArray()[0];
-        $contactObj = json_decode($contact)[0];
+            $contact = collect($_POST['contact'])->toArray()[0];
+            $contactObj = json_decode($contact)[0];
 
-        $user = User::updateOrCreate(['email' => $request->email], [
-            'name' => $contactObj->First_Name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $user = User::updateOrCreate(['email' => $request->email], [
+                'name' => $contactObj->First_Name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-        Contact::updateOrCreate(['email' => $request->email], [
-            'name' => $contactObj->name,
-            'last_name' => $contactObj->Last_Name,
-            'email' => $request->email,
-            'user_id' => $user->id,
-            'entity_id_crm' => $contactObj->id,
-            'phone' => $contactObj->phone
-        ]);
+            Contact::updateOrCreate(['email' => $request->email], [
+                'name' => $contactObj->First_Name,
+                'last_name' => $contactObj->Last_Name,
+                'email' => $request->email,
+                'user_id' => $user->id,
+                'entity_id_crm' => $contactObj->id,
+                'phone' => $contactObj->phone
+            ]);
 
-        // Crea un nuevo token de acceso
-        $tokenResult = $user->createToken($request->email);
-        $token = $tokenResult->token;
-        $token->save();
+            // Crea un nuevo token de acceso
+            $tokenResult = $user->createToken($request->email);
+            $token = $tokenResult->token;
+            $token->save();
 
-        return response()->json([
-            'message' => 'Successfully created user!',
-            'access_token' => $tokenResult->accessToken,
-            'token_type' => 'Bearer',
-            'expires_at' => $token->expires_at,
-        ], 201);
+            return response()->json([
+                'message' => 'Successfully created user!',
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'expires_at' => $token->expires_at,
+            ], 201);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en signupForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            return response()->json([
+                'error' => $e,
+            ], 500);
+        }
     }
     public function signup(Request $request)
     { //devolver el el token para que quede logeado
