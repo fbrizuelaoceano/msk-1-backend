@@ -81,7 +81,6 @@ class AuthController extends Controller
 
         // $zohoService = new ZohoCRMService();
         $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
-        Log::info(print_r($response, true));
 
         if ($response != null) { //A -> Esta en CRM
             if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
@@ -122,6 +121,8 @@ class AuthController extends Controller
                     ], 201);
                 }
             } else {
+               Log::info("if ($response != null) { //A -> Esta en CRM: ".print_r($response, true));
+
                 if(isset($response->data[0])){
                     $contact = $response->data[0];
                     $user = User::createOrUpdate(
