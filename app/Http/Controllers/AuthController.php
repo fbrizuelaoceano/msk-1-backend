@@ -123,34 +123,34 @@ class AuthController extends Controller
             } else {
                Log::info("if (response != null) { //A -> Esta en CRM: ".print_r($response, true));
 
-                if(isset($response->data[0])){
-                    $contact = $response->data[0];
+                if(isset($response["data"][0])){
+                    $contactCRM = $response["data"][0];
                     $user = User::createOrUpdate(
                         [
-                            'email' => $contact['Usuario'],
+                            'email' => $contactCRM['Usuario'],
                         ],
                         [
-                            'name' => $contact['Usuario'],
-                            'email' => $contact['Usuario'],
-                            'password' => Hash::make($contact['Password']),
+                            'name' => $contactCRM['Usuario'],
+                            'email' => $contactCRM['Usuario'],
+                            'password' => Hash::make($contactCRM['Password']),
                         ]
                     );
-                    $newContact = Contact::createOrUpdate(
+                    $newcontactCRM = Contact::createOrUpdate(
                         [
-                            'email' => $contact['Usuario'],
+                            'email' => $contactCRM['Usuario'],
                         ],
                         [
-                            'name' => $contact['First_Name'],
-                            'phone' => $contact['Phone'],
-                            'last_name' => $contact['Last_Name'],
-                            'email' => $contact['Usuario'],
+                            'name' => $contactCRM['First_Name'],
+                            'phone' => $contactCRM['Phone'],
+                            'last_name' => $contactCRM['Last_Name'],
+                            'email' => $contactCRM['Usuario'],
                             'user_id' => $user->id,
-                            'entity_id_crm' => $contact['id'],
-                            'country' => $contact['Pais'],
-                            "profession" => $contact['Profesi_n'],
-                            "speciality" => $contact['Especialidad'],
-                            'other_profession' => $contact['Otra_profesi_n'],
-                            'other_speciality' => $contact['Otra_especialidad'],
+                            'entity_id_crm' => $contactCRM['id'],
+                            'country' => $contactCRM['Pais'],
+                            "profession" => $contactCRM['Profesi_n'],
+                            "speciality" => $contactCRM['Especialidad'],
+                            'other_profession' => $contactCRM['Otra_profesi_n'],
+                            'other_speciality' => $contactCRM['Otra_especialidad'],
                         ]
                     );
                 }
@@ -158,7 +158,7 @@ class AuthController extends Controller
 
                 return response()->json([
                     'message' => "El usuario ya estaba registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
-                    'responseCRM' => $response
+                    // 'responseCRM' => $response
                 ]);
             }
         } else { //B -> No esta en CRM
