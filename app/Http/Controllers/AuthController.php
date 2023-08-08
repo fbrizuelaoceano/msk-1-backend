@@ -112,7 +112,16 @@ class AuthController extends Controller
                     ], 201);
                 }
             } else {
-                $user = User::where(["email" => $response->email])->first();
+                $user = User::createOrUpdate(
+                    [
+                        'email' => $response['Usuario'],
+
+                    ],
+                    [
+                        'name' => $response['Usuario'],
+                        'email' => $response['Usuario'],
+                        'password' => Hash::make($response['Password']),
+                ]);
                 $newContact = Contact::updateOrCreate(
                     [
                         'email' => $response['Usuario'],
