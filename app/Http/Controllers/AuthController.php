@@ -240,7 +240,7 @@ class AuthController extends Controller
             } else {
                 return response()->json([
                     'message' => 'Error al crear el usuario en ZohoCRM',
-                    'resposneCRM' => $response,
+                    'responseCRM' => $response,
                 ], 500);
             }
         }
