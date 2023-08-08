@@ -122,35 +122,38 @@ class AuthController extends Controller
                     ], 201);
                 }
             } else {
-                $user = User::createOrUpdate(
-                    [
-                        'email' => $response['Usuario'],
-
-                    ],
-                    [
-                        'name' => $response['Usuario'],
-                        'email' => $response['Usuario'],
-                        'password' => Hash::make($response['Password']),
-                    ]
-                );
-                $newContact = Contact::createOrUpdate(
-                    [
-                        'email' => $response['Usuario'],
-                    ],
-                    [
-                        'name' => $response['First_Name'],
-                        'phone' => $response['Phone'],
-                        'last_name' => $response['Last_Name'],
-                        'email' => $response['Usuario'],
-                        'user_id' => $user->id,
-                        'entity_id_crm' => $response['id'],
-                        'country' => $response['Pais'],
-                        "profession" => $response['Profesi_n'],
-                        "speciality" => $response['Especialidad'],
-                        'other_profession' => $response['Otra_profesi_n'],
-                        'other_speciality' => $response['Otra_especialidad'],
-                    ]
-                );
+                if(isset($response->data[0])){
+                    $contact = $response->data[0];
+                    $user = User::createOrUpdate(
+                        [
+                            'email' => $contact['Usuario'],
+                        ],
+                        [
+                            'name' => $contact['Usuario'],
+                            'email' => $contact['Usuario'],
+                            'password' => Hash::make($contact['Password']),
+                        ]
+                    );
+                    $newContact = Contact::createOrUpdate(
+                        [
+                            'email' => $contact['Usuario'],
+                        ],
+                        [
+                            'name' => $contact['First_Name'],
+                            'phone' => $contact['Phone'],
+                            'last_name' => $contact['Last_Name'],
+                            'email' => $contact['Usuario'],
+                            'user_id' => $user->id,
+                            'entity_id_crm' => $contact['id'],
+                            'country' => $contact['Pais'],
+                            "profession" => $contact['Profesi_n'],
+                            "speciality" => $contact['Especialidad'],
+                            'other_profession' => $contact['Otra_profesi_n'],
+                            'other_speciality' => $contact['Otra_especialidad'],
+                        ]
+                    );
+                }
+                
 
                 return response()->json([
                     'message' => "El usuario ya estaba registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
