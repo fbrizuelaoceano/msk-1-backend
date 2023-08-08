@@ -68,6 +68,12 @@ class AuthController extends Controller
         $request->validate([
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:users',
+        ],[
+            'last_name.required' => 'El campo Apellido es obligatorio.',
+            'last_name.string' => 'El campo Apellido debe ser una cadena de caracteres.',
+            'email.required' => 'El campo Email es obligatorio.',
+            'email.email' => 'El campo Email debe ser una dirección de correo electrónico válida.',
+            'email.unique' => 'El correo electrónico ya ha sido registrado.',
         ]);
 
         // $zohoService = new ZohoCRMService();

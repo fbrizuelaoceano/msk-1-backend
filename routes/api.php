@@ -30,7 +30,6 @@ Route::prefix('ZohoWorkFlow')->group(function () {
     // Usar el prefix para el zo (reglas de trabajo)
     Route::post('UpdateQuotes', [ZohoWorkflowController::class, 'UpdateQuotes']);
     Route::post('UpdateContact', [ZohoWorkflowController::class, 'UpdateContact']);
-
 });
 
 Route::get('GetByIdAllDetails/{module}/{id}', [ZohoController::class, 'GetByIdAllDetails']);
