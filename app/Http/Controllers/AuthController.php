@@ -125,7 +125,7 @@ class AuthController extends Controller
 
                 if(isset($response["data"][0])){
                     $contactCRM = $response["data"][0];
-                    $user = User::createOrUpdate(
+                    $user = User::updateOrCreate(
                         [
                             'email' => $contactCRM['Usuario'],
                         ],
@@ -135,7 +135,7 @@ class AuthController extends Controller
                             'password' => Hash::make($contactCRM['Password']),
                         ]
                     );
-                    $newcontactCRM = Contact::createOrUpdate(
+                    $newcontactCRM = Contact::updateOrCreate(
                         [
                             'email' => $contactCRM['Usuario'],
                         ],
