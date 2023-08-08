@@ -173,11 +173,18 @@ class AuthController extends Controller
                         "Caracter_stica_contacto" => "Experiencia MSK",
                         "Pais" => $request->country,
                     
-                        "Especialidad" => isset($request->Especialidad) ? $request->Especialidad : null, 
-                        "Profesi_n" => isset($request->Otra_profesi_n) ? $request->Profesi_n : null,
+                        
+                        "Especialidad" => "esp", 
+                        "Profesi_n" => "prof",
                                             
-                        "Otra_especialidad" => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null, 
-                        "Otra_profesi_n" => isset($request->Otra_profesi_n) ? $request->Otra_profesi_n : null
+                        "Otra_especialidad" => "otra eps", 
+                        "Otra_profesi_n" => "otra prof"
+
+                        // "Especialidad" => isset($request->Especialidad) ? $request->Especialidad : null, 
+                        // "Profesi_n" => isset($request->Otra_profesi_n) ? $request->Profesi_n : null,
+                                            
+                        // "Otra_especialidad" => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null, 
+                        // "Otra_profesi_n" => isset($request->Otra_profesi_n) ? $request->Otra_profesi_n : null
                     ]
                 ]
             ];
