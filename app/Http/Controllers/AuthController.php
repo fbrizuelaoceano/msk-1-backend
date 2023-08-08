@@ -122,7 +122,7 @@ class AuthController extends Controller
                         'email' => $response['Usuario'],
                         'password' => Hash::make($response['Password']),
                 ]);
-                $newContact = Contact::updateOrCreate(
+                $newContact = Contact::createOrUpdate(
                     [
                         'email' => $response['Usuario'],
                     ],
