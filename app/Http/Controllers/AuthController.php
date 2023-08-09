@@ -43,13 +43,13 @@ class AuthController extends Controller
 
             $user = User::updateOrCreate(['email' => $request->email], [
                 'name' => $contactObj->Usuario,
-                'email' => $request->Usuario,
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
             Contact::updateOrCreate(['email' => $request->email], [
                 'name' => $contactObj->First_Name,
                 'last_name' => $contactObj->Last_Name,
-                'email' => $request->Usuario,
+                'email' => $request->email,
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
                 'phone' => $contactObj->Phone
