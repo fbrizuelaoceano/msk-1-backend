@@ -175,18 +175,30 @@ class ZohoWorkflowController extends Controller
 
     public function ValidatedUser(Request $request)
     {
-        $contactObj = json_decode($_POST['contact']);
+        try{
+            $contactObj = json_decode($_POST['contact']);
+            $contact = Contact::where('email', $contactObj->Usuario)->update([
+                'validate' => $contactObj->Validador,
+            ]);
 
-        /* Log::info(print_r($contactObj, true));
-        Log::info(print_r($saleObj, true)); */
+            return response()->json(['contact' => $contact]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
 
-        //dd($contactObj->Usuario);
-
-        $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
-            'validate' => $contactObj->Validador,
-        ]);
-
-        return response()->json(['contact' => $contact]);
+            Log::error("Error en ValidatedUser: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            $status = 500;
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+                $status
+            ], $status);
+        }
     }
 
     function UpdateQuotes(Request $request)
