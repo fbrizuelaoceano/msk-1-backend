@@ -31,12 +31,12 @@ class AuthController extends Controller
      */
     public function signupForCRM(Request $request)
     {
-        try {
             $request->validate([
                 'email' => 'required|string|email|',
                 'password' => 'required|string',
             ]);
 
+        try {
             $contact = collect($_POST['contact'])->toArray()[0];
             $contactObj = json_decode($contact)[0];
             Log::error("signupForCRM- contactObj: " . json_encode($contactObj, JSON_PRETTY_PRINT));
@@ -83,7 +83,7 @@ class AuthController extends Controller
     }
     public function signup(Request $request)
     { //devolver el el token para que quede logeado
-        try{
+       
         $request->validate([
             'last_name' => 'required|string',
             'email' => 'required|string|email|unique:users',
@@ -94,7 +94,7 @@ class AuthController extends Controller
             'email.email' => 'El campo Email debe ser una direccion de correo electronico valida.',
             'email.unique' => 'El correo electronico ya ha sido registrado.',
         ]);
-
+        try{
         // $zohoService = new ZohoCRMService();
         $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
 
