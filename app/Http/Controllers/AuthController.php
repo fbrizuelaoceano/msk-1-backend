@@ -133,9 +133,11 @@ class AuthController extends Controller
                         );
 
                         //No le podes devolver un token de sesion porque yo podria poner cualquier email y la pagina me estaria dejando logearme desde la creacion de usuario. Por eso le digo que revise su email o el contacto en crm para logearse.
+                        $status = 500;
                         return response()->json([
-                            'message' => 'El usuario ya esta registradoba en CRM. Le actualizamos la informacion en nuestra base de datos, intente nuevamente. '
-                        ], 201);
+                            'message' => 'El usuario ya esta registradoba en CRM. Le actualizamos la informacion en nuestra base de datos, intente nuevamente. ',
+                            'status' => $status
+                        ], $status);
                     }
                 } else {
                     Log::info("if (response != null) { //A -> Esta en CRM: " . print_r($response, true));
@@ -172,11 +174,12 @@ class AuthController extends Controller
                         );
                     }
 
-
+                    $status = 500;
                     return response()->json([
                         'message' => "El usuario ya estaba registrado en CRM. Revise sus emails para validar su usuario y contraseña. Verifique que db de msk tenga su usuario y contacto",
-                        // 'responseCRM' => $response
-                    ]);
+                        // 'responseCRM' => $response,
+                        'status' => $status
+                    ], $status);
                 }
             } else { //B -> No esta en CRM
                 $data = [
@@ -246,18 +249,22 @@ class AuthController extends Controller
                         $token = $tokenResult->token;
                         $token->save();
 
+                        $status = 200;
                         return response()->json([
                             'message' => 'Successfully created user!',
                             'access_token' => $tokenResult->accessToken,
                             'token_type' => 'Bearer',
                             'expires_at' => $token->expires_at,
-                        ], 201);
+                            'status' => $status
+                        ], $status);
                     }
                 } else {
+                    $status = 500;
                     return response()->json([
                         'message' => 'Error al crear el usuario en ZohoCRM',
                         'responseCRM' => $response,
-                    ], 500);
+                        'status' => $status
+                    ], $status);
                 }
             }
         } catch (\Exception $e) {
@@ -270,9 +277,11 @@ class AuthController extends Controller
             ];
 
             Log::error("Error en signup: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            $status = 500;
             return response()->json([
                 'error' => $e,
-            ], 500);
+                "status" => $status
+            ], $status);
         }
     }
 
