@@ -52,7 +52,8 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
-                'phone' => $contactObj->Phone
+                'phone' => $contactObj->Phone,
+                'country' => $contactObj->Pais
             ]);
            
             // Crea un nuevo token de acceso
