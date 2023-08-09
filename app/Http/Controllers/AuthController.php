@@ -39,6 +39,7 @@ class AuthController extends Controller
 
             $contact = collect($_POST['contact'])->toArray()[0];
             $contactObj = json_decode($contact)[0];
+            Log::error("signupForCRM- contactObj: " . json_encode($contactObj, JSON_PRETTY_PRINT));
 
             $user = User::updateOrCreate(['email' => $request->email], [
                 'name' => $contactObj->First_Name,
@@ -48,7 +49,7 @@ class AuthController extends Controller
             Contact::updateOrCreate(['email' => $request->email], [
                 'name' => $contactObj->First_Name,
                 'last_name' => $contactObj->Last_Name,
-                'email' => $request->Email,
+                'email' => $request->Usuario,
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
                 'phone' => $contactObj->Phone
