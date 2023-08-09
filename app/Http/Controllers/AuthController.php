@@ -42,8 +42,8 @@ class AuthController extends Controller
             Log::error("signupForCRM- contactObj: " . json_encode($contactObj, JSON_PRETTY_PRINT));
 
             $user = User::updateOrCreate(['email' => $request->email], [
-                'name' => $contactObj->First_Name,
-                'email' => $request->email,
+                'name' => $contactObj->Usuario,
+                'email' => $request->Usuario,
                 'password' => Hash::make($request->password),
             ]);
             Contact::updateOrCreate(['email' => $request->email], [
