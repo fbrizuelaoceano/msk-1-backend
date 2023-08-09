@@ -484,7 +484,7 @@ class AuthController extends Controller
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
             Log::error("Error en PutProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
@@ -497,24 +497,41 @@ class AuthController extends Controller
     }
     public function RequestPasswordChange(Request $request)
     {
-
-        $data = [
-            "data" => [
-                [
-                    "Generar_nueva_password" => 1,
+        try{
+            $data = [
+                "data" => [
+                    [
+                        "Generar_nueva_password" => 1,
+                    ]
                 ]
-            ]
-        ];
-        $contact = Contact::where(["email" => $request->email])->first();
+            ];
+            $contact = Contact::where(["email" => $request->email])->first();
 
-        $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-        //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+            $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+            //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+            $status = 200;
+            return response()->json([
+                "message" => "Solicitud enviada.",
+                $response,
+                $status
+            ],$status);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
 
-        return response()->json([
-            "message" => "Solicitud enviada.",
-            $response
-        ]);
-
+            Log::error("Error en PutProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            $status = 500;
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+                $status
+            ], $status);
+        }
     }
     public function ValidatePasswordChange(Request $request)
     {
