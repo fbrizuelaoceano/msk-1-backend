@@ -192,7 +192,8 @@ class AuthController extends Controller
                         "Especialidad" => isset($request->Especialidad) ? $request->Especialidad : null, 
                         "Profesi_n" => isset($request->Otra_profesi_n) ? $request->Profesi_n : null,
                         "Otra_especialidad" => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null, 
-                        "Otra_profesi_n" => isset($request->Otra_profesi_n) ? $request->Otra_profesi_n : null
+                        "Otra_profesi_n" => isset($request->Otra_profesi_n) ? $request->Otra_profesi_n : null,
+                        "Convertido_mediante" => "Sitio web"
                     ]
                 ]
             ];
