@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Http\Request;
 
@@ -82,22 +83,12 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    public function signup(Request $request)
-    { //devolver el el token para que quede logeado
-
-        $request->validate([
-            'last_name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-        ], [
-            'last_name.required' => 'El campo Apellido es obligatorio.',
-            'last_name.string' => 'El campo Apellido debe ser una cadena de caracteres.',
-            'email.required' => 'El campo Email es obligatorio.',
-            'email.email' => 'El campo Email debe ser una direccion de correo electronico valida.',
-            'email.unique' => 'El correo electronico ya ha sido registrado.',
-        ]);
+    public function signup(SignUpRequest $request)
+    {
         try {
             // $zohoService = new ZohoCRMService();
             $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
+            
 
             if ($response != null) { //A -> Esta en CRM
                 if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
