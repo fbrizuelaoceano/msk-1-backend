@@ -43,7 +43,7 @@ class AuthController extends Controller
             // Log::error("signupForCRM- contactObj: " . json_encode($contactObj, JSON_PRETTY_PRINT));
 
             $user = User::updateOrCreate(['email' => $request->email], [
-                'name' => $contactObj->Usuario,
+                'name' => $contactObj->Full_Name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
@@ -95,7 +95,7 @@ class AuthController extends Controller
                     if ($response->data->Password != null && $response->data->Usuario != null) {
 
                         $user = new User([
-                            'name' => $response->data->Usuario,
+                            'name' => $response->data->Full_Name,
                             'email' => $response->data->Usuario,
                             'password' => Hash::make($response->data->Password),
                         ]);
@@ -140,7 +140,7 @@ class AuthController extends Controller
                                 'email' => $contactCRM['Usuario'],
                             ],
                             [
-                                'name' => $contactCRM['Usuario'],
+                                'name' => $contactCRM['Full_Name'],
                                 'email' => $contactCRM['Usuario'],
                                 'password' => Hash::make($contactCRM['Password']),
                             ]
@@ -212,7 +212,7 @@ class AuthController extends Controller
 
                     if (isset($contactCreated['Usuario']) && isset($contactCreated['Password'])) {
                         $user = User::Create([
-                            'name' => $contactCreated['Usuario'],
+                            'name' => $contactCreated['Full_Name'],
                             'email' => $contactCreated['Usuario'],
                             'password' => Hash::make($contactCreated['Password']),
                         ]);
