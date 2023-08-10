@@ -88,7 +88,7 @@ class AuthController extends Controller
         try {
             // $zohoService = new ZohoCRMService();
             $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
-            
+
 
             if ($response != null) { //A -> Esta en CRM
                 if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
@@ -329,39 +329,100 @@ class AuthController extends Controller
     }
     public function newPassword(Request $request)
     {
-        $request->validate([
-            //Dato del codigo del usuario validado, para seguridad
-            'validate' => 'required|string',
-            'email' => 'required|string|email',
-            'password' => 'required',
-        ]);
+        try{
+            $request->validate([
+                //Dato del codigo del usuario validado, para seguridad
+                'validate' => 'required|string',
+                'email' => 'required|string|email',
+                'password' => 'required',
+            ]);
 
-        $user = User::where(["email" => $request->email])->first();
-        $user->password = Hash::make($request->password);
-        $user->save();
+            $user = User::where(["email" => $request->email])->first();
+            $user->password = Hash::make($request->password);
+            $user->save();
 
-        // Revoca todos los tokens activos del usuario
-        $user->tokens()->where('revoked', false)->update(['revoked' => true]);
-        // Crea un nuevo token de acceso
-        $tokenResult = $user->createToken($request->email);
-        $token = $tokenResult->token;
+            // Revoca todos los tokens activos del usuario
+            $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+            // Crea un nuevo token de acceso
+            $tokenResult = $user->createToken($request->email);
+            $token = $tokenResult->token;
 
-        $token->save();
+            $token->save();
 
-        $data = [
-            "data" => [
-                [
-                    "Generar_nueva_password" => 0,
-                    "Password" => $request->password,
+            $data = [
+                "data" => [
+                    [
+                        "Generar_nueva_password" => 0,
+                        "Password" => $request->password,
+                    ]
                 ]
-            ]
-        ];
-        $contact = Contact::where(["email" => $request->email])->first();
+            ];
+            $contact = Contact::where(["email" => $request->email])->first();
 
-        $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-        //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+            $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+            //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
-        return response()->json($response, 201);
+            return response()->json($response, 201);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en newPassword: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            return response()->json([
+                'error' => $e,
+            ], 500);
+        }
+    }
+// https://dev.msklatam.com/ar/change-pass/NTM0NDQ1NTAwMDAwOTA0NjY3NA%3D%3D
+    public function changepass($request)
+    {
+        try{
+
+            $user = User::where(["email" => $request->email])->first();
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            // Revoca todos los tokens activos del usuario
+            $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+            // Crea un nuevo token de acceso
+            $tokenResult = $user->createToken($request->email);
+            $token = $tokenResult->token;
+
+            $token->save();
+
+            $data = [
+                "data" => [
+                    [
+                        "Generar_nueva_password" => 0,
+                        "Password" => $request->password,
+                    ]
+                ]
+            ];
+            $contact = Contact::where(["email" => $request->email])->first();
+
+            $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+            //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
+
+            return response()->json($response, 201);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en newPassword: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            return response()->json([
+                'error' => $e,
+            ], 500);
+        }
     }
     /**
      * Get the authenticated User.
@@ -524,7 +585,7 @@ class AuthController extends Controller
             ], $status);
         }
     }
-    public function ValidatePasswordChange(Request $request)
+    public function ValidatePasswordChange($request)
     {
         $contacto = Contact::where('validate', $request->validate)->first();
 
@@ -539,6 +600,44 @@ class AuthController extends Controller
             return response()->json([
                 "error" => "Codigo no valido.",
             ]);
+        }
+    }
+    public function ValidatePasswordChange2($validateCode)
+    {
+        try{
+            $contacto = Contact::where('validate', $validateCode)->first();
+
+            if ($contacto) {
+                // Si el contacto existe, muestra el formulario
+                $status = 200;
+                return response()->json([
+                    "contact" => $contacto,
+                    "redirect" => "FormChangePassword",
+                    "status" => $status
+                ], $status);
+            } else {
+                // Si el código no coincide con ningún contacto, muestra un error o redirecciona a otra página
+                $status = 500;
+                return response()->json([
+                    "error" => "Codigo no valido.",
+                    "status" => $status
+                ], $status);
+            }
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en newPassword: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            $status = 500;
+            return response()->json([
+                'error' => $e,
+                "status" => $status
+            ], $status);
         }
     }
 }
