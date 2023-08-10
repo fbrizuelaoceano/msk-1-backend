@@ -44,7 +44,10 @@ Route::get('/profile/{email}', [AuthController::class, 'GetProfile'])->middlewar
 Route::put('/profile/{email}', [AuthController::class, 'PutProfile']);
 Route::post('/ValidatePasswordChange', [AuthController::class, 'ValidatePasswordChange']);
 Route::post('/RequestPasswordChange', [AuthController::class, 'RequestPasswordChange']);
-Route::post('/newPassword', [AuthController::class, 'newPassword']);
+Route::post('/newPassword', [AuthController::class, 'ValidatePasswordChange']);
+Route::get('/change-pass/{validateCode}', [AuthController::class, 'ValidatePasswordChange2']);
+
+
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
@@ -93,7 +96,6 @@ Route::prefix('crm')->group(function () {
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
     // Route::get('Products', [ZohoController::class, 'GetContracts']);
     // Route::get('Contracts', [ZohoController::class, 'GetContracts']);
-
 
     Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
 
