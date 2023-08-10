@@ -57,7 +57,14 @@ class ZohoCRMService
             //Lo cargo por primera vez
             $this->generateAccessToken();
         } catch (Exception $e) {
-
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+            Log::error("Error en ZohoCRMService-getAccessToken(): " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
         }
     }
 
@@ -144,6 +151,9 @@ class ZohoCRMService
             $response = Http::withHeaders([
                 'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
             ])->get($URL_ZOHO)->json();
+
+            // if(!isset($response["data"])){
+            // }
 
             return $response;
 
