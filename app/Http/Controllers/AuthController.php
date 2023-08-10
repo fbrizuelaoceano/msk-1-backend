@@ -593,7 +593,7 @@ class AuthController extends Controller
             ], $status);
         }
     }
-    public function ValidatePasswordChange($request)
+    public function ValidatePasswordChange(Request $request)
     {
         $contacto = Contact::where('validate', $request->validate)->first();
 
