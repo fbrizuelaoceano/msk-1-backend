@@ -54,7 +54,11 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
                 'phone' => $contactObj->Phone,
-                'country' => $contactObj->Pais
+                'country' => $contactObj->Pais,
+                "profession" => $contactObj->Profesi_n,
+                "speciality" => $contactObj->Especialidad,
+                'other_profession' => $contactObj->Otra_profesi_n,
+                'other_speciality' => $contactObj->Otra_especialidad,
             ]);
 
             // Crea un nuevo token de acceso
@@ -88,7 +92,6 @@ class AuthController extends Controller
         try {
             // $zohoService = new ZohoCRMService();
             $response = $this->zohoService->GetByEmailService('Contacts', $request["email"]);
-
 
             if ($response != null) { //A -> Esta en CRM
                 if (isset($response->data) && count($response->data) > 0) { //Existe en CRM
@@ -191,6 +194,10 @@ class AuthController extends Controller
                         ]
                     ]
                 ];
+                // Career: ""
+                // Year: ""
+                // profession:"Técnico universitario"
+                // speciality: "Tecnicatura en radiología e imágenes diagnósticas"
 
                 $response = $this->zohoService->Create('Contacts', $data);
                 /*Al crear usuario en crm productivo se ejecuta un flow que crea user y password.
@@ -231,6 +238,7 @@ class AuthController extends Controller
                             'other_profession' => $contactCreated['Otra_profesi_n'],
                             'other_speciality' => $contactCreated['Otra_especialidad'],
                         ]);
+
 
                         // Revoca todos los tokens activos del usuario
                         $user->tokens()->where('revoked', false)->update(['revoked' => true]);
@@ -450,22 +458,22 @@ class AuthController extends Controller
     public function GetProfile(Request $request, $email)
     {
         try {
-            Log::info("GetProfile-email: " . print_r($email, true));
+            // Log::info("GetProfile-email: " . print_r($email, true));
 
             $user = User::with('contact.contracts.products', 'contact.courses_progress')
                 ->where('email', $email)
                 ->first();
 
-            Log::info("GetProfile-user: " . print_r($user, true));
+            // Log::info("GetProfile-user: " . print_r($user, true));
 
             $contracts = $user->contact->contracts;
-            Log::info("GetProfile-contracts: " . print_r($contracts, true));
+            // Log::info("GetProfile-contracts: " . print_r($contracts, true));
 
             $contracts->each(function ($contract) {
                 $contract->setAttribute('products', $contract->products);
             });
 
-            Log::info("GetProfile-user2: " . print_r($user, true));
+            // Log::info("GetProfile-user2: " . print_r($user, true));
 
 
             return response()->json([

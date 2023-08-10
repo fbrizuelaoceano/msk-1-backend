@@ -77,7 +77,7 @@ class ZohoWorkflowController extends Controller
 
             $contactArrayObj = (array) $contactObj;
             $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];
-            Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
+            // Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if ($formCourseProgress) {
 
@@ -292,7 +292,7 @@ class ZohoWorkflowController extends Controller
     {
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
-            Log::info("ZohoWorkflowController-UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
+            // Log::info("ZohoWorkflowController-UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
             $contactArrayObj = (array) $contactObjstdClass;
             // Log::info("OnDev-contactArrayObj: " . print_r($contactArrayObj, true));
 

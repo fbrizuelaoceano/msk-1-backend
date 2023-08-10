@@ -45,7 +45,7 @@ class PopulateUsersWithContacts extends Command
         try {
             $limit = $input->getArgument('limit');
             $page = $input->getArgument('page');
-     
+
             $output->writeln(" - Executing " . __CLASS__ . " " . $page . " " . $limit);
 
             // $result = $this->service->Get('Contacts');
@@ -76,7 +76,7 @@ class PopulateUsersWithContacts extends Command
                         if (!isset($cntc[$campo]) || $cntc[$campo] === null) {//si el campo es null lo imprimo para que no rompa
                             // El campo es null o no está definido en $cntc
                             $output->writeln("Uno de los campos requeridos por la base de datos viene vacio desde la api zoho. Id de la entidad en crm: ".$cntc["id"]);
-                            Log::info("PopulateUsersWithContacts-execute-contacto de zoho sin los datos requeridos: " . print_r($cntc, true));
+                            // Log::info("PopulateUsersWithContacts-execute-contacto de zoho sin los datos requeridos: " . print_r($cntc, true));
                             $isNull=true;
                             break;
                         }
@@ -93,7 +93,7 @@ class PopulateUsersWithContacts extends Command
                                 'password' => Hash::make($cntc['Password']),
                             ]
                         );
-                        
+
                         Contact::UpdateOrCreate(
                             [
                                 'email' => $cntc['Usuario']
@@ -121,7 +121,7 @@ class PopulateUsersWithContacts extends Command
                             ]
                         );
                     }
-                   
+
                 }
             }
 
