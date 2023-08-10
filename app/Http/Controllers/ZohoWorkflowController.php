@@ -230,6 +230,8 @@ class ZohoWorkflowController extends Controller
                 'Quote_Number' => $quoteObj['Quote_Number'],
             ];
             // Log::info("OnDev-mskObjDBQuote: " . print_r($mskObjDBQuote, true));
+            Log::info("OnDev-quoteObj: " . print_r($quoteObj, true));
+            Log::info("OnDev-quoteObj->id: " . print_r($quoteObj["Contact_Name"]->id, true));
 
             $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
             if ($contact) { //rober
@@ -258,7 +260,7 @@ class ZohoWorkflowController extends Controller
                 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en UpdateQuotes: " . $e->getMessage(), $err);
+            Log::error("Error en UpdateQuotes: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
 
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
