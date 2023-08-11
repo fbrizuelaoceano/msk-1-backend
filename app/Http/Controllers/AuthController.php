@@ -567,7 +567,11 @@ class AuthController extends Controller
             ];
             $contact = Contact::where(["email" => $request->email])->first();
 
+            if (!$contact) {
+                throw new \Exception("El contacto no existe en la base de datos.");
+            }
             $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
+
             //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
             $status = 200;
             return response()->json([
@@ -583,12 +587,12 @@ class AuthController extends Controller
                 'file' => $e->getFile(),
                 // 'trace' => $e->getTraceAsString(),
             ];
-
             Log::error("Error en RequestPasswordChange: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+
             $status = 500;
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
-                $err,
+                'details' => $err,
                 $status
             ], $status);
         }
