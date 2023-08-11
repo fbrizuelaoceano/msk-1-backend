@@ -337,7 +337,7 @@ class AuthController extends Controller
     }
     public function newPassword(Request $request)
     {
-        try{
+        try {
             $request->validate([
                 //Dato del codigo del usuario validado, para seguridad
                 'validate' => 'required|string',
@@ -386,10 +386,10 @@ class AuthController extends Controller
             ], 500);
         }
     }
-// https://dev.msklatam.com/ar/change-pass/NTM0NDQ1NTAwMDAwOTA0NjY3NA%3D%3D
+    // https://dev.msklatam.com/ar/change-pass/NTM0NDQ1NTAwMDAwOTA0NjY3NA%3D%3D
     public function changepass($request)
     {
-        try{
+        try {
 
             $user = User::where(["email" => $request->email])->first();
             $user->password = Hash::make($request->password);
@@ -521,11 +521,12 @@ class AuthController extends Controller
                         'Mailing_State' => $contactData['state'],
                         'Mailing_Zip' => $contactData['postal_code'],
 
-                        'RFC' => $contactData['rfc'],
+                        'RFC' => isset($contactData['rfc']) ? $contactData['rfc'] : null,
                         // Mexico
-                        // 'RUT' => $contactData['rut'],// Chile
+                        'RUT' => isset($contactData['rut']) ? $contactData['rut'] : null, // Chile
                         // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ?
-                        // 'CUIT_CUIL_o_DNI' => $contactData['dni'], // Argentina
+                        'CUIT_CUIL_o_DNI' => isset($contactData['dni']) ? $contactData['dni'] : null,
+                        // Argentina
 
                         'R_gimen_fiscal' => $contactData['fiscal_regime'],
                         'Mailing_Street' => $contactData['address'],
@@ -557,7 +558,7 @@ class AuthController extends Controller
     }
     public function RequestPasswordChange(Request $request)
     {
-        try{
+        try {
             $data = [
                 "data" => [
                     [
@@ -574,7 +575,7 @@ class AuthController extends Controller
                 "message" => "Solicitud enviada.",
                 $response,
                 $status
-            ],$status);
+            ], $status);
         } catch (\Exception $e) {
             $err = [
                 'message' => $e->getMessage(),
@@ -612,7 +613,7 @@ class AuthController extends Controller
     }
     public function ValidatePasswordChange2($validateCode)
     {
-        try{
+        try {
             $contacto = Contact::where('validate', $validateCode)->first();
 
             if ($contacto) {
