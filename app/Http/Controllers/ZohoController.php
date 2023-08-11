@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
 class ZohoController extends Controller
 {
     private $accessToken;
-    private $service;
+    private $zohoService;
 
     private $ZOHO_API_BASE_URL = '';
     private $ZOHO_CLIENT_ID = '';
@@ -39,7 +39,8 @@ class ZohoController extends Controller
     public function __construct(ZohoCRMService $service)
     {
         try {
-            $this->service = $service;
+
+            $this->zohoService = $service;
             $this->ZOHO_API_BASE_URL = env("ZOHO_API_BASE_URL");
             $this->ZOHO_CLIENT_ID = env("ZOHO_CLIENT_ID");
             $this->ZOHO_CLIENT_SECRET = env("ZOHO_CLIENT_SECRET");
@@ -646,7 +647,7 @@ class ZohoController extends Controller
 
     public function getProductsCRM()
     {
-        $products = $this->service->Get('Products', 2);
+        $products = $this->zohoService->Get('Products', 2);
 
         foreach ($products['data'] as $p) {
             ProductCRM::updateOrCreate(['product_code' => $p['Product_Code']], [

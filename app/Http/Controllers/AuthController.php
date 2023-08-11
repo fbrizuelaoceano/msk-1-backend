@@ -584,7 +584,7 @@ class AuthController extends Controller
                 // 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en PutProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            Log::error("Error en RequestPasswordChange: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
             $status = 500;
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
