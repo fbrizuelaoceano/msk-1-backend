@@ -16,7 +16,7 @@ class CountryController extends Controller
             $ip = $request->ip;
             $IP_API = "https://pro.ip-api.com/json/".$ip."?fields=61439&key=" . $VITE_IP_API_KEY;
             // Log::info("CountryController-getCountryByIP-IP_API: " . print_r($IP_API, true));
-            
+
             $ch = curl_init($IP_API);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $response = curl_exec($ch);
@@ -31,13 +31,13 @@ class CountryController extends Controller
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
             Log::error("Error en CountryController-getCountryByIP: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
             return response()->json([
                 "error" => "Hubo un error en el servidor, revise los logs."
-            ]); 
+            ]);
         }
     }
 }

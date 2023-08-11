@@ -485,7 +485,7 @@ class AuthController extends Controller
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
             Log::error("Error en GetProfile: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));

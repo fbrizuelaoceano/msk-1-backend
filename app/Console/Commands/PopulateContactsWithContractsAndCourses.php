@@ -70,10 +70,10 @@ class PopulateContactsWithContractsAndCourses extends Command
 
                         $productDetails = $saleOrder["Product_Details"];
                         // Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
-            
+
                         foreach ($productDetails as $pd) {
                             // Log::info("salesForCRM-pd: " . print_r($pd, true));
-            
+
                             Product::updateOrCreate([
                                 'entity_id_crm' => $pd["product"]["id"],
                                 'contract_entity_id' => $saleOrder["id"]
@@ -90,7 +90,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                     }
                 }
             }
-            
+
             $contacts = Contact::all();
             foreach ($contacts as $index => $contact) {
                 if (isset($contact)){
@@ -140,7 +140,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
             Log::error("Error en PopulateContactsWithContractsAndCourses: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));

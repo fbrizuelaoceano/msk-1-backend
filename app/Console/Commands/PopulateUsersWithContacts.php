@@ -131,7 +131,7 @@ class PopulateUsersWithContacts extends Command
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
             $output->writeln("Hubo un error al ejecutar el codigo del comando y no pudo terminar. Para mas detalles revice el archivo de log.");
             Log::error("Error en PopulateUsersWithContacts: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
