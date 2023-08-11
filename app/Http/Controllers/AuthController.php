@@ -511,7 +511,6 @@ class AuthController extends Controller
                         'First_Name' => $contactData['name'],
                         'Last_Name' => $contactData['last_name'],
                         'Email' => $contactData['email'],
-                        'Usuario' => $contactData['email'],
                         'Phone' => $contactData['phone'],
                         'Profesi_n' => $contactData['profession'],
                         'Otra_profesi_n' => $contactData['other_profession'],
@@ -523,7 +522,8 @@ class AuthController extends Controller
 
                         'RFC' => isset($contactData['rfc']) ? $contactData['rfc'] : null,
                         // Mexico
-                        'RUT' => isset($contactData['rut']) ? $contactData['rut'] : null, // Chile
+                        'RUT' => isset($contactData['rut']) ? $contactData['rut'] : null,
+                        // Chile
                         // 'No-definido' => $contactData['mui'],// Ecuador. Cual es el campo en crm ?
                         'CUIT_CUIL_o_DNI' => isset($contactData['dni']) ? $contactData['dni'] : null,
                         // Argentina
