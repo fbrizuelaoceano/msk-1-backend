@@ -629,6 +629,9 @@ class ZohoController extends Controller
     public function GetByEmailService($module, $email)
     {
         try {
+
+            // $products = $this->zohoService->Get('Products', 2);
+
             $this->AccessTokenDB();
             $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/search?email=' . $email;
             $response = Http::withHeaders([
