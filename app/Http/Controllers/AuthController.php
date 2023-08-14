@@ -346,18 +346,12 @@ class AuthController extends Controller
 
             $contact = Contact::where(["validate" => $request->validator])->first();
 
-
             $user = User::where(["email" => $contact->email])->first();
             $user->password = Hash::make($request->password);
             $user->save();
 
             // Revoca todos los tokens activos del usuario
             $user->tokens()->where('revoked', false)->update(['revoked' => true]);
-            // Crea un nuevo token de acceso
-            $tokenResult = $user->createToken($request->email);
-            $token = $tokenResult->token;
-
-            $token->save();
 
             $data = [
                 "data" => [
@@ -371,7 +365,7 @@ class AuthController extends Controller
             $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
             //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
-            return response()->json($response, 201);
+            return response()->json($response, 200);
         } catch (\Exception $e) {
             $err = [
                 'message' => $e->getMessage(),
@@ -387,52 +381,7 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    // https://dev.msklatam.com/ar/change-pass/NTM0NDQ1NTAwMDAwOTA0NjY3NA%3D%3D
-    public function changepass($request)
-    {
-        try {
 
-            $user = User::where(["email" => $request->email])->first();
-            $user->password = Hash::make($request->password);
-            $user->save();
-
-            // Revoca todos los tokens activos del usuario
-            $user->tokens()->where('revoked', false)->update(['revoked' => true]);
-            // Crea un nuevo token de acceso
-            $tokenResult = $user->createToken($request->email);
-            $token = $tokenResult->token;
-
-            $token->save();
-
-            $data = [
-                "data" => [
-                    [
-                        "Generar_nueva_password" => 0,
-                        "Password" => $request->password,
-                    ]
-                ]
-            ];
-            $contact = Contact::where(["email" => $request->email])->first();
-
-            $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-            //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
-
-            return response()->json($response, 201);
-        } catch (\Exception $e) {
-            $err = [
-                'message' => $e->getMessage(),
-                'exception' => get_class($e),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-                // 'trace' => $e->getTraceAsString(),
-            ];
-
-            Log::error("Error en newPassword: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
-            return response()->json([
-                'error' => $e,
-            ], 500);
-        }
-    }
     /**
      * Get the authenticated User.
      *
