@@ -489,6 +489,28 @@ class AuthController extends Controller
 
             $response = $this->zohoService->Update('Contacts', $data, $request->entity_id_crm);
 
+            $contactDataForDB = $request->only([
+                'name',
+                "last_name",
+                "profession",
+                "speciality",
+                "rfc",
+                "dni",
+                "fiscal_regime",
+                "phone",
+                "email",
+                "sex",
+                "date_of_birth",
+                "country",
+                "postal_code",
+                "address",
+                "other_speciality",
+                "other_profession",
+                "state"
+            ]);
+
+            Contact::where(['email' => $email])->update($contactDataForDB);
+
             return response()->json([
                 'updateCRM' => $response
             ]);
