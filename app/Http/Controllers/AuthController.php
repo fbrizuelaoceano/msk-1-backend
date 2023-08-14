@@ -340,12 +340,14 @@ class AuthController extends Controller
         try {
             $request->validate([
                 //Dato del codigo del usuario validado, para seguridad
-                'validate' => 'required|string',
-                'email' => 'required|string|email',
-                'password' => 'required',
+                'validator' => 'required|string',
+                'password' => 'required|string',
             ]);
 
-            $user = User::where(["email" => $request->email])->first();
+            $contact = Contact::where(["validate" => $request->validator])->first();
+
+
+            $user = User::where(["email" => $contact->email])->first();
             $user->password = Hash::make($request->password);
             $user->save();
 
@@ -365,7 +367,6 @@ class AuthController extends Controller
                     ]
                 ]
             ];
-            $contact = Contact::where(["email" => $request->email])->first();
 
             $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
             //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
