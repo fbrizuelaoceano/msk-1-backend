@@ -254,7 +254,7 @@ class AuthController extends Controller
                             'access_token' => $tokenResult->accessToken,
                             'token_type' => 'Bearer',
                             'expires_at' => $token->expires_at,
-                            'status' => $status
+                            'status' => $status,
                         ], $status);
                     }
                 } else {
@@ -308,6 +308,7 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
+        $contact = Contact::where('user_id', $user->id)->first();
         // Revoca todos los tokens activos del usuario
         $user->tokens()->where('revoked', false)->update(['revoked' => true]);
         // Crea un nuevo token de acceso
@@ -319,6 +320,8 @@ class AuthController extends Controller
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'expires_at' => $token->expires_at,
+            'name' => $user->name,
+            'speciality' => $contact->speciality,
         ]);
     }
 
