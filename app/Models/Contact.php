@@ -31,6 +31,8 @@ class Contact extends Model
         "other_speciality",
         "other_profession",
         "state",
+        "career",
+        "year"
     ];
 
     private static $formAttributes = [
