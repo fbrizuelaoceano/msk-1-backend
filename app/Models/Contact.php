@@ -38,7 +38,7 @@ class Contact extends Model
     private static $formAttributes = [
         'entity_id_crm',
     ];
-
+    /***Relationships */
     public function user()
     {
         $user = $this->belongsTo(User::class, 'user_id');
@@ -56,8 +56,7 @@ class Contact extends Model
     {
         return $this->hasMany(CourseProgress::class);
     }
-
-
+    /***End Relationships */
     private static $formAttributesUpdateProfileRequest = [
         'name',
         'last_name',

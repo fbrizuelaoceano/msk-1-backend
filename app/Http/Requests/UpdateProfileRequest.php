@@ -54,7 +54,8 @@ class UpdateProfileRequest extends FormRequest
             'profession' => "required",
             'other_profession' => 'required_if:profession,Otra profesión',
 
-            'speciality' => "required",
+            'speciality' => 'required_unless:profession,Estudiante|string',
+
             // 'speciality' => 'nullable|required_if:profession,null',
             'other_speciality' => 'required_if:speciality,Otra Especialidad',
 
