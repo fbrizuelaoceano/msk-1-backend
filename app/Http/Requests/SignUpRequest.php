@@ -68,8 +68,11 @@ class SignUpRequest extends FormRequest
             'country' => 'required|string',
             'profession' => "required|string",
             'speciality' => "required|string",
+            // 'speciality' => 'required_unless:profession,Estudiante|string',
             'Otra_profesion' => 'required_if:profession,Otra profesión',
             'Otra_especialidad' => 'required_if:speciality,Otra Especialidad',
+            // 'career' => 'required_if:profession,Estudiante',
+            // 'year' => 'required_if:profession,Estudiante',
         ];
     }
 }
