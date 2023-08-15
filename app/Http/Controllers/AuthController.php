@@ -225,7 +225,6 @@ class AuthController extends Controller
                         ]);
 
                         $newContact = Contact::Create([
-
                             'name' => $contactCreated['First_Name'],
                             'phone' => $contactCreated['Phone'],
                             'last_name' => $contactCreated['Last_Name'],
@@ -283,7 +282,6 @@ class AuthController extends Controller
             ], $status);
         }
     }
-
     /**
      * Login user and create token.
      *
@@ -324,7 +322,6 @@ class AuthController extends Controller
             'speciality' => $contact->speciality,
         ]);
     }
-
     /**
      * Logout user (Revoke the token).
      *
@@ -384,7 +381,6 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
     /**
      * Get the authenticated User.
      *
@@ -395,7 +391,6 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
-
     public function CreateContact(Request $request)
     {
         $newOrUpdatedLead = Contact::Create([
@@ -407,7 +402,6 @@ class AuthController extends Controller
             'message' => 'Successfully created user!',
         ], 201);
     }
-
     public function GetProfile(Request $request, $email)
     {
         try {
@@ -456,7 +450,10 @@ class AuthController extends Controller
         try {
 
             // $contactData = $request->only(['name', 'last_name','email','phone','profession','other_profession', 'speciality', 'other_speciality','address', 'country','state','postal_code','rfc','fiscal_regime']);
-            $contactData = $request->only(UpdateProfileRequest::$formAttributes); //pasar el formAttributes al contacto
+            $contactData = $request->only(Contact::getFormAttributesUpdateProfileRequest());
+
+            $profesion = $contactData['profession'];
+            $profession = ($profesion === "" || $profesion === null ) ? null: $profesion;
 
             $data = [
                 'data' => [
@@ -465,7 +462,7 @@ class AuthController extends Controller
                         'Last_Name' => $contactData['last_name'],
                         'Email' => $contactData['email'],
                         'Phone' => $contactData['phone'],
-                        'Profesi_n' => $contactData['profession'],
+                        'Profesi_n' => $profession,
                         'Otra_profesi_n' => $contactData['other_profession'],
                         'Especialidad' => $contactData['speciality'],
                         'Otra_especialidad' => $contactData['other_speciality'],
@@ -483,31 +480,15 @@ class AuthController extends Controller
 
                         'R_gimen_fiscal' => $contactData['fiscal_regime'],
                         'Mailing_Street' => $contactData['address'],
+                        'Carrera_de_estudio' =>  ($profession === "Estudiante")? $contactData['career']: null,
+                        'A_o_de_estudio' => ($profession === "Estudiante")? $contactData['year']: null,
                     ]
                 ]
             ];
 
             $response = $this->zohoService->Update('Contacts', $data, $request->entity_id_crm);
 
-            $contactDataForDB = $request->only([
-                'name',
-                "last_name",
-                "profession",
-                "speciality",
-                "rfc",
-                "dni",
-                "fiscal_regime",
-                "phone",
-                "email",
-                "sex",
-                "date_of_birth",
-                "country",
-                "postal_code",
-                "address",
-                "other_speciality",
-                "other_profession",
-                "state"
-            ]);
+            $contactDataForDB = $request->only(Contact::getFormAttributesPutProfile());
 
             Contact::where(['email' => $email])->update($contactDataForDB);
 
