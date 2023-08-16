@@ -21,9 +21,9 @@ class Recaptcha implements ValidationRule
             'secret' => '6Lf1FPomAAAAAOiTM3JObb8mwKPmu25MmNegoB3l',
             'response' => $value
         ])->object();
-        Log::info("Rules-Recaptcha-value: " . print_r($value, true));
 
-        Log::info("Rules-Recaptcha-response: " . print_r($response, true));
+        // Log::info("Rules-Recaptcha-value: " . print_r($value, true));
+        // Log::info("Rules-Recaptcha-response: " . print_r($response, true));
 
         $errorMessages = [
             'missing-input-secret' => 'Falta el parámetro de clave secreta.',
