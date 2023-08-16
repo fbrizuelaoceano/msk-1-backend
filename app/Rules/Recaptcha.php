@@ -17,7 +17,7 @@ class Recaptcha implements ValidationRule
     {
         // https://www.youtube.com/watch?v=HK_146nJSWU&t=488s
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify',[
-            'secret' => '6LcIf-ElAAAAAMDxIODuptMWQ9R2LjdWoESBjO9k',
+            'secret' => '6LcIf-6Lf1FPomAAAAAOiTM3JObb8mwKPmu25MmNegoB3l',
             'response' => $value
         ])->object();
 

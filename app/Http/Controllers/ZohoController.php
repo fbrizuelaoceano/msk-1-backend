@@ -295,6 +295,7 @@ class ZohoController extends Controller
         $request->validate([
             'Email' => 'required|string|email',
             'Last_Name' => 'required|string',
+            'recaptcha_token' => ['required', new Recaptcha]
         ]);
 
         // $lead = Lead::where(['Email'=> $request->Email ])->first();
