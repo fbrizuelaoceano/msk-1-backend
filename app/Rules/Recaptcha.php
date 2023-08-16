@@ -22,6 +22,8 @@ class Recaptcha implements ValidationRule
             'response' => $value
         ])->object();
 
+        Log::info("Rules-Recaptcha-value: " . print_r($value, true));
+
         Log::info("Rules-Recaptcha-response: " . print_r($response, true));
 
         // if(!$response->success && !$response->score >= 0.7)
