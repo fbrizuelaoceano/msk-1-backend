@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lead;
-use App\Models\MethodContact;
-use App\Models\ProductCRM;
-use App\Models\Profession;
-use App\Models\Speciality;
-use App\Models\TokenPassport;
+use App\Models\{Lead,MethodContact,ProductCRM,Profession,Speciality,TokenPassport};
 use App\Services\ZohoCRMService;
+use App\Rules\Recaptcha;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
