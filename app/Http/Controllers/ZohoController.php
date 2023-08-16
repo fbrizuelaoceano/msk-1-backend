@@ -298,6 +298,9 @@ class ZohoController extends Controller
             'recaptcha_token' => ['required', new Recaptcha]
         ]);
 
+        Log::info("CreateLeadHomeContactUs-request: " . print_r($request, true));
+
+
         // $lead = Lead::where(['Email'=> $request->Email ])->first();
         // $response = $this->GetByEmailService('Leads',$request->Email);
         // if ($response == null ) {//No esta en CRM
