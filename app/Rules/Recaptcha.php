@@ -26,8 +26,18 @@ class Recaptcha implements ValidationRule
 
         Log::info("Rules-Recaptcha-response: " . print_r($response, true));
 
+        $errorMessages = [
+            'missing-input-secret' => 'Falta el parámetro de clave secreta.',
+            'invalid-input-secret' => 'El parámetro de clave secreta es inválido o está malformado.',
+            'missing-input-response' => 'Falta el parámetro de respuesta.',
+            'invalid-input-response' => 'El parámetro de respuesta es inválido o está malformado.',
+            'bad-request' => 'La solicitud es inválida o está malformada.',
+            'timeout-or-duplicate' => 'La respuesta ya no es válida: o es demasiado antigua o se ha utilizado previamente.'
+        ];
+
         // if(!$response->success && !$response->score >= 0.7)
-        if(!$response->success)
-            $fail('La verificacion de reCaptcha ha fallado. Message: ' . json_encode($response));
+        if (!$response->success && isset($errorMessages[$response->{'error-codes'}[0]])) {
+            $fail('La verificación de reCaptcha ha fallado. Mensaje: ' . $errorMessages[$response->{'error-codes'}[0]]);
+        }
     }
 }
