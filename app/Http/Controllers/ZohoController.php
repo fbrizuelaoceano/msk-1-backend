@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Lead,MethodContact,ProductCRM,Profession,Speciality,TokenPassport};
+use App\Http\Requests\ContactUsRequest;
+use App\Models\{Career, Lead,MethodContact,ProductCRM,Profession,Speciality,TokenPassport};
 use App\Services\ZohoCRMService;
-use App\Rules\Recaptcha;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -290,23 +290,9 @@ class ZohoController extends Controller
             'data' => $accessToken,
         ]);
     }
-    public function CreateLeadHomeContactUs(Request $request)
+    public function CreateLeadHomeContactUs(ContactUsRequest $request)
     {
         try{
-            $request->validate([
-                'Email' => 'required|string|email',
-                'Last_Name' => 'required|string',
-                'recaptcha_token' => ['required', new Recaptcha]
-            ]);
-
-            // Log::info("CreateLeadHomeContactUs-request: " . print_r($request, true));
-
-
-            // $lead = Lead::where(['Email'=> $request->Email ])->first();
-            // $response = $this->GetByEmailService('Leads',$request->Email);
-            // if ($response == null ) {//No esta en CRM
-
-
             $data = [
                 "data" => [
                     [
@@ -324,9 +310,11 @@ class ZohoController extends Controller
                         "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
                         "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
                         "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
-                        "Pais" => $request->Pais
-
-                    ]
+                        "Pais" => $request->Pais,
+                        "Cursos_consultados" => isset($request->Cursos_consultados) ? $request->Cursos_consultados : null,
+                        "Carrera_de_estudio" => isset($request->career) ? $request->career : null,
+                        "A_o_de_estudio" => isset($request->year) ? $request->year : null,
+                        ]
                 ]
             ];
 
@@ -336,10 +324,17 @@ class ZohoController extends Controller
 
             //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
 
-            if (!empty($request->Profesion))
+            if ( !empty($request->Profesion) )
                 $profession = Profession::where(['name' => $request->Profesion])->first();
-            if (!empty($request->Especialidad))
+            if ( isset($profession->name) && $profession->name !== "Estudiante" ){
+                if ( !empty($request->Especialidad) )
                 $specialty = Speciality::where(['name' => $request->Especialidad])->first();
+            }
+            if ( isset($profession->name) && $profession->name === "Estudiante" ){
+                if ( !empty($request->career) )
+                    $career = Career::where(['name' => $request->career])->first();
+            }
+
             if (!empty($request->Preferencia_de_contactaci_n))
                 $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
 
@@ -347,12 +342,14 @@ class ZohoController extends Controller
                 "email" => $request->Email,
                 "last_name" => $request->Last_Name,
                 "name" => $request->First_Name,
-                "profession" => isset($profession->id) ? $profession->id : '',
-                "speciality" => isset($specialty->id) ? $specialty->id : '',
+                "profession" => isset($profession->id) ? $profession->id : null,
+                "speciality" => isset($specialty->id) ? $specialty->id : null,
                 "phone" => $request->Phone,
-                "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
+                "method_contact" => isset($contactMethod->id) ? $contactMethod->id : null,
                 "entity_id_crm" => $response['data'][0]['details']['id'],
-                'country' => $request->Pais
+                'country' => $request->Pais,
+                "career" => isset($career->id) ? $career->id : '',
+                'year' => isset($request->year) ? $request->year : ''
             ]);
 
             return response()->json([
@@ -371,14 +368,13 @@ class ZohoController extends Controller
             Log::error("Error en CreateLeadHomeContactUs: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
             $status = 500;
             return response()->json([
-                'error' => $e,
+                'error' => $err,
                 "status" => $status
             ], $status);
         }
     }
     public function CreateLeadHomeNewsletter(Request $request)
     {
-
         $request->validate([
             'Email' => 'required|string|email',
         ]);
