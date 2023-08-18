@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignUpRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ use App\Models\User;
 use App\Models\Contact;
 use App\Models\Profession;
 use App\Models\Speciality;
+use App\Rules\Recaptcha;
 use App\Services\ZohoCRMService;
 
 class AuthController extends Controller
@@ -287,13 +289,8 @@ class AuthController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
         $credentials = [
             'email' => $request->email,
             'password' => $request->password,

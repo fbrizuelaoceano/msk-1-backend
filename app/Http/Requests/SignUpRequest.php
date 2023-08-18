@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Recaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SignUpRequest extends FormRequest
@@ -50,7 +51,6 @@ class SignUpRequest extends FormRequest
             'Otra_profesion.string' => 'La Otra Profesion debe ser una cadena de caracteres.',
             'Otra_especialidad.required_if' => 'La Otra Especialidad es obligatorio.',
             'Otra_especialidad.string' => 'La Otra Especialidad debe ser una cadena de caracteres.',
-
         ];
     }
     /**
@@ -61,6 +61,7 @@ class SignUpRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'recaptcha_token' => ['required', new Recaptcha],
             'last_name' => 'required|string',//Necesario para crear el contacto de crm
             'email' => 'required|string|email|unique:users',//Necesario para crear el contacto de crm
             'first_name' => 'required|string:',
