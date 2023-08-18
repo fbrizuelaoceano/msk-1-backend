@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('leads', function (Blueprint $table) {
             $table->string('career')->nullable()->default(null);
             $table->string('year')->nullable()->default(null);
-            $table->string('country')->nullable()->default(null);
             $table->string('other_profession')->nullable()->default(null);
             $table->string('other_speciality')->nullable()->default(null);
         });
@@ -28,7 +27,6 @@ return new class extends Migration
         Schema::table('leads', function (Blueprint $table) {
             $table->dropColumn('career');
             $table->dropColumn('year');
-            $table->dropColumn('country');
             $table->dropColumn('other_profession');
             $table->dropColumn('other_speciality');
         });
