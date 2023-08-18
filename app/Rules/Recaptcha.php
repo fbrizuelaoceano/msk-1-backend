@@ -22,17 +22,25 @@ class Recaptcha implements ValidationRule
             'response' => $value
         ])->object();
 
-        $errorMessages = [
-            'missing-input-secret' => 'Falta el parámetro de clave secreta.',
-            'invalid-input-secret' => 'El parámetro de clave secreta es inválido o está malformado.',
-            'missing-input-response' => 'Falta el parámetro de respuesta.',
-            'invalid-input-response' => 'El parámetro de respuesta es inválido o está malformado.',
-            'bad-request' => 'La solicitud es inválida o está malformada.',
-            'timeout-or-duplicate' => 'La respuesta ya no es válida: o es demasiado antigua o se ha utilizado previamente.'
-        ];
-
-        if (!$response->success && isset($errorMessages[$response->{'error-codes'}[0]])) {
-            $fail('La verificación de reCaptcha ha fallado. Mensaje: ' . $errorMessages[$response->{'error-codes'}[0]]);
+        if (!$response->success && isset($response->{'error-codes'}[0])) {
+            $errorCode = $response->{'error-codes'}[0];
+            $errorMessage = $this->getErrorMessage($errorCode);
+            $fail('reCaptcha: ' . $errorMessage);
         }
     }
+
+    private function getErrorMessage(string $errorCode): string
+    {
+        $errorMessages = [
+            'missing-input-secret' => 'Falta el parametro de clave secreta.',
+            'invalid-input-secret' => 'El parametro de clave secreta es invalido o esta malformado.',
+            'missing-input-response' => 'Falta el parametro de respuesta.',
+            'invalid-input-response' => 'El parametro de respuesta es invalido o esta malformado.',
+            'bad-request' => 'La solicitud es invalida o esta malformada.',
+            'timeout-or-duplicate' => 'Token reCaptcha no valido: o es demasiado antiguo o se ha utilizado previamente.',
+        ];
+
+        return $errorMessages[$errorCode] ?? 'Error de reCaptcha desconocido.';
+    }
 }
+
