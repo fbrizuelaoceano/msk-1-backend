@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('career')->nullable()->default(null);
             $table->string('year')->nullable()->default(null);
             $table->string('country')->nullable()->default(null);
+            $table->string('other_profession')->nullable()->default(null);
+            $table->string('other_speciality')->nullable()->default(null);
         });
     }
 
@@ -27,6 +29,8 @@ return new class extends Migration
             $table->dropColumn('career');
             $table->dropColumn('year');
             $table->dropColumn('country');
+            $table->dropColumn('other_profession');
+            $table->dropColumn('other_speciality');
         });
     }
 };
