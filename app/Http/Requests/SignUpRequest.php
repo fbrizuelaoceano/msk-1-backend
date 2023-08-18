@@ -51,6 +51,7 @@ class SignUpRequest extends FormRequest
             'Otra_profesion.string' => 'La Otra Profesion debe ser una cadena de caracteres.',
             'Otra_especialidad.required_if' => 'La Otra Especialidad es obligatorio.',
             'Otra_especialidad.string' => 'La Otra Especialidad debe ser una cadena de caracteres.',
+            'recaptcha_token' => 'El token de recaptcha es requerido.'
         ];
     }
     /**
