@@ -190,7 +190,11 @@ class AuthController extends Controller
                             "Profesi_n" => $request->profession,
                             "Otra_especialidad" => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null,
                             "Otra_profesi_n" => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
-                            "Convertido_mediante" => "Sitio web"
+                            "Convertido_mediante" => "Sitio web",
+                            "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
+                            "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
+                            "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
+                            "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
                         ]
                     ]
                 ];
