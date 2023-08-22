@@ -342,6 +342,12 @@ class ZohoCRMService
             ->post($URL_ZOHO, $requestArray)
             ->json();
 
+        $body = [
+            "URL_ZOHO" => $URL_ZOHO,
+            "response" => $response,
+            "requestArray" => $requestArray
+        ];
+        $this->analyzeResponseForErrors($response,$body);
 
         return $response;
     }
