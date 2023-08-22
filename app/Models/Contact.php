@@ -31,12 +31,14 @@ class Contact extends Model
         "other_speciality",
         "other_profession",
         "state",
+        "career",
+        "year"
     ];
 
     private static $formAttributes = [
         'entity_id_crm',
     ];
-
+    /***Relationships */
     public function user()
     {
         $user = $this->belongsTo(User::class, 'user_id');
@@ -54,4 +56,60 @@ class Contact extends Model
     {
         return $this->hasMany(CourseProgress::class);
     }
+    /***End Relationships */
+    private static $formAttributesUpdateProfileRequest = [
+        'name',
+        'last_name',
+        'email',
+        'phone',
+        'fiscal_regime',
+        'address',
+        'country',
+        'state',
+        'postal_code',
+
+        'rfc',
+        'rut',
+        'mui',
+        'dni',
+
+        'profession',
+        'speciality',
+        'other_profession',
+        'other_speciality',
+
+        'career',
+        'year'
+    ];
+    public static function getFormAttributesUpdateProfileRequest()
+    {
+        return self::$formAttributesUpdateProfileRequest;
+    }
+
+    private static $formAttributesPutProfile = [
+        'name',
+        "last_name",
+        "rfc",
+        "dni",
+        "fiscal_regime",
+        "phone",
+        "email",
+        "sex",
+        "date_of_birth",
+        "country",
+        "postal_code",
+        "address",
+        "profession",
+        "speciality",
+        "other_profession",
+        "other_speciality",
+        "state",
+        "career",
+        "year"
+    ];
+    public static function getFormAttributesPutProfile()
+    {
+        return self::$formAttributesPutProfile;
+    }
+
 }

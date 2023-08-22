@@ -12,6 +12,8 @@ class TokenPassport extends Model
     protected $fillable = [
         'name',
         'token',
+        'expired',
+        'observacion',
         'hours_duration',
     ];
     public $timestamps = true;
