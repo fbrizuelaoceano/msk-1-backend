@@ -526,10 +526,12 @@ class ZohoController extends Controller
                     '&grant_type=' . 'refresh_token';
                 $response = Http::post($URL)->json();
 
+                $observacion = 'ZohoController: Se creo porque un token expiraba en 5 minutos. Id del que expiraba: '.$accessToken->id;
                 $tokenData = [
                     'name' => 'Access Token',
                     'token' => $response['access_token'],
                     'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                    'observacion' => $observacion
                 ];
                 $newAccessToken = TokenPassport::create($tokenData);
                 $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
@@ -542,10 +544,12 @@ class ZohoController extends Controller
                 '&grant_type=' . 'refresh_token';
             $response = Http::post($URL)->json();
 
+            $observacion = 'ZohoController: Se lo cargo por primera vez';
             $tokenData = [
                 'name' => 'Access Token',
                 'token' => $response['access_token'],
                 'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                'observacion' => $observacion
             ];
             $newAccessToken = TokenPassport::create($tokenData);
             $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
