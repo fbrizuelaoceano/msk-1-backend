@@ -51,10 +51,9 @@ class ZohoCRMService
     {
 
     }
-     /* Administracion de tokens */
-
+    /* Administracion de tokens */
     private function cleanTokensExpired(){
-        $accessTokens = TokenPassport::all();
+        $accessTokens = TokenPassport::where('expired', false)->get();
 
         foreach($accessTokens as $accessToken){
             $createdAt = Carbon::parse($accessToken->created_at);
@@ -62,7 +61,7 @@ class ZohoCRMService
 
             $timeElapsedInHours = $timeElapsedInSeconds / 3600; //3600 segundos == 1 hora
             if($timeElapsedInHours >= 1){
-                $accessToken->update(['expired' => 1,'observacion' => 'cleanTokensExpired()']);
+                $accessToken->update(['expired' => 1,'observacion' => 'cleanTokensExpired()-'.$accessToken->observacion]);
             }
         }
 
@@ -217,6 +216,7 @@ class ZohoCRMService
         */
     }
     /* End Administracion de tokens */
+
 
 
     private function generateAccessToken($observacion = 'Sin observacion.')
