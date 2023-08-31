@@ -395,7 +395,8 @@ class ZohoController extends Controller
                         "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
                         "Preferencia_de_contactaci_n" => ["E-mail"],
                         "Carrera_de_estudio" => isset($request->Career) ? $request->Career : null,
-                        "A_o_de_estudio" => isset($request->Year) ? $request->Year : null, "
+                        "A_o_de_estudio" => isset($request->Year) ? $request->Year : null,
+                        "
                         Temas_de_interes" => "Temas_de_interes"
                     ]
                 ]
@@ -688,15 +689,13 @@ class ZohoController extends Controller
     {
         $products = $this->zohoService->Get('Products', 2);
 
-        dump($products);
-        exit();
 
         foreach ($products['data'] as $p) {
             ProductCRM::updateOrCreate(['product_code' => $p['Product_Code']], [
                 'product_code' => $p['Product_Code'],
                 'cedente_code' => $p['C_digo_de_Curso_Cedente'],
                 'platform' => $p['Plataforma_enrolamiento'],
-                'platform_url' => $p['URL_plataforma'],
+                'platform_url' => isset($p['URL_plataforma']) ? $p['URL_plataforma'] : null,
                 'entity_id' => $p['id'],
             ]);
         }
