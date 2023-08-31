@@ -38,15 +38,6 @@ class ZohoWorkflowController extends Controller
             $contactObj = json_decode($_POST['contact']);
             $saleObj = json_decode($_POST['sale']);
 
-            // $dosObj = [ $contactObj, $saleObj ];Log::info("salesForCRM-dosObj: " . print_r($dosObj, true));
-
-            /*
-                Log::info(print_r($contactObj, true));
-                Log::info(print_r($saleObj, true));
-            */
-            //dd($contactObj->Usuario);
-            // Log::info("salesForCRM-contactObj: " . print_r($contactObj, true));
-
             $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
                 'name' => $contactObj->Full_Name,
                 'email' => $contactObj->Usuario,
@@ -77,7 +68,7 @@ class ZohoWorkflowController extends Controller
 
             $contactArrayObj = (array) $contactObj;
             $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];
-            // Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
+            Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if ($formCourseProgress) {
 
@@ -175,7 +166,7 @@ class ZohoWorkflowController extends Controller
 
     public function ValidatedUser(Request $request)
     {
-        try{
+        try {
             $contactObj = json_decode($_POST['contact']);
             $contact = Contact::where('email', $contactObj->Usuario)->update([
                 'validate' => $contactObj->Validador,
@@ -299,21 +290,35 @@ class ZohoWorkflowController extends Controller
             // Log::info("OnDev-contactArrayObj: " . print_r($contactArrayObj, true));
 
             $mskObjDBContact = [
-                'name' => $contactArrayObj["First_Name"], //ok
-                'last_name' => $contactArrayObj["Last_Name"], //ok
-                'email' => $contactArrayObj["Email"], //ok
+                'name' => $contactArrayObj["First_Name"],
+                //ok
+                'last_name' => $contactArrayObj["Last_Name"],
+                //ok
+                'email' => $contactArrayObj["Email"],
+                //ok
                 // 'email' => $contactArrayObj["Usuario"],
-                'phone' => $contactArrayObj["Phone"], //ok
-                'entity_id_crm' => $contactArrayObj["id"], //no esta en el form de Datos personales
-                'profession' => $contactArrayObj["Profesi_n"], //ok "Otra profesion"
-                'other_profession' => $contactArrayObj["Otra_profesi_n"], //ok "la otra profesion"
-                'speciality' => $contactArrayObj["Especialidad"], //ok
-                'other_speciality' => $contactArrayObj["Otra_especialidad"], //ok
-                'rfc' => $contactArrayObj["RFC"], //ok
-                'country' => $contactArrayObj["Pais"], //ok
-                'fiscal_regime' => $contactArrayObj["R_gimen_fiscal"], //ok
-                'postal_code' => $contactArrayObj["Mailing_Zip"], //ok
-                'address' => $contactArrayObj["Mailing_Street"], //ok
+                'phone' => $contactArrayObj["Phone"],
+                //ok
+                'entity_id_crm' => $contactArrayObj["id"],
+                //no esta en el form de Datos personales
+                'profession' => $contactArrayObj["Profesi_n"],
+                //ok "Otra profesion"
+                'other_profession' => $contactArrayObj["Otra_profesi_n"],
+                //ok "la otra profesion"
+                'speciality' => $contactArrayObj["Especialidad"],
+                //ok
+                'other_speciality' => $contactArrayObj["Otra_especialidad"],
+                //ok
+                'rfc' => $contactArrayObj["RFC"],
+                //ok
+                'country' => $contactArrayObj["Pais"],
+                //ok
+                'fiscal_regime' => $contactArrayObj["R_gimen_fiscal"],
+                //ok
+                'postal_code' => $contactArrayObj["Mailing_Zip"],
+                //ok
+                'address' => $contactArrayObj["Mailing_Street"],
+                //ok
                 'state' => $contactArrayObj["Mailing_State"], //ok
                 // 'date_of_birth' => $contactArrayObj["Date_of_Birth"],//no esta en el form de Datos personales
                 // 'sex' => $contactArrayObj["Sexo"],//no esta en el form de Datos personales
