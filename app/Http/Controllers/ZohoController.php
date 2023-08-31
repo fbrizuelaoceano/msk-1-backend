@@ -687,7 +687,7 @@ class ZohoController extends Controller
 
     public function getProductsCRM()
     {
-        $products = $this->zohoService->Get('Products', 2);
+        $products = $this->zohoService->Get('Products');
 
 
         foreach ($products['data'] as $p) {
