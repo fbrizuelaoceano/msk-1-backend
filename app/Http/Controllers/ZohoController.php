@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactUsRequest;
 use App\Http\Requests\LeadHomeNewsletterRequest;
-use App\Models\{Career, Lead,MethodContact,ProductCRM,Profession,Speciality,TokenPassport};
+use App\Models\{Career, Lead, MethodContact, ProductCRM, Profession, Speciality, TokenPassport};
 use App\Services\ZohoCRMService;
 use Carbon\Carbon;
 use Exception;
@@ -293,7 +293,7 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeContactUs(ContactUsRequest $request)
     {
-        try{
+        try {
             $data = [
                 "data" => [
                     [
@@ -315,7 +315,7 @@ class ZohoController extends Controller
                         "Cursos_consultados" => isset($request->Cursos_consultados) ? $request->Cursos_consultados : null,
                         "Carrera_de_estudio" => isset($request->career) ? $request->career : null,
                         "A_o_de_estudio" => isset($request->year) ? $request->year : null,
-                        ]
+                    ]
                 ]
             ];
 
@@ -325,14 +325,14 @@ class ZohoController extends Controller
 
             //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
 
-            if ( !empty($request->Profesion) )
+            if (!empty($request->Profesion))
                 $profession = Profession::where(['name' => $request->Profesion])->first();
-            if ( isset($profession->name) && $profession->name !== "Estudiante" ){
-                if ( !empty($request->Especialidad) )
-                $specialty = Speciality::where(['name' => $request->Especialidad])->first();
+            if (isset($profession->name) && $profession->name !== "Estudiante") {
+                if (!empty($request->Especialidad))
+                    $specialty = Speciality::where(['name' => $request->Especialidad])->first();
             }
-            if ( isset($profession->name) && $profession->name === "Estudiante" ){
-                if ( !empty($request->career) )
+            if (isset($profession->name) && $profession->name === "Estudiante") {
+                if (!empty($request->career))
                     $career = Career::where(['name' => $request->career])->first();
             }
 
@@ -376,7 +376,7 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeNewsletter(LeadHomeNewsletterRequest $request)
     {
-        try{
+        try {
             $data = [
                 "data" => [
                     [
@@ -395,7 +395,7 @@ class ZohoController extends Controller
                         "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
                         "Preferencia_de_contactaci_n" => ["E-mail"],
                         "Carrera_de_estudio" => isset($request->Career) ? $request->Career : null,
-                        "A_o_de_estudio" => isset($request->Year) ? $request->Year : null,"
+                        "A_o_de_estudio" => isset($request->Year) ? $request->Year : null, "
                         Temas_de_interes" => "Temas_de_interes"
                     ]
                 ]
@@ -405,14 +405,14 @@ class ZohoController extends Controller
             // "Description" => $request->Description,
             // "Cursos_consultados" => isset($request->Cursos_consultados) ? $request->Cursos_consultados : null,
 
-            if ( !empty($request->Profesion) )
+            if (!empty($request->Profesion))
                 $profession = Profession::where(['name' => $request->Profesion])->first();
-            if ( isset($profession->name) && $profession->name !== "Estudiante" ){
-                if ( !empty($request->Especialidad) )
+            if (isset($profession->name) && $profession->name !== "Estudiante") {
+                if (!empty($request->Especialidad))
                     $specialty = Speciality::where(['name' => $request->Especialidad])->first();
             }
-            if ( isset($profession->name) && $profession->name === "Estudiante" ){
-                if ( !empty($request->Career) )
+            if (isset($profession->name) && $profession->name === "Estudiante") {
+                if (!empty($request->Career))
                     $career = Career::where(['name' => $request->Career])->first();
             }
 
@@ -526,11 +526,12 @@ class ZohoController extends Controller
                     '&grant_type=' . 'refresh_token';
                 $response = Http::post($URL)->json();
 
-                $observacion = 'ZohoController: Se creo porque un token expiraba en 5 minutos. Id del que expiraba: '.$accessToken->id;
+                $observacion = 'ZohoController: Se creo porque un token expiraba en 5 minutos. Id del que expiraba: ' . $accessToken->id;
                 $tokenData = [
                     'name' => 'Access Token',
                     'token' => $response['access_token'],
-                    'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                    'hours_duration' => floor($response['expires_in'] / 3600),
+                    //calcular horas, 3600 = seg
                     'observacion' => $observacion
                 ];
                 $newAccessToken = TokenPassport::create($tokenData);
@@ -548,7 +549,8 @@ class ZohoController extends Controller
             $tokenData = [
                 'name' => 'Access Token',
                 'token' => $response['access_token'],
-                'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                'hours_duration' => floor($response['expires_in'] / 3600),
+                //calcular horas, 3600 = seg
                 'observacion' => $observacion
             ];
             $newAccessToken = TokenPassport::create($tokenData);
@@ -685,6 +687,9 @@ class ZohoController extends Controller
     public function getProductsCRM()
     {
         $products = $this->zohoService->Get('Products', 2);
+
+        dump($products);
+        exit();
 
         foreach ($products['data'] as $p) {
             ProductCRM::updateOrCreate(['product_code' => $p['Product_Code']], [
