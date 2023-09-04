@@ -59,7 +59,7 @@ class SSOController extends Controller
         $hash = password_hash($identifier . $secret, PASSWORD_BCRYPT, array("cost" => 12));
         $identifier = urlencode($identifier);
 
-        $cadenaGET = "?mail=" . $identifier . "&secret=" . $hash;
+        $cadenaGET = "?mail=" . $identifier . "&secret=" . $hash . "&curso=" . $data['cedente_code'];
         // $cadenaGET.="&codcurso=C23796";
         return env('SSO_MOODLE_URL') . $cadenaGET;
     }
