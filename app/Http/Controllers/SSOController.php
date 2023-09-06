@@ -51,7 +51,7 @@ class SSOController extends Controller
         return env('SSO_TROPOS_URL') . $cadenaGET;
     }
 
-    private function makeSSOMoodle($data)
+    private function makeSSOMoodle($data, $isMundoSanitario = false)
     {
         $secret = env("SSO_MOODLE_SECRET");
         $identifier = $data['email'];
@@ -62,7 +62,7 @@ class SSOController extends Controller
         $cadenaGET = "?mail=" . $identifier . "&secret=" . $hash . "&curso=" . $data['cod_curso'];
         // $cadenaGET.="&codcurso=C23796";
 
-        if ($data['platform'] === 'Moodle Mundo Sanitario') {
+        if ($isMundoSanitario) {
             return env('SSO_MOODLE_SANITARIO_URL') . $cadenaGET;
         }
 
@@ -78,6 +78,8 @@ class SSOController extends Controller
         switch ($coursePlatform) {
             case 'Moodle MSK':
                 return $this->makeSSOMoodle($data);
+            case 'Moodle Mundo Sanitario':
+                return $this->makeSSOMoodle($data, true);
             default: //Tropos
                 return $this->makeSSOTropos($data);
         }
