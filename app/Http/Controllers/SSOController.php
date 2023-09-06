@@ -61,6 +61,11 @@ class SSOController extends Controller
 
         $cadenaGET = "?mail=" . $identifier . "&secret=" . $hash . "&curso=" . $data['cod_curso'];
         // $cadenaGET.="&codcurso=C23796";
+
+        if ($data['paltform'] === 'Moodle Mundo Sanitario') {
+            return env('SSO_MOODLE_SANITARIO_URL') . $cadenaGET;
+        }
+
         return env('SSO_MOODLE_URL') . $cadenaGET;
     }
 
