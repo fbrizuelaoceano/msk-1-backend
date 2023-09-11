@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactUsRequest;
 use App\Models\Lead;
 use App\Models\MethodContact;
 use App\Models\Profession;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use ReCaptcha\ReCaptcha;
 
 // use samples\src\com\zoho\crm\api\initializer;
 
@@ -290,17 +292,12 @@ class ZohoController extends Controller
             'data' => $accessToken,
         ]);
     }
-    public function CreateLeadHomeContactUs(Request $request)
+    public function CreateLeadHomeContactUs(ContactUsRequest $request)
     {
 
-        $request->validate([
-            'Email' => 'required|string|email',
-            'Last_Name' => 'required|string',
-        ]);
-
-        // $lead = Lead::where(['Email'=> $request->Email ])->first();
-        // $response = $this->GetByEmailService('Leads',$request->Email);
-        // if ($response == null ) {//No esta en CRM
+        $token = $request->input('recaptcha_token');
+        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+        $response = $recaptcha->verify($token);
 
 
         $data = [
@@ -328,7 +325,7 @@ class ZohoController extends Controller
 
         //Log::channel('zoho-leads')->info("data: " . print_r($data, true));
 
-        $response = $this->Create('Leads', $data);
+       // $response = $this->Create('Leads', $data);
 
         //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
 
@@ -383,7 +380,9 @@ class ZohoController extends Controller
                 ]
             ]
         ];
+
         $leadExists = Lead::where(['email' => $request->Email])->first();
+
         if (!$leadExists) { // no se encontró ningún registro con ese email
             $response = $this->Create('Leads', $data);
 
@@ -529,7 +528,7 @@ class ZohoController extends Controller
         ])
             ->put($URL_ZOHO, $requestArray)
             ->json();
-        
+
         $body = [
             $URL_ZOHO,
             $response,
