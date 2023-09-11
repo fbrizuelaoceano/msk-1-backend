@@ -34,18 +34,9 @@ class ZohoWorkflowController extends Controller
 
     public function salesForCRM(Request $request)
     {
-       try { 
+        try {
             $contactObj = json_decode($_POST['contact']);
             $saleObj = json_decode($_POST['sale']);
-            
-            // $dosObj = [ $contactObj, $saleObj ];Log::info("salesForCRM-dosObj: " . print_r($dosObj, true));
-            
-            /*  
-                Log::info(print_r($contactObj, true));
-                Log::info(print_r($saleObj, true));
-            */
-            //dd($contactObj->Usuario);
-            // Log::info("salesForCRM-contactObj: " . print_r($contactObj, true));
 
             $user = User::updateOrCreate(['email' => $contactObj->Usuario], [
                 'name' => $contactObj->Full_Name,
@@ -53,8 +44,8 @@ class ZohoWorkflowController extends Controller
                 'password' => Hash::make($contactObj->Password),
             ]);
             // Log::info("salesForCRM-user: " . print_r($user, true));
-            
-            
+
+
             $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
                 'name' => $contactObj->First_Name,
                 'last_name' => $contactObj->Last_Name,
@@ -74,17 +65,17 @@ class ZohoWorkflowController extends Controller
                 'date_of_birth' => $contactObj->Date_of_Birth
             ]);
             // Log::info("salesForCRM-contact: " . print_r($contact, true));
-            
-            $contactArrayObj = (array)$contactObj;
-            $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
+
+            $contactArrayObj = (array) $contactObj;
+            $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];
             Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
-            if($formCourseProgress){
-                
+            if ($formCourseProgress) {
+
                 foreach ($formCourseProgress as $formCPstdClass) {
-                    $formCP = (array)$formCPstdClass;
+                    $formCP = (array) $formCPstdClass;
                     // Log::info("salesForCRM-foreach: " . print_r($formCP, true));
-                    
+
                     $mskObjDBCourseProgress = null;
                     $mskObjDBCourseProgress = [
                         'entity_id_crm' => $formCP['id'],
@@ -109,7 +100,7 @@ class ZohoWorkflowController extends Controller
                         'C_digo_de_Curso_Cedente' => $formCP['C_digo_de_Curso_Cedente'],
                         'Plataforma_enrolamiento' => $formCP['Plataforma_enrolamiento'],
                     ];
-                   
+
                     // Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
 
                     CourseProgress::updateOrCreate([
@@ -140,19 +131,20 @@ class ZohoWorkflowController extends Controller
                     'entity_id_crm' => $pd->product->id,
                     'contract_entity_id' => $saleObj->id
                 ], [
-                        'entity_id_crm' => $pd->product->id,
-                        'contract_id' => $contract->id,
-                        'contract_entity_id' => $saleObj->id,
-                        'quantity' => $pd->quantity,
-                        'discount' => $pd->Discount,
-                        'price' => $pd->total,
-                        'product_code' => (int) $pd->product->Product_Code
-                    ]);
+                    'entity_id_crm' => $pd->product->id,
+                    'contract_id' => $contract->id,
+                    'contract_entity_id' => $saleObj->id,
+                    'quantity' => $pd->quantity,
+                    'discount' => $pd->Discount,
+                    'price' => $pd->total,
+                    'product_code' => (int) $pd->product->Product_Code
+                ]);
 
             }
 
             return response()->json([
-                'user' => $user, 'contact' => $contact
+                'user' => $user,
+                'contact' => $contact
             ]);
         } catch (\Exception $e) {
             $err = [
@@ -160,11 +152,11 @@ class ZohoWorkflowController extends Controller
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
             Log::error("Error en salesForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
-            
+
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
                 $err,
@@ -174,25 +166,38 @@ class ZohoWorkflowController extends Controller
 
     public function ValidatedUser(Request $request)
     {
-        $contactObj = json_decode($_POST['contact']);
+        try {
+            $contactObj = json_decode($_POST['contact']);
+            $contact = Contact::where('email', $contactObj->Usuario)->update([
+                'validate' => $contactObj->Validador,
+            ]);
 
-        /* Log::info(print_r($contactObj, true));
-        Log::info(print_r($saleObj, true)); */
+            return response()->json(['contact' => $contact]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
 
-        //dd($contactObj->Usuario);
-
-        $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
-            'validate' => $contactObj->Validador,
-        ]);
-
-        return response()->json(['contact' => $contact]);
+            Log::error("Error en ValidatedUser: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            $status = 500;
+            return response()->json([
+                'error' => 'Ocurrió un error en el servidor',
+                $err,
+                $status
+            ], $status);
+        }
     }
-    
-    function UpdateQuotes(Request $request){
+
+    function UpdateQuotes(Request $request)
+    {
         try {
             $quoteObjstdClass = json_decode($_POST['quote']);
             // Log::info("OnDev-quoteObjstdClass: " . print_r($quoteObjstdClass, true));
-            $quoteObj = (array)$quoteObjstdClass;
+            $quoteObj = (array) $quoteObjstdClass;
             // Log::info("OnDev-quoteObj: " . print_r($quoteObj, true));
 
             //prueba desde postman
@@ -216,9 +221,11 @@ class ZohoWorkflowController extends Controller
                 'Quote_Number' => $quoteObj['Quote_Number'],
             ];
             // Log::info("OnDev-mskObjDBQuote: " . print_r($mskObjDBQuote, true));
+            // Log::info("OnDev-quoteObj: " . print_r($quoteObj, true));
+            // Log::info("OnDev-quoteObj->id: " . print_r($quoteObj["Contact_Name"]->id, true));
 
             $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
-            if ($contact) { //rober 
+            if ($contact) { //rober
                 $mskObjDBQuote["contact_id"] = $contact->id;
             }
             $quote = Quote::updateOrCreate(
@@ -226,9 +233,9 @@ class ZohoWorkflowController extends Controller
                     'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
                 ],
                 $mskObjDBQuote
-            );        
+            );
             // Log::info("Quote::updateOrCreate: " . print_r($quote, true));
-        
+
             return response()->json([
                 $mskObjDBQuote,
                 $quote,
@@ -241,84 +248,102 @@ class ZohoWorkflowController extends Controller
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en UpdateQuotes: " . $e->getMessage(), $err);
-            
+            Log::error("Error en UpdateQuotes: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
                 $err,
             ], 500);
         }
     }
-    
+
     /**
-    *    Datos desde postman                        Datos desde api con api-names.
-    *   {                                
-    *       "entity_id_crm": "5344455000004398022",
-    *       "name": "Eva2",                         [First_Name] => Eva
-    *       "last_name": "Marmolejo2",              [Last_Name] => Marmolejo
-    *       "email": "emarmolejo2@msklatam.com",    [Email] => emarmolejo@msklatam.com
-    *       "phone": "+34 222 22 22 22",            [Phone] => +34 619 96 13 17
-    *       "profession": "Abogado2",               [Profesi_n] =>
-    *       "other_profession": null,               [Otra_profesi_n] =>
-    *       "speciality": "Derecho penal2",         [Especialidad] => Bioquímica
-    *       "other_speciality": null,               [Otra_especialidad] =>
-    *       "address": "Calle 2222",                [Mailing_Street] => Calle 1123
-    *       "country": "Chile2",                    [Pais] => México
-    *       "state": "Ciudad de México2",           [Mailing_City] => Ciudad de México
-    *       "postal_code": "22222",                 [Mailing_Zip] => 03100
-    *       "rfc": "XAXX020202000",                 [RFC] => XAXX010101000
-    *       "fiscal_regime": "General2"             [R_gimen_fiscal] => 616 Sin obligaciones fiscales
-    *   }
-    */
+     *    Datos desde postman                        Datos desde api con api-names.
+     *   {
+     *       "entity_id_crm": "5344455000004398022",
+     *       "name": "Eva2",                         [First_Name] => Eva
+     *       "last_name": "Marmolejo2",              [Last_Name] => Marmolejo
+     *       "email": "emarmolejo2@msklatam.com",    [Email] => emarmolejo@msklatam.com
+     *       "phone": "+34 222 22 22 22",            [Phone] => +34 619 96 13 17
+     *       "profession": "Abogado2",               [Profesi_n] =>
+     *       "other_profession": null,               [Otra_profesi_n] =>
+     *       "speciality": "Derecho penal2",         [Especialidad] => Bioquímica
+     *       "other_speciality": null,               [Otra_especialidad] =>
+     *       "address": "Calle 2222",                [Mailing_Street] => Calle 1123
+     *       "country": "Chile2",                    [Pais] => México
+     *       "state": "Ciudad de México2",           [Mailing_City] => Ciudad de México
+     *       "postal_code": "22222",                 [Mailing_Zip] => 03100
+     *       "rfc": "XAXX020202000",                 [RFC] => XAXX010101000
+     *       "fiscal_regime": "General2"             [R_gimen_fiscal] => 616 Sin obligaciones fiscales
+     *   }
+     */
     // Esto recibe lo de la regla
-    function UpdateContact(Request $request){
+    function UpdateContact(Request $request)
+    {
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
-            Log::info("ZohoWorkflowController-UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
-            $contactArrayObj = (array)$contactObjstdClass;
+            // Log::info("ZohoWorkflowController-UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
+            $contactArrayObj = (array) $contactObjstdClass;
             // Log::info("OnDev-contactArrayObj: " . print_r($contactArrayObj, true));
 
             $mskObjDBContact = [
-                'name' => $contactArrayObj["First_Name"],//ok
-                'last_name' => $contactArrayObj["Last_Name"],//ok
-                'email' => $contactArrayObj["Email"],//ok
+                'name' => $contactArrayObj["First_Name"],
+                //ok
+                'last_name' => $contactArrayObj["Last_Name"],
+                //ok
+                'email' => $contactArrayObj["Email"],
+                //ok
                 // 'email' => $contactArrayObj["Usuario"],
-                'profession' => $contactArrayObj["Profesi_n"],//ok
-                'speciality' => $contactArrayObj["Especialidad"],//ok
-                'entity_id_crm' => $contactArrayObj["id"],//no esta en el form de Datos personales
-                'rfc' => $contactArrayObj["RFC"],//ok
-                'country' => $contactArrayObj["Pais"],//ok
-                'phone' => $contactArrayObj["Phone"],//ok
-                'fiscal_regime' => $contactArrayObj["R_gimen_fiscal"],//ok
-                'postal_code' => $contactArrayObj["Mailing_Zip"],//ok
-                'address' => $contactArrayObj["Mailing_Street"],//ok
-                'other_profession' => $contactArrayObj["Otra_profesi_n"],//ok
-                'other_speciality' => $contactArrayObj["Otra_especialidad"],//ok
-                'state' => $contactArrayObj["Mailing_City"],//ok
+                'phone' => $contactArrayObj["Phone"],
+                //ok
+                'entity_id_crm' => $contactArrayObj["id"],
+                //no esta en el form de Datos personales
+                'profession' => $contactArrayObj["Profesi_n"],
+                //ok "Otra profesion"
+                'other_profession' => $contactArrayObj["Otra_profesi_n"],
+                //ok "la otra profesion"
+                'speciality' => $contactArrayObj["Especialidad"],
+                //ok
+                'other_speciality' => $contactArrayObj["Otra_especialidad"],
+                //ok
+                'rfc' => $contactArrayObj["RFC"],
+                //ok
+                'country' => $contactArrayObj["Pais"],
+                //ok
+                'fiscal_regime' => $contactArrayObj["R_gimen_fiscal"],
+                //ok
+                'postal_code' => $contactArrayObj["Mailing_Zip"],
+                //ok
+                'address' => $contactArrayObj["Mailing_Street"],
+                //ok
+                'state' => $contactArrayObj["Mailing_State"], //ok
                 // 'date_of_birth' => $contactArrayObj["Date_of_Birth"],//no esta en el form de Datos personales
                 // 'sex' => $contactArrayObj["Sexo"],//no esta en el form de Datos personales
                 // 'validate' => $contactArrayObj["Validador"],//no esta en el form de Datos personales
             ];
             // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
-           
-            $updatedContact = Contact::updateOrCreate( [ 'entity_id_crm' => $contactArrayObj["id"] ], $mskObjDBContact );
-            // Log::info("UpdateContact-newCo[ntact: " . print_r($newContact, true));
-        
+
+            $updatedContact = Contact::updateOrCreate(['entity_id_crm' => $contactArrayObj["id"]], $mskObjDBContact);
+            $updateUser = User::where('email', $contactArrayObj["Usuario"])->update([
+                'name' => $contactArrayObj["Full_Name"],
+            ]);
+            // Log::info("UpdateContact-updatedContact: " . print_r($updatedContact, true));
+
             //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
-           
-            $formCourseProgress = (array)$contactArrayObj["Formulario_de_cursada"];
-            Log::info("ZohoWorkflowController-UpdateContact-formCourseProgress: " . print_r($formCourseProgress, true));
 
-            if($formCourseProgress){
-                
+            $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];
+            // Log::info("ZohoWorkflowController-UpdateContact-formCourseProgress: " . print_r($formCourseProgress, true));
+
+            if ($formCourseProgress) {
+
                 foreach ($formCourseProgress as $formCPstdClass) {
-                    $arrayFormCP = (array)$formCPstdClass;
-                    Log::info("ZohoWorkflowController-UpdateContact-foreach formCPstdClass: " . print_r($formCPstdClass, true));
-                    
+                    $arrayFormCP = (array) $formCPstdClass;
+                    // Log::info("ZohoWorkflowController-UpdateContact-foreach formCPstdClass: " . print_r($formCPstdClass, true));
+
                     $mskObjDBCourseProgress = null;
                     $mskObjDBCourseProgress = [
                         'entity_id_crm' => $arrayFormCP['id'],
@@ -343,7 +368,7 @@ class ZohoWorkflowController extends Controller
                         'C_digo_de_Curso_Cedente' => $arrayFormCP['C_digo_de_Curso_Cedente'],
                         'Plataforma_enrolamiento' => $arrayFormCP['Plataforma_enrolamiento'],
                     ];
-                    Log::info("ZohoWorkflowController-UpdateContact-foreach mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
+                    // Log::info("ZohoWorkflowController-UpdateContact-foreach mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
 
                     CourseProgress::updateOrCreate([
                         'entity_id_crm' => $arrayFormCP['id'],
@@ -366,11 +391,11 @@ class ZohoWorkflowController extends Controller
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
-                'trace' => $e->getTraceAsString(),
+                // 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en UpdateContact: " . $e->getMessage(), $err);
-            
+            Log::error("Error en UpdateContact: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
                 $err,
@@ -378,7 +403,3 @@ class ZohoWorkflowController extends Controller
         }
     }
 }
-
-
-
-

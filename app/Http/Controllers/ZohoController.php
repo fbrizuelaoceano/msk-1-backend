@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactUsRequest;
-use App\Models\Lead;
-use App\Models\MethodContact;
-use App\Models\Profession;
-use App\Models\Speciality;
-use App\Models\TokenPassport;
+use App\Http\Requests\LeadHomeNewsletterRequest;
+use App\Models\{Career, Lead, MethodContact, ProductCRM, Profession, Speciality, TokenPassport};
+use App\Services\ZohoCRMService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -22,6 +20,7 @@ use ReCaptcha\ReCaptcha;
 class ZohoController extends Controller
 {
     private $accessToken;
+    private $zohoService;
 
     private $ZOHO_API_BASE_URL = '';
     private $ZOHO_CLIENT_ID = '';
@@ -35,10 +34,11 @@ class ZohoController extends Controller
 
     private $URL_ZOHO = '';
 
-    public function __construct()
+    public function __construct(ZohoCRMService $service)
     {
         try {
 
+            $this->zohoService = $service;
             $this->ZOHO_API_BASE_URL = env("ZOHO_API_BASE_URL");
             $this->ZOHO_CLIENT_ID = env("ZOHO_CLIENT_ID");
             $this->ZOHO_CLIENT_SECRET = env("ZOHO_CLIENT_SECRET");
@@ -299,66 +299,96 @@ class ZohoController extends Controller
         $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
         $response = $recaptcha->verify($token);
 
-
+        try{
         $data = [
             "data" => [
                 [
                     "Phone" => $request->Phone,
-                    "Description" => $request->Description,
-                    "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
-                    "First_Name" => $request->First_Name,
-                    "Last_Name" => $request->Last_Name,
-                    "Email" => $request->Email,
-                    "Profesion" => $request->Profesion,
-                    "Especialidad" => $request->Especialidad,
-                    "Otra_profesion" => $request->Otra_profesion,
-                    "Otra_especialidad" => $request->Otra_especialidad,
-                    "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
-                    "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
-                    "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
-                    "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
-                    "Pais" => $request->Pais
+                        "Description" => $request->Description,
+                        "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
+                        "First_Name" => $request->First_Name,
+                        "Last_Name" => $request->Last_Name,
+                        "Email" => $request->Email,
+                        "Profesion" => $request->Profesion,
+                        "Especialidad" => $request->Especialidad,
+                        "Otra_profesion" => $request->Otra_profesion,
+                        "Otra_especialidad" => $request->Otra_especialidad,
+                        "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
+                        "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
+                        "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
+                        "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
+                        "Pais" => $request->Pais,
+                        "Cursos_consultados" => isset($request->Cursos_consultados) ? $request->Cursos_consultados : null,
+                        "Carrera_de_estudio" => isset($request->career) ? $request->career : null,
+                        "A_o_de_estudio" => isset($request->year) ? $request->year : null,
 
                 ]
             ]
         ];
 
-        //Log::channel('zoho-leads')->info("data: " . print_r($data, true));
+            //Log::channel('zoho-leads')->info("data: " . print_r($data, true));
 
-       // $response = $this->Create('Leads', $data);
+        $response = $this->Create('Leads', $data);
 
-        //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
+            //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
 
-        if (!empty($request->Profesion))
-            $profession = Profession::where(['name' => $request->Profesion])->first();
-        if (!empty($request->Especialidad))
-            $specialty = Speciality::where(['name' => $request->Especialidad])->first();
-        if (!empty($request->Preferencia_de_contactaci_n))
-            $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
+            if (!empty($request->Profesion))
+                $profession = Profession::where(['name' => $request->Profesion])->first();
+            if (isset($profession->name) && $profession->name !== "Estudiante") {
+                if (!empty($request->Especialidad))
+                    $specialty = Speciality::where(['name' => $request->Especialidad])->first();
+            }
+            if (isset($profession->name) && $profession->name === "Estudiante") {
+                if (!empty($request->career))
+                    $career = Career::where(['name' => $request->career])->first();
+            }
 
-        $newLead = Lead::create([
-            "email" => $request->Email,
-            "last_name" => $request->Last_Name,
-            "name" => $request->First_Name,
-            "profession" => isset($profession->id) ? $profession->id : '',
-            "speciality" => isset($specialty->id) ? $specialty->id : '',
-            "phone" => $request->Phone,
-            "method_contact" => isset($contactMethod->id) ? $contactMethod->id : '',
-            "entity_id_crm" => $response['data'][0]['details']['id'],
-            'country' => $request->Pais
-        ]);
+            if (!empty($request->Preferencia_de_contactaci_n))
+                $contactMethod = MethodContact::where(['name' => $request->Preferencia_de_contactaci_n])->first();
 
-        return response()->json([
-            "crm" => $response,
-            "msk" => $newLead
-        ]);
+            $newLead = Lead::create([
+                "email" => $request->Email,
+                "last_name" => $request->Last_Name,
+                "name" => $request->First_Name,
+                "profession" => isset($profession->id) ? $profession->id : null,
+                "speciality" => isset($specialty->id) ? $specialty->id : null,
+                "phone" => $request->Phone,
+                "method_contact" => isset($contactMethod->id) ? $contactMethod->id : null,
+                "entity_id_crm" => $response['data'][0]['details']['id'],
+                'country' => $request->Pais,
+                "career" => isset($career->id) ? $career->id : '',
+                'year' => isset($request->year) ? $request->year : ''
+            ]);
+
+            return response()->json([
+                "crm" => $response,
+                "msk" => $newLead
+            ]);
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+
+            Log::error("Error en CreateLeadHomeContactUs: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            $status = 500;
+            return response()->json([
+                'error' => $err,
+                "status" => $status
+            ], $status);
+        }
     }
-    public function CreateLeadHomeNewsletter(Request $request)
+    public function CreateLeadHomeNewsletter(LeadHomeNewsletterRequest $request)
     {
 
         $request->validate([
             'Email' => 'required|string|email',
         ]);
+
+        try{
 
         $data = [
             "data" => [
@@ -380,46 +410,101 @@ class ZohoController extends Controller
                 ]
             ]
         ];
-
         $leadExists = Lead::where(['email' => $request->Email])->first();
+        $profession = Profession::where('name', $request->Profesion)->first();
+        $specialty = Speciality::where('name', $request->Especialidad)->first();
+        $career = Career::where('name', $request->Career)->first();
 
         if (!$leadExists) { // no se encontró ningún registro con ese email
-            $response = $this->Create('Leads', $data);
-
-            $leadMSK = new Lead();
-            $leadMSK->email = $request->Email;
-
-            if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
-                $leadMSK->entity_id_crm = $response['data'][0]['details']['id'];
-            }
-
-            $newLead = Lead::Create($leadMSK->toArray());
-
-            return response()->json([
-                "crm" => $response,
-                "msk" => $newLead
-            ]);
-        } else { // se encontró un registro con ese email
-            if (isset($leadExists->entity_id_crm)) { //Tiene id en crm, existe en crm, entonces actualizo
-                $response = $this->Update('Leads', $data, $leadExists->entity_id_crm);
-            } else { // No tiene id de crm, no existe en crm, entonces lo creo
                 $response = $this->Create('Leads', $data);
+                $leadMSK = new Lead();
+                $leadMSK->email = $request->Email;
+
                 if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
-                    $leadExists->entity_id_crm = $response['data'][0]['details']['id'];
-                    $leadExists->save();
+                    $leadMSK->entity_id_crm = $response['data'][0]['details']['id'];
                 }
+
+                // $newLead = Lead::Create($leadMSK->toArray());
+                $newLead = Lead::create([
+                    "email" => $request->Email,
+                    "last_name" => $request->Last_Name,
+                    "name" => $request->First_Name,
+                    "profession" => isset($profession->id) ? $profession->id : null,
+                    "speciality" => isset($specialty->id) ? $specialty->id : null,
+                    "phone" => $request->Phone,
+                    "method_contact" => 2,
+                    "entity_id_crm" => $response['data'][0]['details']['id'],
+                    'country' => $request->Pais,
+                    "career" => isset($career->id) ? $career->id : '',
+                    'year' => isset($request->Year) ? $request->Year : '',
+                    'other_profession' => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
+                    'other_speciality' => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null
+
+                ]);
+
+                return response()->json([
+                    "crm" => $response,
+                    "msk" => $newLead
+                ]);
+            } else { // se encontró un registro con ese email
+                $leadExists->update([
+                    "email" => $request->Email,
+                    "last_name" => $request->Last_Name,
+                    "name" => $request->First_Name,
+                    "profession" => isset($profession->id) ? $profession->id : null,
+                    "speciality" => isset($specialty->id) ? $specialty->id : null,
+                    "phone" => $request->Phone,
+                    "method_contact" => 2,
+                    'country' => $request->Pais,
+                    "career" => isset($career->id) ? $career->id : '',
+                    'year' => isset($request->Year) ? $request->Year : '',
+                    'other_profession' => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
+                    'other_speciality' => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null
+
+                ]);
+                // Cargar el modelo nuevamente para obtener los datos actualizados
+                $leadExists->refresh();
+
+                if (isset($leadExists->entity_id_crm) && $leadExists->entity_id_crm !== '') { //Tiene id en crm, existe en crm, entonces actualizo
+                    $response = $this->zohoService->Update('Leads', $data, $leadExists->entity_id_crm);
+                } else { // No tiene id de crm, no existe en crm, entonces lo creo
+                    $response = $this->Create('Leads', $data);
+                    if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
+                        // $leadExists->entity_id_crm = $response['data'][0]['details']['id'];
+                        // $leadExists->save();
+                        $leadExists->update([
+                            "entity_id_crm" => $response['data'][0]['details']['id'],
+                        ]);
+                    }
+                }
+                return response()->json([
+                    "crm" => $response,
+                    "msk" => $leadExists
+                ]);
             }
+        } catch (\Exception $e) {
+            $err = [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                // 'trace' => $e->getTraceAsString(),
+            ];
+            Log::error("Error en CreateLeadHomeNewsletter: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+
+            $status = 500;
             return response()->json([
-                "crm" => $response,
-                "msk" => $leadExists
-            ]);
+                'error' => 'Ocurrió un error en el servidor',
+                'details' => $err,
+                $status
+            ], $status);
         }
     }
     /* Desarrollo de Refactorizacion */
     /* Administracion de token */
     function AccessTokenDB()
     {
-        $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
+        // $accessToken = TokenPassport::where(['name' => 'Access Token'])->orderBy('created_at', 'desc')->first();
         if (isset($accessToken)) {
             if (empty($this->ZOHO_ACCESS_TOKEN_RESET)) {
                 $this->ZOHO_ACCESS_TOKEN_RESET = $accessToken->token;
@@ -438,10 +523,13 @@ class ZohoController extends Controller
                     '&grant_type=' . 'refresh_token';
                 $response = Http::post($URL)->json();
 
+                $observacion = 'ZohoController: Se creo porque un token expiraba en 5 minutos. Id del que expiraba: ' . $accessToken->id;
                 $tokenData = [
                     'name' => 'Access Token',
                     'token' => $response['access_token'],
-                    'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                    'hours_duration' => floor($response['expires_in'] / 3600),
+                    //calcular horas, 3600 = seg
+                    'observacion' => $observacion
                 ];
                 $newAccessToken = TokenPassport::create($tokenData);
                 $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
@@ -454,10 +542,13 @@ class ZohoController extends Controller
                 '&grant_type=' . 'refresh_token';
             $response = Http::post($URL)->json();
 
+            $observacion = 'ZohoController: Se lo cargo por primera vez';
             $tokenData = [
                 'name' => 'Access Token',
                 'token' => $response['access_token'],
-                'hours_duration' => floor($response['expires_in'] / 3600), //calcular horas, 3600 = seg
+                'hours_duration' => floor($response['expires_in'] / 3600),
+                //calcular horas, 3600 = seg
+                'observacion' => $observacion
             ];
             $newAccessToken = TokenPassport::create($tokenData);
             $this->ZOHO_ACCESS_TOKEN_RESET = $response['access_token'];
@@ -534,7 +625,7 @@ class ZohoController extends Controller
             $response,
             $requestArray
         ];
-        Log::info("ZohoController-Update-body: " . print_r($body, true));
+        // Log::info("ZohoController-Update-body: " . print_r($body, true));
 
         return response()->json($response, );
     }
@@ -571,6 +662,9 @@ class ZohoController extends Controller
     public function GetByEmailService($module, $email)
     {
         try {
+
+            // $products = $this->zohoService->Get('Products', 2);
+
             $this->AccessTokenDB();
             $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '/search?email=' . $email;
             $response = Http::withHeaders([
@@ -586,4 +680,22 @@ class ZohoController extends Controller
     }
     /* End Desarrollo de Refactorizacion */
 
+
+    public function getProductsCRM($page)
+    {
+        $products = $this->zohoService->Get('Products', $page);
+
+        foreach ($products['data'] as $p) {
+            ProductCRM::updateOrCreate(['product_code' => $p['Product_Code']], [
+                'product_code' => $p['Product_Code'],
+                'cedente_code' => $p['C_digo_de_Curso_Cedente'],
+                'platform' => $p['Plataforma_enrolamiento'],
+                'platform_url' => isset($p['URL_plataforma']) ? $p['URL_plataforma'] : null,
+                'entity_id' => $p['id'],
+            ]);
+        }
+
+        dump($products);
+
+    }
 }

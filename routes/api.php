@@ -8,7 +8,8 @@ use App\Http\Controllers\ZohoController;
 use App\Http\Controllers\ZohoWorkflowController;
 use App\Models\Profession;
 use App\Models\Speciality;
-use App\Models\User;
+use App\Models\TopicInterest;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -16,19 +17,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CourseProgressController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LikeController;
-use App\Models\Like;
-use GuzzleHttp\Psr7\Request;
+use App\Http\Controllers\CountryController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
@@ -40,7 +30,6 @@ Route::prefix('ZohoWorkFlow')->group(function () {
     // Usar el prefix para el zo (reglas de trabajo)
     Route::post('UpdateQuotes', [ZohoWorkflowController::class, 'UpdateQuotes']);
     Route::post('UpdateContact', [ZohoWorkflowController::class, 'UpdateContact']);
-
 });
 
 Route::get('GetByIdAllDetails/{module}/{id}', [ZohoController::class, 'GetByIdAllDetails']);
@@ -56,6 +45,9 @@ Route::put('/profile/{email}', [AuthController::class, 'PutProfile']);
 Route::post('/ValidatePasswordChange', [AuthController::class, 'ValidatePasswordChange']);
 Route::post('/RequestPasswordChange', [AuthController::class, 'RequestPasswordChange']);
 Route::post('/newPassword', [AuthController::class, 'newPassword']);
+Route::get('/change-pass/{validateCode}', [AuthController::class, 'ValidatePasswordChange2']);
+
+
 
 Route::get('prueba', [ContactController::class, 'relacionarUserContact']);
 Route::post('prueba', [AuthController::class, 'CreateContact']);
@@ -102,6 +94,8 @@ Route::prefix('crm')->group(function () {
     Route::delete('DeleteContacts/{id}', [ZohoController::class, 'DeleteContacts']);
 
     Route::get('Contracts', [ZohoController::class, 'GetContracts']);
+    // Route::get('Products', [ZohoController::class, 'GetContracts']);
+    // Route::get('Contracts', [ZohoController::class, 'GetContracts']);
 
     Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
 
@@ -130,112 +124,7 @@ Route::get('store/professions', function () {
 
 Route::get('newsletter/specialities', function () {
 
-    $specialties = [
-        [
-            'id' => 1,
-            'name' => 'Cardiología'
-        ],
-        [
-            'id' => 2,
-            'name' => 'Ginecología'
-        ],
-        [
-            'id' => 3,
-            'name' => 'Diabetes'
-        ],
-        [
-            'id' => 4,
-            'name' => 'Psicología'
-        ],
-        [
-            'id' => 5,
-            'name' => 'Cirugía'
-        ],
-        [
-            'id' => 6,
-            'name' => 'Medicina general'
-        ],
-        [
-            'id' => 7,
-            'name' => 'Nutrición'
-        ],
-        [
-            'id' => 8,
-            'name' => 'Infectología'
-        ],
-        [
-            'id' => 9,
-            'name' => 'Obstetricia'
-        ],
-        [
-            'id' => 10,
-            'name' => 'Hematología'
-        ],
-        [
-            'id' => 11,
-            'name' => 'Emergentología'
-        ],
-        [
-            'id' => 12,
-            'name' => 'Oncología'
-        ],
-        [
-            'id' => 13,
-            'name' => 'Gastroenterología'
-        ],
-        [
-            'id' => 14,
-            'name' => 'Medicina intensiva'
-        ],
-        [
-            'id' => 15,
-            'name' => 'Anestesiología y dolor'
-        ],
-        [
-            'id' => 16,
-            'name' => 'Pediatría'
-        ],
-        [
-            'id' => 17,
-            'name' => 'Dermatología'
-        ],
-        [
-            'id' => 18,
-            'name' => 'Geriatría'
-        ],
-        [
-            'id' => 19,
-            'name' => 'Psiquiatría'
-        ],
-        [
-            'id' => 20,
-            'name' => 'Diagnóstico por imágenes'
-        ],
-        [
-            'id' => 21,
-            'name' => 'Endocrinología'
-        ],
-        [
-            'id' => 22,
-            'name' => 'Medicina interna'
-        ],
-        [
-            'id' => 23,
-            'name' => 'Neurología'
-        ],
-        [
-            'id' => 24,
-            'name' => 'Oftalmología'
-        ],
-        [
-            'id' => 25,
-            'name' => 'Traumatología'
-        ],
-        [
-            'id' => 26,
-            'name' => 'Otorrinolaringología'
-        ]
-    ];
+    $specialties = TopicInterest::all();
 
     return response()->json($specialties);
 });
@@ -246,7 +135,28 @@ Route::get('professions', function () {
 });
 Route::get('specialities', function () {
     $specialities = Speciality::all();
-    return response()->json($specialities);
+    $professions = Profession::with('specialities', 'careers')->get();
+    $specialities_group = [];
+
+    foreach ($professions as $p) {
+        $spData = [];
+        if ($p->name === "Estudiante") {
+            foreach ($p->careers as $c) {
+                array_push($spData, ["id" => $c->id, "name" => $c->name]);
+            }
+        } else {
+            foreach ($p->specialities as $sp) {
+                array_push($spData, ["id" => $sp->id, "name" => $sp->name]);
+            }
+        }
+
+        $specialities_group[$p->id] = $spData;
+    }
+
+    return response()->json([
+        "specialities_group" => $specialities_group,
+        "specialities" => $specialities
+    ]);
 });
 
 Route::prefix('products')->group(function () {
@@ -260,6 +170,8 @@ Route::prefix('webhook/rebill')->group(function () {
     Route::any('/newSubscription', [RebillController::class, 'newSubscription']);
     Route::any('/changeStatusSubscription', [RebillController::class, 'changeStatusSubscription']);
     Route::any('/test', [RebillController::class, 'test']);
+    // Route::post("/payloadZohoCRMMSK", [RebillController::class, "payloadZohoCRMMSK"]);
+
 });
 
 Route::get("omApiPayments", function () {
@@ -270,3 +182,5 @@ Route::get("omApiPayments", function () {
 });
 
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
+Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
+Route::get("/crm/products/{page}", [ZohoController::class, 'getProductsCRM']);

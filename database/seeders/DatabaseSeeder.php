@@ -17,7 +17,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ProfessionSeeder::class,
             SpecialitySeeder::class,
+            CareerSeeder::class,
             MethodContactSeeder::class,
+            TopicInterestSeeder::class,
+            ProfessionSpecialitySeeder::class,
+            ProfessionCareerSeeder::class,
         ]);
     }
 }

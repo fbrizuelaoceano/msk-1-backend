@@ -27,7 +27,7 @@ return new class extends Migration {
 
             $table->string('phone');
             $table->string('email')->unique();
-            $table->string('sex');
+            $table->string('sex');//se le agrego una migracion aparte la propiedad de que sea nulleable
             $table->string('date_of_birth')->nullable()->default(null);
 
             $table->string('country');

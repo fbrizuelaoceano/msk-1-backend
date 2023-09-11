@@ -49,49 +49,35 @@ class UpdateProfileRequest extends FormRequest
             'last_name' => "required",
             'email' => "required|email|min:8|",
             'phone' => "required",
-            
+
             // 'profession' => 'nullable|required_if:speciality,null',
             'profession' => "required",
             'other_profession' => 'required_if:profession,Otra profesión',
-            
-            'speciality' => "required",
+
+            'speciality' => 'required_unless:profession,Estudiante|string',
+
             // 'speciality' => 'nullable|required_if:profession,null',
             'other_speciality' => 'required_if:speciality,Otra Especialidad',
-            
-            'address' => "required", 
+
+            'address' => "required",
             'country' => "required",
             'state' => "required",
             'postal_code' => "required",
-            
+
             //identificacion
             'rfc' => 'required_if:country,México',
             'rut' => 'required_if:country,Chile',
             'mui' => 'required_if:country,Ecuador',
             'dni' => 'required_if:country,Argentina',
 
-            'fiscal_regime' => "required"
+            'fiscal_regime' => "required",
+
+            'career' => 'required_if:profession,Estudiante',
+            'year' => 'required_if:profession,Estudiante',
         ];
     }
 
-    public static $formAttributes = [
-        'name',
-        'last_name',
-        'email',
-        'phone',
-        'profession',
-        'other_profession',
-        'speciality', 
-        'other_speciality',
-        'address', 
-        'country',
-        'state',
-        'postal_code',
 
-        'rfc',
-        'rut',
-        'mui',
-        'dni',
 
-        'fiscal_regime'
-    ];
+
 }

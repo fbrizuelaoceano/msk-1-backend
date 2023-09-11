@@ -21,7 +21,6 @@ return new class extends Migration {
             $table->string('last_name')->nullable()->default(null);
             $table->string('email')->nullable()->default(null);
             $table->string('phone')->nullable()->default(null);
-            $table->string('country')->nullable()->default(null);
 
             $table->foreignId('profession')->nullable()->default(null)
                 ->references('id')
