@@ -203,31 +203,18 @@ class ZohoWorkflowController extends Controller
             //prueba desde postman
             // $quoteObj = $request->quote["context"];
 
-            $mskObjDBQuote = [
-                'entity_id_crm' => $quoteObj['id'],
-                'Discount' => $quoteObj['Discount'],
-                'currency_symbol' => $quoteObj['$currency_symbol'],
-                'field_states' => $quoteObj['$field_states'],
-                'Seleccione_total_de_pagos_recurrentes' => $quoteObj['Seleccione_total_de_pagos_recurrentes'],
-                'M_todo_de_pago' => $quoteObj['M_todo_de_pago'],
-                'Currency' => $quoteObj['Currency'],
-                'otro_so' => $quoteObj['otro_so'],
-                'Modo_de_pago' => $quoteObj['Modo_de_pago'],
-                'Quote_Stage' => $quoteObj['Quote_Stage'],
-                'Grand_Total' => $quoteObj['Grand_Total'],
-                'Modified_Time' => $quoteObj['Modified_Time'],
-                'Sub_Total' => $quoteObj['Sub_Total'],
-                'Subject' => $quoteObj['Subject'],
-                'Quote_Number' => $quoteObj['Quote_Number'],
-            ];
+            $mskObjDBQuote = Quote::mappingData($quoteObj);
+
             // Log::info("OnDev-mskObjDBQuote: " . print_r($mskObjDBQuote, true));
             // Log::info("OnDev-quoteObj: " . print_r($quoteObj, true));
             // Log::info("OnDev-quoteObj->id: " . print_r($quoteObj["Contact_Name"]->id, true));
 
             $contact = Contact::where("entity_id_crm", $quoteObj["Contact_Name"]["id"])->first();
+
             if ($contact) { //rober
                 $mskObjDBQuote["contact_id"] = $contact->id;
             }
+
             $quote = Quote::updateOrCreate(
                 [
                     'entity_id_crm' => $mskObjDBQuote['entity_id_crm']
