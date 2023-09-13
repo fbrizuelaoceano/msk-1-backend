@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use ReCaptcha\ReCaptcha;
 
 // use samples\src\com\zoho\crm\api\initializer;
 
@@ -293,11 +294,16 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeContactUs(ContactUsRequest $request)
     {
-        try {
-            $data = [
-                "data" => [
-                    [
-                        "Phone" => $request->Phone,
+
+        $token = $request->input('recaptcha_token');
+        $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
+        $response = $recaptcha->verify($token);
+
+        try{
+        $data = [
+            "data" => [
+                [
+                    "Phone" => $request->Phone,
                         "Description" => $request->Description,
                         "Preferencia_de_contactaci_n" => [$request->Preferencia_de_contactaci_n],
                         "First_Name" => $request->First_Name,
@@ -315,13 +321,14 @@ class ZohoController extends Controller
                         "Cursos_consultados" => isset($request->Cursos_consultados) ? $request->Cursos_consultados : null,
                         "Carrera_de_estudio" => isset($request->career) ? $request->career : null,
                         "A_o_de_estudio" => isset($request->year) ? $request->year : null,
-                    ]
+
                 ]
-            ];
+            ]
+        ];
 
             //Log::channel('zoho-leads')->info("data: " . print_r($data, true));
 
-            $response = $this->Create('Leads', $data);
+        $response = $this->Create('Leads', $data);
 
             //Log::channel('zoho-leads')->info("data: " . print_r($response, true));
 
@@ -376,51 +383,40 @@ class ZohoController extends Controller
     }
     public function CreateLeadHomeNewsletter(LeadHomeNewsletterRequest $request)
     {
-        try {
-            $data = [
-                "data" => [
-                    [
-                        "First_Name" => $request->First_Name,
-                        "Last_Name" => $request->Last_Name,
-                        "Email" => $request->Email,
-                        "Profesion" => $request->Profesion,
-                        "Especialidad" => $request->Especialidad,
-                        "Otra_profesion" => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
-                        "Otra_especialidad" => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null,
-                        "Temas_de_interes" => $request->Temas_de_interes,
-                        "Lead_Source" => "Suscriptor newsletter",
-                        "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
-                        "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
-                        "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
-                        "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
-                        "Preferencia_de_contactaci_n" => ["E-mail"],
-                        "Carrera_de_estudio" => isset($request->Career) ? $request->Career : null,
-                        "A_o_de_estudio" => isset($request->Year) ? $request->Year : null,
-                        "
-                        Temas_de_interes" => "Temas_de_interes"
-                    ]
+
+        $request->validate([
+            'Email' => 'required|string|email',
+        ]);
+
+        try{
+
+        $data = [
+            "data" => [
+                [
+                    "First_Name" => $request->First_Name,
+                    "Last_Name" => $request->Last_Name,
+                    "Email" => $request->Email,
+                    "Profesion" => $request->Profesion,
+                    "Especialidad" => $request->Especialidad,
+                    "Otra_profesion" => $request->Otra_profesion,
+                    "Otra_especialidad" => $request->Otra_especialidad,
+                    "Temas_de_interes" => $request->Temas_de_interes,
+                    "Lead_Source" => "Suscriptor newsletter",
+                    "Ad_Account" => isset($request->utm_source) ? $request->utm_source : null,
+                    "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
+                    "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
+                    "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
+
                 ]
-            ];
+            ]
+        ];
+        $leadExists = Lead::where(['email' => $request->Email])->first();
+        $profession = Profession::where('name', $request->Profesion)->first();
+        $specialty = Speciality::where('name', $request->Especialidad)->first();
+        $career = Career::where('name', $request->Career)->first();
 
-            // "Phone" => $request->Phone,
-            // "Description" => $request->Description,
-            // "Cursos_consultados" => isset($request->Cursos_consultados) ? $request->Cursos_consultados : null,
-
-            if (!empty($request->Profesion))
-                $profession = Profession::where(['name' => $request->Profesion])->first();
-            if (isset($profession->name) && $profession->name !== "Estudiante") {
-                if (!empty($request->Especialidad))
-                    $specialty = Speciality::where(['name' => $request->Especialidad])->first();
-            }
-            if (isset($profession->name) && $profession->name === "Estudiante") {
-                if (!empty($request->Career))
-                    $career = Career::where(['name' => $request->Career])->first();
-            }
-
-            $leadExists = Lead::where(['email' => $request->Email])->first();
-            if (!$leadExists) { // no se encontró ningún registro con ese email
-                $response = $this->zohoService->Create('Leads', $data);
-
+        if (!$leadExists) { // no se encontró ningún registro con ese email
+                $response = $this->Create('Leads', $data);
                 $leadMSK = new Lead();
                 $leadMSK->email = $request->Email;
 
@@ -685,9 +681,9 @@ class ZohoController extends Controller
     /* End Desarrollo de Refactorizacion */
 
 
-    public function getProductsCRM()
+    public function getProductsCRM($page)
     {
-        $products = $this->zohoService->Get('Products', 2);
+        $products = $this->zohoService->Get('Products', $page);
 
         foreach ($products['data'] as $p) {
             ProductCRM::updateOrCreate(['product_code' => $p['Product_Code']], [
@@ -698,6 +694,8 @@ class ZohoController extends Controller
                 'entity_id' => $p['id'],
             ]);
         }
+
+        dump($products);
 
     }
 }

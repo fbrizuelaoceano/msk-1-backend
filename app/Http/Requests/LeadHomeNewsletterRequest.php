@@ -88,7 +88,6 @@ class LeadHomeNewsletterRequest extends FormRequest
                'utm_medium' => 'nullable|string',
                'utm_source' => 'nullable|string',
 
-               'Year' => 'required_if:Profesion,Estudiante|not_in:Seleccionar año',
                'Terms_And_Conditions2' => 'required|accepted',
                'Temas_de_interes' => 'required|array_min:1',
             ];
