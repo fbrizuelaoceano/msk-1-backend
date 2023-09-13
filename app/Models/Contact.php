@@ -112,4 +112,36 @@ class Contact extends Model
         return self::$formAttributesPutProfile;
     }
 
+    public static function mappingData(array $contactInformation)
+    {
+
+        return [
+            'name' => $contactInformation["First_Name"],
+            'last_name' => $contactInformation["Last_Name"],
+            'email' => $contactInformation["Email"],
+            'phone' => $contactInformation["Phone"],
+            'entity_id_crm' => $contactInformation["id"],
+            'profession' => $contactInformation["Profesi_n"],
+            'other_profession' => $contactInformation["Otra_profesi_n"],
+            'speciality' => $contactInformation["Especialidad"],
+            'other_speciality' => $contactInformation["Otra_especialidad"],
+            'rfc' => $contactInformation["RFC"],
+            'country' => $contactInformation["Pais"],
+            'fiscal_regime' => $contactInformation["R_gimen_fiscal"],
+            'postal_code' => $contactInformation["Mailing_Zip"],
+            'address' => $contactInformation["Mailing_Street"],
+            'state' => $contactInformation["Mailing_State"], // 'date_of_birth' => $contactInformation["Date_of_Birth"],//no esta en el form de Datos personales
+            // 'sex' => $contactInformation["Sexo"],//no esta en el form de Datos personales
+            // 'validate' => $contactInformation["Validador"],//no esta en el form de Datos personales
+        ];
+
+    }
+
+    public static function updateOrCreateContact(array $data)
+    {
+        return self::updateOrCreate(['entity_id_crm' => $data["id"]], $data);
+    }
+
+
+
 }

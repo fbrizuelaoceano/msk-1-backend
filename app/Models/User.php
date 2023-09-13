@@ -52,4 +52,9 @@ class User extends Authenticatable
         // return $this->hasMany(Like::class);
         return Like::where(["user_id" => $this->id]);
     }
+
+    public static function updateNameByEmail(string $email, string $newName)
+    {
+        self::where('email', $email)->update(['name' => $newName]);
+    }
 }

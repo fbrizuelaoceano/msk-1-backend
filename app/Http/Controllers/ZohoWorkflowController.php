@@ -281,103 +281,46 @@ class ZohoWorkflowController extends Controller
      *   }
      */
     // Esto recibe lo de la regla
-    function UpdateContact(Request $request)
+    public function UpdateContact(Request $request)
     {
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
-            // Log::info("ZohoWorkflowController-UpdateContact-contactObjstdClass: " . print_r($contactObjstdClass, true));
             $contactArrayObj = (array) $contactObjstdClass;
-            // Log::info("OnDev-contactArrayObj: " . print_r($contactArrayObj, true));
 
-            $mskObjDBContact = [
-                'name' => $contactArrayObj["First_Name"],
-                //ok
-                'last_name' => $contactArrayObj["Last_Name"],
-                //ok
-                'email' => $contactArrayObj["Email"],
-                //ok
-                // 'email' => $contactArrayObj["Usuario"],
-                'phone' => $contactArrayObj["Phone"],
-                //ok
-                'entity_id_crm' => $contactArrayObj["id"],
-                //no esta en el form de Datos personales
-                'profession' => $contactArrayObj["Profesi_n"],
-                //ok "Otra profesion"
-                'other_profession' => $contactArrayObj["Otra_profesi_n"],
-                //ok "la otra profesion"
-                'speciality' => $contactArrayObj["Especialidad"],
-                //ok
-                'other_speciality' => $contactArrayObj["Otra_especialidad"],
-                //ok
-                'rfc' => $contactArrayObj["RFC"],
-                //ok
-                'country' => $contactArrayObj["Pais"],
-                //ok
-                'fiscal_regime' => $contactArrayObj["R_gimen_fiscal"],
-                //ok
-                'postal_code' => $contactArrayObj["Mailing_Zip"],
-                //ok
-                'address' => $contactArrayObj["Mailing_Street"],
-                //ok
-                'state' => $contactArrayObj["Mailing_State"], //ok
-                // 'date_of_birth' => $contactArrayObj["Date_of_Birth"],//no esta en el form de Datos personales
-                // 'sex' => $contactArrayObj["Sexo"],//no esta en el form de Datos personales
-                // 'validate' => $contactArrayObj["Validador"],//no esta en el form de Datos personales
-            ];
-            // Log::info("UpdateContact-mskObjDBContact: " . print_r($mskObjDBContact, true));
+            $mskObjDBContact = Contact::mappingData($contactArrayObj);
+            $updatedContact = Contact::updateOrCreateContact($mskObjDBContact);
+            $contactCourses = $updatedContact->courses_progress()->get();
 
-            $updatedContact = Contact::updateOrCreate(['entity_id_crm' => $contactArrayObj["id"]], $mskObjDBContact);
-            $updateUser = User::where('email', $contactArrayObj["Usuario"])->update([
-                'name' => $contactArrayObj["Full_Name"],
-            ]);
-            // Log::info("UpdateContact-updatedContact: " . print_r($updatedContact, true));
+            User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
 
             //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
 
             $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];
-            // Log::info("ZohoWorkflowController-UpdateContact-formCourseProgress: " . print_r($formCourseProgress, true));
 
-            if ($formCourseProgress) {
+            if (isset($formCourseProgress)) {
+                $mskObjDBCourseProgress = [];
 
                 foreach ($formCourseProgress as $formCPstdClass) {
                     $arrayFormCP = (array) $formCPstdClass;
-                    // Log::info("ZohoWorkflowController-UpdateContact-foreach formCPstdClass: " . print_r($formCPstdClass, true));
-
-                    $mskObjDBCourseProgress = null;
-                    $mskObjDBCourseProgress = [
-                        'entity_id_crm' => $arrayFormCP['id'],
-                        'Fecha_finalizaci_n' => $arrayFormCP['Fecha_finalizaci_n'],
-                        // 'Nombre_de_curso' => $arrayFormCP['Nombre_de_curso']['name'].' id:'.$arrayFormCP['Nombre_de_curso']['id'],
-                        'Nombre_de_curso' => $arrayFormCP['Nombre_de_curso']->name,
-                        'Estado_de_OV' => $arrayFormCP['Estado_de_OV'],
-                        'field_states' => $arrayFormCP['$field_states'],
-                        'Created_Time' => $arrayFormCP['Created_Time'],
-                        // 'Parent_Id' => $arrayFormCP['Parent_Id']['name'].' id:'.$arrayFormCP['Parent_Id']['id'],
-                        'Parent_Id' => $arrayFormCP['Parent_Id']->id,
-                        'Nota' => $arrayFormCP['Nota'],
-                        'Estado_cursada' => $arrayFormCP['Estado_cursada'],
-                        'Avance' => $arrayFormCP['Avance'],
-                        'Fecha_de_expiraci_n' => $arrayFormCP['Fecha_de_expiraci_n'],
-                        'in_merge' => $arrayFormCP['$in_merge'],
-                        'Fecha_de_compra' => $arrayFormCP['Fecha_de_compra'],
-                        'Enrollamiento' => $arrayFormCP['Enrollamiento'],
-                        'Fecha_de_ltima_sesi_n' => $arrayFormCP['Fecha_de_ltima_sesi_n'],
-                        'contact_id' => $updatedContact->id,
-                        'Product_Code' => $arrayFormCP['Product_Code'],
-                        'C_digo_de_Curso_Cedente' => $arrayFormCP['C_digo_de_Curso_Cedente'],
-                        'Plataforma_enrolamiento' => $arrayFormCP['Plataforma_enrolamiento'],
-                    ];
-                    // Log::info("ZohoWorkflowController-UpdateContact-foreach mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
+                    $mskObjDBCourseProgress = CourseProgress::mappingData($arrayFormCP, $updatedContact->id);
 
                     CourseProgress::updateOrCreate([
                         'entity_id_crm' => $arrayFormCP['id'],
                         'contact_id' => $updatedContact->id
                     ], $mskObjDBCourseProgress);
-
                 }
-
             }
+
+            $contactCourses->each(function ($contactCourse) use ($formCourseProgress) {
+                $entityIdCrm = $contactCourse->entity_id_crm;
+                $formCourseIds = array_column($formCourseProgress, 'id');
+                $conditionToDelete = !in_array($entityIdCrm, $formCourseIds);
+
+                if ($conditionToDelete) {
+                    $contactCourse->delete();
+                }
+            });
 
             return response()->json([
                 //$mskObjDBContact,
@@ -402,4 +345,5 @@ class ZohoWorkflowController extends Controller
             ], 500);
         }
     }
+
 }
