@@ -42,8 +42,6 @@ class ContactUsRequest extends FormRequest
             'Pais.string' => 'El País debe ser una cadena de caracteres.',
             'Phone.required' => 'El Telefono es obligatorio.',
             'Phone.string' => 'El Telefono debe ser una cadena de caracteres.',
-            'Preferencia_de_contactaci_n.required' => 'La Preferencia de contacto es obligatoria.',
-            'Preferencia_de_contactaci_n.string' => 'La Preferencia de contacto debe ser una cadena de caracteres.',
             'Profesion.required' => 'La Profesion es obligatoria.',
             'Especialidad.required_unless' => 'La Especialidad es obligatoria.',
             'Otra_profesion.required_if' => 'La Otra Profesion es obligatoria.',
@@ -69,27 +67,27 @@ class ContactUsRequest extends FormRequest
     public function rules(): array
     {
         return [
-               // 'Description' => 'required|string',
-               'Last_Name' => 'required|string',
-               'Email' => 'required|string|email',
-               'recaptcha_token' => ['required', new Recaptcha],
+            // 'Description' => 'required|string',
+            'Last_Name' => 'required|string',
+            'Email' => 'required|string|email',
+            'recaptcha_token' => ['required', new Recaptcha],
 
-               'First_Name' => 'required|string',
-               'Pais' => 'required|string',
-               'Phone' => 'required|string',
+            'First_Name' => 'required|string',
+            'Pais' => 'required|string',
+            'Phone' => 'required|string',
 
-               'Preferencia_de_contactaci_n' => 'required|string',
-               'Profesion' => 'required',
-               'Especialidad' => 'required_unless:Profesion,Estudiante',
-               'Otra_profesion' => 'required_if:Profesion,Otra profesión',
-               'Otra_especialidad' => 'required_if:Especialidad,Otra Especialidad',
-               'career' => 'required_if:Profesion,Estudiante|not_in:Seleccionar carrera',
-               'year' => 'required_if:Profesion,Estudiante|not_in:Seleccionar año',
+            'Preferencia_de_contactaci_n' => 'required|string',
+            'Profesion' => 'required',
+            'Especialidad' => 'required_unless:Profesion,Estudiante',
+            'Otra_profesion' => 'required_if:Profesion,Otra profesión',
+            'Otra_especialidad' => 'required_if:Especialidad,Otra Especialidad',
+            'career' => 'required_if:Profesion,Estudiante|not_in:Seleccionar carrera',
+            'year' => 'required_if:Profesion,Estudiante|not_in:Seleccionar año',
 
-               'utm_campaign' => 'nullable|string',
-               'utm_content' => 'nullable|string',
-               'utm_medium' => 'nullable|string',
-               'utm_source' => 'nullable|string',
+            'utm_campaign' => 'nullable|string',
+            'utm_content' => 'nullable|string',
+            'utm_medium' => 'nullable|string',
+            'utm_source' => 'nullable|string',
         ];
     }
 }
