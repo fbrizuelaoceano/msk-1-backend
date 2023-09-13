@@ -286,6 +286,7 @@ class ZohoWorkflowController extends Controller
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
             $contactArrayObj = (array) $contactObjstdClass;
+            Log::debug("contactArrayObj: " . print_r($contactArrayObj, true));
 
             $mskObjDBContact = Contact::mappingData($contactArrayObj);
             $updatedContact = Contact::updateOrCreateContact($mskObjDBContact);
