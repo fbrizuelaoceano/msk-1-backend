@@ -137,9 +137,9 @@ class Contact extends Model
 
     }
 
-    public static function updateOrCreateContact(array $data)
+    public static function updateOrCreateContact($contactId, array $data)
     {
-        return self::updateOrCreate(['entity_id_crm' => $data["id"]], $data);
+        return self::updateOrCreate(['entity_id_crm' => $contactId], $data);
     }
 
 

@@ -289,7 +289,7 @@ class ZohoWorkflowController extends Controller
             Log::debug("contactArrayObj: " . print_r($contactArrayObj, true));
 
             $mskObjDBContact = Contact::mappingData($contactArrayObj);
-            $updatedContact = Contact::updateOrCreateContact($mskObjDBContact);
+            $updatedContact = Contact::updateOrCreateContact($contactArrayObj['id'], $mskObjDBContact);
             $contactCourses = $updatedContact->courses_progress()->get();
 
             User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
