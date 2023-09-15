@@ -72,7 +72,7 @@ class SSOController extends Controller
     private function makeSSOLink($data)
     {
 
-        $course = ProductCRM::where('cedente_code', $data['cod_curso'])->first();
+        $course = ProductCRM::where('product_code', $data['product_code'])->first();
         $coursePlatform = $course->platform;
 
         switch ($coursePlatform) {
@@ -91,7 +91,8 @@ class SSOController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
-                'cod_curso' => 'required'
+                'cod_curso' => 'required',
+                'product_code' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -99,18 +100,18 @@ class SSOController extends Controller
                 return response()->json(['errors' => $validator->errors()], 400);
             }
 
-            $data = $request->only(['email', 'cod_curso']);
+            $data = $request->only(['email', 'cod_curso', 'product_code']);
             $sso = $this->makeSSOLink($data);
 
             // Contact::where('email', 'emarmolejo@msklatam.com')->get();
             $contacto = Contact::where('email', $data['email'])->get()->first();
             $formCourseProgressMSKDB = CourseProgress::where([
                 'contact_id' => $contacto->id,
-                'C_digo_de_Curso_Cedente' => $data['cod_curso']
+                'Product_Code' => $data['product_code']
             ])->get()->first();
             // $formCourseProgressMSKDB = CourseProgress::all();
             if ($formCourseProgressMSKDB) {
-                if ($formCourseProgressMSKDB["C_digo_de_Curso_Cedente"] == $data["cod_curso"]) {
+                if ($formCourseProgressMSKDB["Product_Code"] == $data["product_code"]) {
                     $contactZohoCRM = $this->zohoService->GetByIdAllDetails("Contacts", $contacto->entity_id_crm);
 
                     $formCourseProgress = (array) $contactZohoCRM["data"][0]["Formulario_de_cursada"];
