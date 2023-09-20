@@ -59,7 +59,6 @@ class PopulateUsersWithContacts extends Command
             }
 
             if (isset($result['data'])) {
-
                 $contacts = $result['data'];
                 $requeridos = [
                     'id',
@@ -81,6 +80,17 @@ class PopulateUsersWithContacts extends Command
                             $isNull = true;
                             break;
                         }
+                    }
+
+                    $output->writeln("ID de contacto en zoho: " . $cntc['id']);
+
+                    if($cntc['Caracter_stica_contacto'] !== 'Experiencia MSK'){
+                        $output->writeln("El contacto no cuenta con 'Experiencia MSK'." );
+                        $isNull = true;
+                    }
+                    if($cntc["Validador"] === null){
+                        $output->writeln("El usuario no esta validado.");
+                        $isNull = true;
                     }
 
                     if (!$isNull) {
@@ -124,7 +134,6 @@ class PopulateUsersWithContacts extends Command
                             ]
                         );
                     }
-
                 }
             }
 
@@ -143,3 +152,5 @@ class PopulateUsersWithContacts extends Command
         return 0;
     }
 }
+
+
