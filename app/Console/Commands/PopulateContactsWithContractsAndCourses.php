@@ -47,13 +47,14 @@ class PopulateContactsWithContractsAndCourses extends Command
     {
         try {
 
-            $limit = $input->getArgument('limit');
+            $limit = $input->getArgument('limit') ?? 1;
             $page = $input->getArgument('page') ?? 1;
 
             $output->writeln(" - Executing " . __CLASS__ . " " . $page . " " . $limit);
 
 
-            $salesOrders = $this->zohoService->Get('Sales_Orders', $page);
+            $salesOrders = $this->zohoService->GetForCommand('Sales_Orders', $limit, $page);
+            Log::debug("GetForCommand: " . print_r($salesOrders, true));
             $output->writeln("Se encontraton " . sizeof($salesOrders) . " contratos");
 
             if (!(sizeof($salesOrders) > 0)) {
@@ -122,6 +123,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                     $output->writeln("Recuperando contacto con id " . $contact->entity_id_crm . " desde ZohoCRM");
 
                     $contactZoho = $this->zohoService->GetByIdAllDetails('Contacts', $contact->entity_id_crm);
+                    Log::debug("GetByIdAllDetails: " . print_r($contactZoho, true));
 
                     if (isset($contactZoho['data'][0])) {
                         $output->writeln("Se encontro el contacto " . $contact->entity_id_crm . " en ZohoCRM");
