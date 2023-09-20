@@ -54,7 +54,7 @@ class PopulateContactsWithContractsAndCourses extends Command
 
 
             $salesOrders = $this->zohoService->GetForCommand('Sales_Orders', $limit, $page);
-            Log::debug("GetForCommand: " . print_r($salesOrders, true));
+            // Log::debug("GetForCommand: " . print_r($salesOrders, true));
             $output->writeln("Se encontraton " . sizeof($salesOrders) . " contratos");
 
             if (!(sizeof($salesOrders) > 0)) {
