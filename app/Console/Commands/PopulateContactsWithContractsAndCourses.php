@@ -49,7 +49,7 @@ class PopulateContactsWithContractsAndCourses extends Command
 
             $limit = $input->getArgument('limit') ?? 1;
             $page = $input->getArgument('page') ?? 1;
-
+            $contactsIds = [];
             $output->writeln(" - Executing " . __CLASS__ . " " . $page . " " . $limit);
 
 
@@ -103,6 +103,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                             ]);
                         }
                         $output->writeln("Se completo el procesamiento");
+                        $contactsIds[] = $saleOrder["Contact_Name"]["id"];
 
                     } else {
                         $output->writeln("El contacto " . $saleOrder["Contact_Name"]["id"] . " no esta en la base de datos");
@@ -112,8 +113,8 @@ class PopulateContactsWithContractsAndCourses extends Command
                 }
             }
 
-            $output->writeln("Buscando contactos ...");
-            $contacts = Contact::all();
+            $output->writeln("Buscando contactos " . sizeof($contactsIds) . " ...");
+            $contacts = Contact::whereIn('entity_id_crm', $contactsIds);
             $output->writeln("Se encontraron " . sizeof($contacts));
 
             foreach ($contacts as $index => $contact) {
@@ -123,16 +124,15 @@ class PopulateContactsWithContractsAndCourses extends Command
                     $output->writeln("Recuperando contacto con id " . $contact->entity_id_crm . " desde ZohoCRM");
 
                     $contactZoho = $this->zohoService->GetByIdAllDetails('Contacts', $contact->entity_id_crm);
-                    Log::debug("GetByIdAllDetails: " . print_r($contactZoho, true));
 
                     if (isset($contactZoho['data'][0])) {
                         $output->writeln("Se encontro el contacto " . $contact->entity_id_crm . " en ZohoCRM");
                         $output->writeln("Tomando y actualizando cursadas ....");
+                        Log::debug("Actualizando usuario: " . $contactZoho['data'][0]['Usuario'] . " - ID: " . $contactZoho['data'][0]['id']);
 
                         $coursesProgressZoho = $contactZoho['data'][0]["Formulario_de_cursada"];
                         foreach ($coursesProgressZoho as $index => $cpZoho) {
                             $dataProductZoho = $this->zohoService->GetByIdAllDetails('Products', $cpZoho["Nombre_de_curso"]["id"]);
-                            // Log::info("PopulateContactsWithContractsAndCourses-execute-productsZoho: " . print_r($productsZoho, true));
                             $productZoho = $dataProductZoho["data"][0];
                             CourseProgress::updateOrCreate([
                                 'entity_id_crm' => $cpZoho['id'],
@@ -163,6 +163,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                         }
                     } else {
                         $output->writeln("No se encontro el contacto " . $contact->entity_id_crm . " en ZohoCRM");
+                        Log::warning("Contacto no esta en ZohoCRM: [ID]" . $contact->entity_id_crm);
 
                     }
                 }
