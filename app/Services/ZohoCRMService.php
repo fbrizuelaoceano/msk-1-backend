@@ -108,8 +108,6 @@ class ZohoCRMService
     }
     private function isValidToken($accessToken)
     {
-
-
         $createdAt = Carbon::parse($accessToken->created_at);
         $expiresAt = $createdAt->addHours($accessToken->hours_duration);
         $timeLeft = Carbon::now()->diffInSeconds($expiresAt, false);
@@ -168,7 +166,7 @@ class ZohoCRMService
              **/
             // Lanza una excepción personalizada con los datos en un campo específico
             Log::error("body: " . "\n" . json_encode($body, JSON_PRETTY_PRINT));
-            throw new \Exception("Error, campo obligatorio no encontrado en el request: " . json_encode($body["requestArray"]) . " Url: " . $body["URL_ZOHO"], 500, new \Exception(json_encode($body)));
+            throw new \Exception("Error, campo obligatorio no encontrado en el request: " . json_encode(($body["requestArray"]??null)) . " Url: " . $body["URL_ZOHO"], 500, new \Exception(json_encode($body)));
         }
         if (isset($response["data"][0]["code"]) && $response["data"][0]["code"] === "INVALID_DATA") {
             /**
@@ -187,7 +185,7 @@ class ZohoCRMService
              **/
             // Lanza una excepción personalizada con los datos en un campo específico
             Log::error("body: " . "\n" . json_encode($body, JSON_PRETTY_PRINT));
-            throw new \Exception("Error, data invalida. Error en los campos o el email podria no existir en crm. data: " . json_encode($body["requestArray"]) . " Url: " . $body["URL_ZOHO"], 500, new \Exception(json_encode($body)));
+            throw new \Exception("Error, data invalida. Error en los campos o el email podria no existir en crm. data: " . json_encode(($body["requestArray"]??null)) . " Url: " . $body["URL_ZOHO"], 500, new \Exception(json_encode($body)));
         }
 
         /**
@@ -218,8 +216,6 @@ class ZohoCRMService
          */
     }
     /* End Administracion de tokens */
-
-
 
     private function generateAccessToken($observacion = 'Sin observacion.')
     {
@@ -309,6 +305,14 @@ class ZohoCRMService
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
         ])->get($URL_ZOHO)->json();
 
+        $body = [
+            "URL_ZOHO" => $URL_ZOHO,
+            "response" => $response,
+            "requestArray" => null,
+            "token" => $this->accessTokenReset
+        ];
+        $this->analyzeResponseForErrors($response, $body);
+
         return $response;
     }
 
@@ -318,6 +322,14 @@ class ZohoCRMService
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
         ])->get($URL_ZOHO)->json();
+
+        $body = [
+            "URL_ZOHO" => $URL_ZOHO,
+            "response" => $response,
+            "requestArray" => null,
+            "token" => $this->accessTokenReset
+        ];
+        $this->analyzeResponseForErrors($response, $body);
 
         return $response;
     }
