@@ -113,7 +113,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                 }
             }
 
-            $output->writeln("Buscando contactos " . sizeof($contactsIds) . " ...");
+            $output->writeln("Buscando contactos " . count($contactsIds) . " ...");
             $contacts = Contact::whereIn('entity_id_crm', $contactsIds);
             $output->writeln("Se encontraron " . sizeof($contacts));
 
