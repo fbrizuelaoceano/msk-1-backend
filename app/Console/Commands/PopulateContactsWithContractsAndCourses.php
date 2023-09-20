@@ -66,7 +66,7 @@ class PopulateContactsWithContractsAndCourses extends Command
                 $salesOrdersArray = (array) $salesOrders["data"];
 
                 foreach ($salesOrdersArray as $index => $saleOrder) {
-                    $output->writeln("Contrato " . $index . "/" . sizeof($salesOrders));
+                    $output->writeln("Contrato " . $index + 1 . "/" . sizeof($salesOrders));
                     $output->writeln("-----------------------");
                     $output->writeln("Recuperando contacto con id " . $saleOrder["Contact_Name"]["id"]);
 
@@ -119,7 +119,7 @@ class PopulateContactsWithContractsAndCourses extends Command
 
             foreach ($contacts as $index => $contact) {
                 if (isset($contact)) {
-                    $output->writeln("Contacto " . $index . "/" . sizeof($contacts));
+                    $output->writeln("Contacto " . $index + 1 . "/" . sizeof($contacts));
                     $output->writeln("-----------------------");
                     $output->writeln("Recuperando contacto con id " . $contact->entity_id_crm . " desde ZohoCRM");
 
