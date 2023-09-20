@@ -133,6 +133,7 @@ class ZohoCRMService
              *   }
              **/
             // Lanza una excepción personalizada con los datos en un campo específico
+
             Log::error("body: " . "\n" . json_encode($body, JSON_PRETTY_PRINT));
             throw new \Exception("Error de token invalido: " . $body["URL_ZOHO"], 500, new \Exception(json_encode($body)));
         }
@@ -322,6 +323,29 @@ class ZohoCRMService
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
         ])->get($URL_ZOHO)->json();
+
+        if (isset($response["code"]) && $response["code"] === "INVALID_TOKEN") {
+            /**
+             *   //error de token ?
+             *   [] local.ERROR: response:
+             *   {
+             *       "code": "INVALID_TOKEN",
+             *       "details": [],
+             *       "message": "invalid oauth token",
+             *       "status": "error"
+             *   }
+             **/
+            // Lanza una excepción personalizada con los datos en un campo específico
+
+
+
+            $this->getAccessToken();
+
+            $URL_ZOHO = env('URL_ZOHO') . '/' . $module . '?page=' . $page . '&per_page=' . $limit;
+            $response = Http::withHeaders([
+                'Authorization' => 'Zoho-oauthtoken ' . $this->accessTokenReset,
+            ])->get($URL_ZOHO)->json();
+        }
 
         $body = [
             "URL_ZOHO" => $URL_ZOHO,
