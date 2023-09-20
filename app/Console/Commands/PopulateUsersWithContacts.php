@@ -49,7 +49,7 @@ class PopulateUsersWithContacts extends Command
             $output->writeln(" - Executing " . __CLASS__ . " " . $page . " " . $limit);
 
             // $result = $this->service->Get('Contacts');
-            $result = $this->service->Get('Contacts'.'?per_page='.$limit);
+            $result = $this->service->GetForCommand('Contacts', $limit, $page);
 
             // Log::info("PopulateUsersWithContacts-execute-result: " . print_r($result, true));
 
@@ -70,19 +70,22 @@ class PopulateUsersWithContacts extends Command
                     'Sexo',
                     'Pais'
                 ];
-                foreach ($contacts as $cntc) {
+                foreach ($contacts as $index => $cntc) {
+                    $output->writeln("Contacto " . $index + 1 . "/" . sizeof($contacts));
                     $isNull = false;
                     foreach ($requeridos as $campo) {
-                        if (!isset($cntc[$campo]) || $cntc[$campo] === null) {//si el campo es null lo imprimo para que no rompa
+                        if (!isset($cntc[$campo]) || $cntc[$campo] === null) { //si el campo es null lo imprimo para que no rompa
                             // El campo es null o no está definido en $cntc
-                            $output->writeln("Uno de los campos requeridos por la base de datos viene vacio desde la api zoho. Id de la entidad en crm: ".$cntc["id"]);
+                            $output->writeln("Uno de los campos requeridos por la base de datos viene vacio desde la api zoho. Id de la entidad en crm: " . $cntc["id"]);
                             // Log::info("PopulateUsersWithContacts-execute-contacto de zoho sin los datos requeridos: " . print_r($cntc, true));
-                            $isNull=true;
+                            $isNull = true;
                             break;
                         }
                     }
 
-                    if(!$isNull){
+                    if (!$isNull) {
+                        $output->writeln("Creando usuario " . $cntc['Usuario'] . " ...");
+
                         $newUser = User::UpdateOrCreate(
                             [
                                 'email' => $cntc['Usuario']
