@@ -16,13 +16,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PopulateContactsWithContractsAndCourses extends Command
 {
     // protected $name = 'populate:contracts-products-courses-progress';
-    protected $name = 'populate:contacts-contracts';
+    protected $name = 'populate:contacts-contracts {limit=10&page=1}';
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'populate:contacts-contracts';
+    protected $signature = 'populate:contacts-contracts {limit=10&page=1}';
     /**
      * The console command description.
      *
@@ -37,27 +37,44 @@ class PopulateContactsWithContractsAndCourses extends Command
         $this->zohoService = $service;
     }
 
+    protected function configure()
+    {
+        $this->addArgument('limit');
+        $this->addArgument('page');
+    }
+
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        try{
-            $output->writeln("Ejecutando comando...");
+        try {
 
-            $salesOrders = $this->zohoService->Get('Sales_Orders') ;
+            $limit = $input->getArgument('limit');
+            $page = $input->getArgument('page') ?? 1;
+
+            $output->writeln(" - Executing " . __CLASS__ . " " . $page . " " . $limit);
+
+
+            $salesOrders = $this->zohoService->Get('Sales_Orders', $page);
+            $output->writeln("Se encontraton " . sizeof($salesOrders) . " contratos");
+
             if (!(sizeof($salesOrders) > 0)) {
                 $output->writeln(" - no entries result from CRM, aborting...");
                 return 0;
             }
 
-            // Log::info("PopulateContactsWithContractsAndCourses-execute-salesOrders: " . print_r($salesOrders, true));
-
             if (isset($salesOrders['data'])) {
-                $salesOrdersArray = (array)$salesOrders["data"];
-                // Log::info("PopulateContactsWithContractsAndCourses-execute-salesOrdersArray: " . print_r($salesOrdersArray, true));
+                $salesOrdersArray = (array) $salesOrders["data"];
+
                 foreach ($salesOrdersArray as $index => $saleOrder) {
+                    $output->writeln("Contrato " . $index . "/" . sizeof($salesOrders));
+                    $output->writeln("-----------------------");
+                    $output->writeln("Recuperando contacto con id " . $saleOrder["Contact_Name"]["id"]);
+
                     $contact = Contact::where(["entity_id_crm" => $saleOrder["Contact_Name"]["id"]])->first();
-                    if (isset($contact)){
-                        // Log::info("PopulateContactsWithContractsAndCourses-execute-contactId: " . print_r($contact->id, true));
-                        // Log::info("PopulateContactsWithContractsAndCourses-execute-saleOrder: " . print_r($saleOrder, true));
+
+                    if (isset($contact)) {
+                        $output->writeln("El contacto esta en la base de datos");
+                        $output->writeln("Actualizando contacto y tomando productos ...");
+
                         $contract = Contract::updateOrCreate(['entity_id_crm' => $saleOrder["id"]], [
                             'contact_id' => $contact->id,
                             'entity_id_crm' => $saleOrder["id"],
@@ -69,38 +86,50 @@ class PopulateContactsWithContractsAndCourses extends Command
                         ]);
 
                         $productDetails = $saleOrder["Product_Details"];
-                        // Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
 
                         foreach ($productDetails as $pd) {
-                            // Log::info("salesForCRM-pd: " . print_r($pd, true));
-
                             Product::updateOrCreate([
                                 'entity_id_crm' => $pd["product"]["id"],
                                 'contract_entity_id' => $saleOrder["id"]
                             ], [
-                                    'entity_id_crm' => $pd["product"]["id"],
-                                    'contract_id' => $contract->id,
-                                    'contract_entity_id' => $saleOrder["id"],
-                                    'quantity' => $pd["quantity"],
-                                    'discount' => $pd["Discount"],
-                                    'price' => $pd["total"],
-                                    'product_code' => (int) $pd["product"]["Product_Code"]
-                                ]);
+                                'entity_id_crm' => $pd["product"]["id"],
+                                'contract_id' => $contract->id,
+                                'contract_entity_id' => $saleOrder["id"],
+                                'quantity' => $pd["quantity"],
+                                'discount' => $pd["Discount"],
+                                'price' => $pd["total"],
+                                'product_code' => (int) $pd["product"]["Product_Code"]
+                            ]);
                         }
+                        $output->writeln("Se completo el procesamiento");
+
+                    } else {
+                        $output->writeln("El contacto " . $saleOrder["Contact_Name"]["id"] . " no esta en la base de datos");
                     }
+
+
                 }
             }
 
+            $output->writeln("Buscando contactos ...");
             $contacts = Contact::all();
+            $output->writeln("Se encontraron " . sizeof($contacts));
+
             foreach ($contacts as $index => $contact) {
-                if (isset($contact)){
-                    $contactZoho = $this->zohoService->GetByIdAllDetails('Contacts',$contact->entity_id_crm);
-                    // Log::info("PopulateContactsWithContractsAndCourses-execute-contact: " . print_r($contact, true));
-                    // Log::info("PopulateContactsWithContractsAndCourses-execute-contactsZoho: " . print_r($contactZoho, true));
-                    if(isset($contactZoho['data'][0])){
+                if (isset($contact)) {
+                    $output->writeln("Contacto " . $index . "/" . sizeof($contacts));
+                    $output->writeln("-----------------------");
+                    $output->writeln("Recuperando contacto con id " . $contact->entity_id_crm . " desde ZohoCRM");
+
+                    $contactZoho = $this->zohoService->GetByIdAllDetails('Contacts', $contact->entity_id_crm);
+
+                    if (isset($contactZoho['data'][0])) {
+                        $output->writeln("Se encontro el contacto " . $contact->entity_id_crm . " en ZohoCRM");
+                        $output->writeln("Tomando y actualizando cursadas ....");
+
                         $coursesProgressZoho = $contactZoho['data'][0]["Formulario_de_cursada"];
-                        foreach($coursesProgressZoho as $index => $cpZoho){
-                            $dataProductZoho = $this->zohoService->GetByIdAllDetails('Products',$cpZoho["Nombre_de_curso"]["id"]);
+                        foreach ($coursesProgressZoho as $index => $cpZoho) {
+                            $dataProductZoho = $this->zohoService->GetByIdAllDetails('Products', $cpZoho["Nombre_de_curso"]["id"]);
                             // Log::info("PopulateContactsWithContractsAndCourses-execute-productsZoho: " . print_r($productsZoho, true));
                             $productZoho = $dataProductZoho["data"][0];
                             CourseProgress::updateOrCreate([
@@ -130,6 +159,9 @@ class PopulateContactsWithContractsAndCourses extends Command
                                 'Plataforma_enrolamiento' => $productZoho['Plataforma_enrolamiento'],
                             ]);
                         }
+                    } else {
+                        $output->writeln("No se encontro el contacto " . $contact->entity_id_crm . " en ZohoCRM");
+
                     }
                 }
             }
@@ -149,4 +181,3 @@ class PopulateContactsWithContractsAndCourses extends Command
         return 0;
     }
 }
-
