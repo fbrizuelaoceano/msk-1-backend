@@ -17,8 +17,8 @@ class Recaptcha implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         // https://www.youtube.com/watch?v=HK_146nJSWU&t=488s
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify',[
-            'secret' => '6Lf1FPomAAAAAOiTM3JObb8mwKPmu25MmNegoB3l',
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => env('RECAPTCHA_SECRET_KEY'),
             'response' => $value
         ])->object();
 
@@ -43,4 +43,3 @@ class Recaptcha implements ValidationRule
         return $errorMessages[$errorCode] ?? 'Error de reCaptcha desconocido.';
     }
 }
-
