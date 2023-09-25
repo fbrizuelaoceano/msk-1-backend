@@ -183,9 +183,11 @@ class ZohoOMController extends Controller
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $ZOHO_ACCESS_TOKEN,
-        ])
-            ->put($URL_ZOHO, $request->all())
-            ->json();
+        ])->put($URL_ZOHO, $request->all())->json();
+
+
+        Log::debug("updateContact: response" . print_r($response, true));
+        Log::debug("updateContact: request" . print_r($request->all(), true));
 
         return response()->json([
             'data' => $response,
