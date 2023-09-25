@@ -56,7 +56,7 @@ class ContactUsRequest extends FormRequest
             'utm_content.nullable' => 'Contenido UTM debe ser una cadena de caracteres.',
             'utm_medium.nullable' => 'Medio UTM debe ser una cadena de caracteres.',
             'utm_source.nullable' => 'Fuente UTM debe ser una cadena de caracteres.',
-            'recaptcha_token' => 'El token de recaptcha es requerido.'
+            //'recaptcha_token' => 'El token de recaptcha es requerido.'
         ];
     }
     /**
@@ -70,7 +70,7 @@ class ContactUsRequest extends FormRequest
             // 'Description' => 'required|string',
             'Last_Name' => 'required|string',
             'Email' => 'required|string|email',
-            'recaptcha_token' => ['required', new Recaptcha],
+            //'recaptcha_token' => ['required', new Recaptcha],
 
             'First_Name' => 'required|string',
             'Pais' => 'required|string',

@@ -36,7 +36,7 @@ class LoginRequest extends FormRequest
             'email.email' => 'El Email debe ser una direccion de correo electronico valida.',
             'password.required' => 'La Contraseña es obligatoria.',
             'password.string' => 'La Contraseña debe ser una cadena de caracteres.',
-            'recaptcha_token' => 'El token de recaptcha es requerido.'
+            //'recaptcha_token' => 'El token de recaptcha es requerido.'
         ];
     }
     /**
@@ -47,9 +47,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-               'email' => 'required|string|email',
-               'password' => 'required|string',
-               'recaptcha_token' => ['required', new Recaptcha],
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+            //'recaptcha_token' => ['required', new Recaptcha],
         ];
     }
 }
