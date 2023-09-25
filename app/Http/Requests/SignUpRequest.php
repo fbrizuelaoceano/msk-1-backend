@@ -61,9 +61,11 @@ class SignUpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'recaptcha_token' => ['required', new Recaptcha],
-            'last_name' => 'required|string', //Necesario para crear el contacto de crm
-            'email' => 'required|string|email|unique:users', //Necesario para crear el contacto de crm
+            'recaptcha_token' => ['required', new Recaptcha],
+            'last_name' => 'required|string',
+            //Necesario para crear el contacto de crm
+            'email' => 'required|string|email|unique:users',
+            //Necesario para crear el contacto de crm
             'first_name' => 'required|string:',
             'phone' => 'required|string',
             'country' => 'required|string',

@@ -295,9 +295,9 @@ class ZohoController extends Controller
     public function CreateLeadHomeContactUs(ContactUsRequest $request)
     {
 
-        /* $token = $request->input('recaptcha_token');
+        $token = $request->input('recaptcha_token');
         $recaptcha = new ReCaptcha(env('RECAPTCHA_SECRET_KEY'));
-        $response = $recaptcha->verify($token); */
+        $response = $recaptcha->verify($token);
 
         try {
             $data = [
