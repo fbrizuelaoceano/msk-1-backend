@@ -59,7 +59,6 @@ class PopulateUsersWithContacts extends Command
             }
 
             if (isset($result['data'])) {
-
                 $contacts = $result['data'];
                 $requeridos = [
                     'id',
@@ -71,16 +70,29 @@ class PopulateUsersWithContacts extends Command
                     'Pais'
                 ];
                 foreach ($contacts as $index => $cntc) {
+                    $output->writeln("-----------------------");
                     $output->writeln("Contacto " . $index + 1 . "/" . sizeof($contacts));
+                    $output->writeln("ID de contacto en zoho: " . $cntc['id']);
+
                     $isNull = false;
                     foreach ($requeridos as $campo) {
                         if (!isset($cntc[$campo]) || $cntc[$campo] === null) { //si el campo es null lo imprimo para que no rompa
                             // El campo es null o no está definido en $cntc
-                            $output->writeln("Uno de los campos requeridos por la base de datos viene vacio desde la api zoho. Id de la entidad en crm: " . $cntc["id"]);
+                            $output->writeln("Uno de los campos requeridos por la base de datos viene vacio desde la api zoho.");
                             // Log::info("PopulateUsersWithContacts-execute-contacto de zoho sin los datos requeridos: " . print_r($cntc, true));
                             $isNull = true;
                             break;
                         }
+                    }
+
+
+                    if($cntc['Caracter_stica_contacto'] !== 'Experiencia MSK'){
+                        $output->writeln("El contacto no cuenta con 'Experiencia MSK'." );
+                        $isNull = true;
+                    }
+                    if($cntc["Validador"] === null){
+                        $output->writeln("El usuario no esta validado.");
+                        $isNull = true;
                     }
 
                     if (!$isNull) {
@@ -143,3 +155,5 @@ class PopulateUsersWithContacts extends Command
         return 0;
     }
 }
+
+
