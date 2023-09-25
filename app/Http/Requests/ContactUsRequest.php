@@ -56,7 +56,6 @@ class ContactUsRequest extends FormRequest
             'utm_content.nullable' => 'Contenido UTM debe ser una cadena de caracteres.',
             'utm_medium.nullable' => 'Medio UTM debe ser una cadena de caracteres.',
             'utm_source.nullable' => 'Fuente UTM debe ser una cadena de caracteres.',
-            'recaptcha_token' => 'El token de recaptcha es requerido.'
         ];
     }
     /**
