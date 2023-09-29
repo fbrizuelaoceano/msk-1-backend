@@ -74,8 +74,6 @@ class ContactUsRequest extends FormRequest
             'First_Name' => 'required|string',
             'Pais' => 'required|string',
             'Phone' => 'required|string',
-
-            'Preferencia_de_contactaci_n' => 'string',
             'Profesion' => 'required',
             'Especialidad' => 'required_unless:Profesion,Estudiante',
             'Otra_profesion' => 'required_if:Profesion,Otra profesión',
