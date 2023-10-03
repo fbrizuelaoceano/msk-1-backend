@@ -320,7 +320,7 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'expires_at' => $token->expires_at,
             'name' => $user->name,
-            'speciality' => $contact->speciality,
+            'speciality' => $contact->speciality ?? '',
         ]);
     }
     /**

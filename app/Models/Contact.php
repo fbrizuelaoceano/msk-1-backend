@@ -125,7 +125,7 @@ class Contact extends Model
             'other_profession' => $contactInformation["Otra_profesi_n"],
             'speciality' => $contactInformation["Especialidad"],
             'other_speciality' => $contactInformation["Otra_especialidad"],
-            'rfc' => $contactInformation["RFC"],
+            'rfc' => $contactInformation["RFC"] ?? '',
             'country' => $contactInformation["Pais"],
             'fiscal_regime' => $contactInformation["R_gimen_fiscal"],
             'postal_code' => $contactInformation["Mailing_Zip"],
