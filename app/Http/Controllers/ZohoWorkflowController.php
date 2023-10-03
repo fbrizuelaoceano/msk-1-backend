@@ -54,7 +54,7 @@ class ZohoWorkflowController extends Controller
                 'specialty' => $contactObj->Especialidad,
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
-                'rfc' => $contactObj->RFC,
+                'rfc' => $contactObj->RFC ?? '',
                 'sex' => $contactObj->Sexo,
                 'country' => $contactObj->Pais,
                 'phone' => $contactObj->Phone,
