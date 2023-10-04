@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
@@ -66,7 +67,7 @@ class User extends Authenticatable
             $contact->user->update([
                 'name' => $contactArrayObj['Full_Name'],
                 'email' => $contactArrayObj['Email'],
-                'password' => $contactArrayObj['Password'],
+                'password' => Hash::make($contactArrayObj['Password']),
                 'test' => $contactArrayObj['usuario_prueba'],
             ]);
         }
