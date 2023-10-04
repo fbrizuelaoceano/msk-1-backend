@@ -58,12 +58,34 @@ class User extends Authenticatable
         self::where('email', $email)->update(['name' => $newName]);
     }
 
-    public static function updateNameByContact($contactArrayObj)
+
+    // $contactArrayObj = ['id' => '5344455000009258327', 'Email' => 'facundobrizuela@msklatam.com', 'Full_Name' => 'Facundo Brizuela','Password' => 'keyuno','usuario_prueba' => 1];
+    // User::updateOrCreateByContact($contactArrayObj );
+    public static function updateOrCreateByContact($contactArrayObj)
     {
         $contact = Contact::where(['entity_id_crm' => $contactArrayObj['id']])->get()->first();
-        $contact->user->update([
-            'name' => $contactArrayObj['Full_Name'],
-            'email' => $contactArrayObj['Email'],
-        ]);
+
+        if($contact->user??null !== null){
+            $contact->user->update([
+                'name' => $contactArrayObj['Full_Name'],
+                'email' => $contactArrayObj['Email'],
+                'password' => $contactArrayObj['Password'],
+                'test' => $contactArrayObj['usuario_prueba'],
+            ]);
+        }
+        // else{
+        //     self::updateOrCreate(['email' => $contactArrayObj['Email']],
+        //         [
+        //             'email' => $contactArrayObj['Email'],
+        //             'name' => $contactArrayObj['Full_Name'],
+        //             'password' => $contactArrayObj['Password'],
+        //             'test' => $contactArrayObj['usuario_prueba'],
+        //         ]
+        //     );
+
+        //     $user = self::where([ 'email' => $contactArrayObj['Email'] ])->get()->first();
+
+        //     $contact->user_id = $user->id; // Asigna la relación entre el usuario y el contacto
+        // }
     }
 }

@@ -268,6 +268,8 @@ class ZohoWorkflowController extends Controller
      *   }
      */
     // Esto recibe lo de la regla
+
+
     public function UpdateContact(Request $request)
     {
         try {
@@ -280,7 +282,7 @@ class ZohoWorkflowController extends Controller
             $contactCourses = $updatedContact->courses_progress()->get();
 
 
-            User::updateNameByContact($contactArrayObj);
+            User::updateOrCreateByContact($contactArrayObj);
             // User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
 
             //traer contact con buscar courses_progress
