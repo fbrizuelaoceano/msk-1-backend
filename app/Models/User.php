@@ -63,7 +63,7 @@ class User extends Authenticatable
         $contact = Contact::where(['entity_id_crm' => $contactArrayObj['id']])->get()->first();
         $contact->user->update([
             'name' => $contactArrayObj['Full_Name'],
-            'email' => $contactArrayObj['email'],
+            'email' => $contactArrayObj['Email'],
         ]);
     }
 }
