@@ -57,4 +57,13 @@ class User extends Authenticatable
     {
         self::where('email', $email)->update(['name' => $newName]);
     }
+
+    public static function updateNameByContact($contactArrayObj)
+    {
+        $contact = Contact::where(['entity_id_crm' => $contactArrayObj['id']])->get()->first();
+        $contact->user->update([
+            'name' => $contactArrayObj['Full_Name'],
+            'email' => $contactArrayObj['email'],
+        ]);
+    }
 }
