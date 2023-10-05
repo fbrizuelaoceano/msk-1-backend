@@ -54,7 +54,7 @@ class ZohoWorkflowController extends Controller
                 'specialty' => $contactObj->Especialidad,
                 'user_id' => $user->id,
                 'entity_id_crm' => $contactObj->id,
-                'rfc' => $contactObj->RFC,
+                'rfc' => $contactObj->RFC ?? '',
                 'sex' => $contactObj->Sexo,
                 'country' => $contactObj->Pais,
                 'phone' => $contactObj->Phone,
@@ -268,6 +268,8 @@ class ZohoWorkflowController extends Controller
      *   }
      */
     // Esto recibe lo de la regla
+
+
     public function UpdateContact(Request $request)
     {
         try {
@@ -279,7 +281,9 @@ class ZohoWorkflowController extends Controller
             $updatedContact = Contact::updateOrCreateContact($contactArrayObj['id'], $mskObjDBContact);
             $contactCourses = $updatedContact->courses_progress()->get();
 
-            User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
+
+            User::updateOrCreateByContact($contactArrayObj);
+            // User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
 
             //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
