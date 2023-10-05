@@ -32,7 +32,8 @@ class Contact extends Model
         "other_profession",
         "state",
         "career",
-        "year"
+        "year",
+        'validate',
     ];
 
     private static $formAttributes = [
