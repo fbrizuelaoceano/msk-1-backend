@@ -277,7 +277,7 @@ class ZohoWorkflowController extends Controller
             $contactArrayObj = (array) $contactObjstdClass;
             Log::debug("contactArrayObj: " . print_r($contactArrayObj, true));
 
-            $user = User::where('email', $contactArrayObj['Usuario'])->first();
+            $user = User::where('email', $contactArrayObj['Email'])->first();
 
             $mskObjDBContact = Contact::mappingData($contactArrayObj);
 
