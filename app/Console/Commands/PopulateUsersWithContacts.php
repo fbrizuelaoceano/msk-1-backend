@@ -122,7 +122,7 @@ class PopulateUsersWithContacts extends Command
                                 'user_id' => $newUser->id,
                                 'profession' => $cntc["Profesi_n"],
                                 'speciality' => $cntc["Especialidad"],
-                                'rfc' => $cntc["RFC"],
+                                'rfc' => $cntc["RFC"] ?? '',
                                 'country' => $cntc["Pais"],
                                 'fiscal_regime' => $cntc["R_gimen_fiscal"],
                                 'postal_code' => $cntc["Mailing_Zip"],
