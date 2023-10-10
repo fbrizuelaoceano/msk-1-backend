@@ -144,6 +144,4 @@ class Contact extends Model
         return self::updateOrCreate(['entity_id_crm' => $contactId], $data);
     }
 
-
-
 }

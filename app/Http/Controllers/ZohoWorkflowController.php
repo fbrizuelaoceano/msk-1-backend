@@ -276,7 +276,7 @@ class ZohoWorkflowController extends Controller
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
             $contactArrayObj = (array) $contactObjstdClass;
-            Log::debug("contactArrayObj: " . print_r($contactArrayObj, true));
+            Log::channel('zohoWorkFlow')->info("zohoWorkflow->contactArrayObj: " . print_r($contactArrayObj, true));
 
             $user = User::where('email', $contactArrayObj['Email'])->first();
 
