@@ -406,7 +406,8 @@ class ZohoController extends Controller
                         "Ad_Set" => isset($request->utm_medium) ? $request->utm_medium : null,
                         "Ad_Campaign" => isset($request->utm_campaign) ? $request->utm_campaign : null,
                         "Ad_Name" => isset($request->utm_content) ? $request->utm_content : null,
-
+                        "Pais" => $request->country ?? null,
+                        "Country" => $request->country ?? null,
                     ]
                 ]
             ];
