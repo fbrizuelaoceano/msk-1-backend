@@ -117,6 +117,7 @@ return [
             'processors' => [PsrLogMessageProcessor::class],
         ],
 
+
         'syslog' => [
             'driver' => 'syslog',
             'level' => env('LOG_LEVEL', 'debug'),
@@ -137,6 +138,12 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'zohoWorkFlow' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/zohoWorkFlow.log'),
+            'level' => 'debug',
         ],
     ],
 

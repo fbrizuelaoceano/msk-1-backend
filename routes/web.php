@@ -15,5 +15,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    throw new Exception('My first GlitchTip error!');
 });
+
+/* Route::get('/', function () {
+    return view('welcome');
+}); */

@@ -57,16 +57,13 @@ class CourseProgress extends Model
 
     public static function mappingData(array $courseProgressInformation, int $contactId)
     {
-
         return [
             'entity_id_crm' => $courseProgressInformation['id'],
             'Fecha_finalizaci_n' => $courseProgressInformation['Fecha_finalizaci_n'],
-            // 'Nombre_de_curso' => $courseProgressInformation['Nombre_de_curso']['name'].' id:'.$courseProgressInformation['Nombre_de_curso']['id'],
             'Nombre_de_curso' => $courseProgressInformation['Nombre_de_curso']->name,
-            'Estado_de_OV' => $courseProgressInformation['Estado_de_OV'],
+            'Estado_de_OV' => $courseProgressInformation['Estado_de_OV'] ?? null,
             'field_states' => $courseProgressInformation['$field_states'],
             'Created_Time' => $courseProgressInformation['Created_Time'],
-            // 'Parent_Id' => $courseProgressInformation['Parent_Id']['name'].' id:'.$courseProgressInformation['Parent_Id']['id'],
             'Parent_Id' => $courseProgressInformation['Parent_Id']->id,
             'Nota' => $courseProgressInformation['Nota'],
             'Estado_cursada' => $courseProgressInformation['Estado_cursada'],

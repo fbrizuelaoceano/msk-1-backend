@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
+
+
 class ZohoWorkflowController extends Controller
 {
     public function setNewPasswordFromMSK(Request $request)
@@ -154,8 +156,7 @@ class ZohoWorkflowController extends Controller
                 'file' => $e->getFile(),
                 // 'trace' => $e->getTraceAsString(),
             ];
-
-            Log::error("Error en salesForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            Log::channel('zohoWorkFlow')->error("Error en salesForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
 
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
@@ -181,8 +182,8 @@ class ZohoWorkflowController extends Controller
                 'file' => $e->getFile(),
                 // 'trace' => $e->getTraceAsString(),
             ];
+            Log::channel('zohoWorkFlow')->error("Error en ValidatedUser: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
 
-            Log::error("Error en ValidatedUser: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
             $status = 500;
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
@@ -238,7 +239,7 @@ class ZohoWorkflowController extends Controller
                 // 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en UpdateQuotes: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            Log::channel('zohoWorkFlow')->error("Error en UpdateQuotes: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
 
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',
@@ -268,18 +269,27 @@ class ZohoWorkflowController extends Controller
      *   }
      */
     // Esto recibe lo de la regla
+
+
     public function UpdateContact(Request $request)
     {
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
             $contactArrayObj = (array) $contactObjstdClass;
-            Log::debug("contactArrayObj: " . print_r($contactArrayObj, true));
+            Log::channel('zohoWorkFlow')->info("zohoWorkflow->contactArrayObj: " . print_r($contactArrayObj, true));
+
+            $user = User::where('email', $contactArrayObj['Email'])->first();
 
             $mskObjDBContact = Contact::mappingData($contactArrayObj);
+
+            $mskObjDBContact['user_id'] = $user->id;
+
             $updatedContact = Contact::updateOrCreateContact($contactArrayObj['id'], $mskObjDBContact);
             $contactCourses = $updatedContact->courses_progress()->get();
 
-            User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
+
+            User::updateOrCreateByContact($contactArrayObj);
+            // User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
 
             //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
@@ -325,7 +335,7 @@ class ZohoWorkflowController extends Controller
                 // 'trace' => $e->getTraceAsString(),
             ];
 
-            Log::error("Error en UpdateContact: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
+            Log::channel('zohoWorkFlow')->error("Error en UpdateContact: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
 
             return response()->json([
                 'error' => 'Ocurrió un error en el servidor',

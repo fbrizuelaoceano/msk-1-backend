@@ -338,14 +338,14 @@ class AuthController extends Controller
     }
     public function newPassword(Request $request)
     {
-        try {
-            $request->validate([
-                //Dato del codigo del usuario validado, para seguridad
-                'validator' => 'required|string',
-                'password' => 'required|string',
-            ]);
+        $request->validate([
+            'validator' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-            $contact = Contact::where(["validate" => $request->validator])->first();
+        try {
+
+            $contact = Contact::where(["entity_id_crm" => base64_decode($request->validator)])->first();
 
             $user = User::where(["email" => $contact->email])->first();
             $user->password = Hash::make($request->password);
@@ -364,7 +364,6 @@ class AuthController extends Controller
             ];
 
             $response = $this->zohoService->Update('Contacts', $data, $contact->entity_id_crm);
-            //$response = $zohoService->Update('Contacts', $data, "5344455000004144002");
 
             return response()->json($response, 200);
         } catch (\Exception $e) {
@@ -406,22 +405,15 @@ class AuthController extends Controller
     public function GetProfile(Request $request, $email)
     {
         try {
-            // Log::info("GetProfile-email: " . print_r($email, true));
-
             $user = User::with('contact.contracts.products', 'contact.courses_progress')
                 ->where('email', $email)
                 ->first();
 
-            // Log::info("GetProfile-user: " . print_r($user, true));
-
             $contracts = $user->contact->contracts;
-            // Log::info("GetProfile-contracts: " . print_r($contracts, true));
 
             $contracts->each(function ($contract) {
                 $contract->setAttribute('products', $contract->products);
             });
-
-            // Log::info("GetProfile-user2: " . print_r($user, true));
 
 
             return response()->json([
@@ -454,7 +446,7 @@ class AuthController extends Controller
             $contactData = $request->only(Contact::getFormAttributesUpdateProfileRequest());
 
             $profesion = $contactData['profession'];
-            $profession = ($profesion === "" || $profesion === null ) ? null: $profesion;
+            $profession = ($profesion === "" || $profesion === null) ? null : $profesion;
 
             $data = [
                 'data' => [
@@ -481,8 +473,8 @@ class AuthController extends Controller
 
                         'R_gimen_fiscal' => $contactData['fiscal_regime'],
                         'Mailing_Street' => $contactData['address'],
-                        'Carrera_de_estudio' =>  ($profession === "Estudiante")? $contactData['career']: null,
-                        'A_o_de_estudio' => ($profession === "Estudiante")? $contactData['year']: null,
+                        'Carrera_de_estudio' => ($profession === "Estudiante") ? $contactData['career'] : null,
+                        'A_o_de_estudio' => ($profession === "Estudiante") ? $contactData['year'] : null,
                     ]
                 ]
             ];

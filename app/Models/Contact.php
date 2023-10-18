@@ -32,7 +32,8 @@ class Contact extends Model
         "other_profession",
         "state",
         "career",
-        "year"
+        "year",
+        'validate',
     ];
 
     private static $formAttributes = [
@@ -130,9 +131,10 @@ class Contact extends Model
             'fiscal_regime' => $contactInformation["R_gimen_fiscal"],
             'postal_code' => $contactInformation["Mailing_Zip"],
             'address' => $contactInformation["Mailing_Street"],
-            'state' => $contactInformation["Mailing_State"], // 'date_of_birth' => $contactInformation["Date_of_Birth"],//no esta en el form de Datos personales
+            'state' => $contactInformation["Mailing_State"],
+            // 'date_of_birth' => $contactInformation["Date_of_Birth"],//no esta en el form de Datos personales
             // 'sex' => $contactInformation["Sexo"],//no esta en el form de Datos personales
-            // 'validate' => $contactInformation["Validador"],//no esta en el form de Datos personales
+            'validate' => $contactInformation["Validador"] ?? null,//no esta en el form de Datos personales
         ];
 
     }
@@ -141,7 +143,5 @@ class Contact extends Model
     {
         return self::updateOrCreate(['entity_id_crm' => $contactId], $data);
     }
-
-
 
 }
