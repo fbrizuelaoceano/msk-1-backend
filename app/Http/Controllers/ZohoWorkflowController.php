@@ -282,15 +282,13 @@ class ZohoWorkflowController extends Controller
 
             $updatedContact = Contact::updateOrCreateContact($contactArrayObj['id'], $mskObjDBContact);
             $contactCourses = $updatedContact->courses_progress()->get();
-
             $userContact = $updatedContact->user;
+
             Log::channel('zohoWorkFlow')->info("zohoWorkflow->userContact: " . print_r($userContact, true) );
 
-
             User::updateOrCreateByContact($contactArrayObj, $userContact);
-            // User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
+            Log::channel('zohoWorkFlow')->info("zohoWorkflow->userContact: " . print_r($userContact->toArray(), true) );
 
-            //traer contact con buscar courses_progress
             //actualizar los datos de cursadas
 
             $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];

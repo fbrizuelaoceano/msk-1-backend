@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     public static function updateOrCreateByContact($contactArrayObj, $userContact)
     {
-        if($userContact??null !== null){
+        if($userContact){
             $userContact->update([
                 'name' => $contactArrayObj['Full_Name'],
                 'email' => $contactArrayObj['Email'],
