@@ -276,19 +276,18 @@ class ZohoWorkflowController extends Controller
         try {
             $contactObjstdClass = json_decode($_POST['contact']);
             $contactArrayObj = (array) $contactObjstdClass;
-            Log::channel('zohoWorkFlow')->info("zohoWorkflow->contactArrayObj: " . print_r($contactArrayObj, true));
-
-            $user = User::where('email', $contactArrayObj['Email'])->first();
+            Log::channel('zohoWorkFlow')->info("zohoWorkflow->contactArrayObj: " . $contactArrayObj);
 
             $mskObjDBContact = Contact::mappingData($contactArrayObj);
-
-            $mskObjDBContact['user_id'] = $user->id;
 
             $updatedContact = Contact::updateOrCreateContact($contactArrayObj['id'], $mskObjDBContact);
             $contactCourses = $updatedContact->courses_progress()->get();
 
+            $userContact = $updatedContact->user;
+            Log::channel('zohoWorkFlow')->info("zohoWorkflow->userContact: " . $userContact);
 
-            User::updateOrCreateByContact($contactArrayObj);
+
+            User::updateOrCreateByContact($contactArrayObj, $userContact);
             // User::updateNameByEmail($contactArrayObj["Usuario"], $contactArrayObj["Full_Name"]);
 
             //traer contact con buscar courses_progress

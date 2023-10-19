@@ -59,18 +59,15 @@ class User extends Authenticatable
         self::where('email', $email)->update(['name' => $newName]);
     }
 
-    public static function updateOrCreateByContact($contactArrayObj)
+    public static function updateOrCreateByContact($contactArrayObj, $userContact)
     {
-        $contact = Contact::where(['entity_id_crm' => $contactArrayObj['id']])->get()->first();
-
-        if($contact->user??null !== null){
-            $contact->user->update([
+        if($userContact??null !== null){
+            $userContact->update([
                 'name' => $contactArrayObj['Full_Name'],
                 'email' => $contactArrayObj['Email'],
                 'password' => Hash::make($contactArrayObj['Password']),
                 'test' => $contactArrayObj['usuario_prueba'],
             ]);
         }
-
     }
 }
