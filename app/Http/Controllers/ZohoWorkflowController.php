@@ -284,10 +284,10 @@ class ZohoWorkflowController extends Controller
             $contactCourses = $updatedContact->courses_progress()->get();
             $userContact = $updatedContact->user;
 
-            Log::channel('zohoWorkFlow')->info("zohoWorkflow->userContact: " . print_r($userContact, true) );
+           // Log::channel('zohoWorkFlow')->info("zohoWorkflow->userContact: " . print_r($userContact, true) );
 
             User::updateOrCreateByContact($contactArrayObj, $userContact);
-            Log::channel('zohoWorkFlow')->info("zohoWorkflow->userContact: " . print_r($userContact->toArray(), true) );
+            Log::channel('zohoWorkFlow')->debug("zohoWorkflow->userContactUpdate: " . print_r($userContact->toArray(), true) );
 
             //actualizar los datos de cursadas
 
