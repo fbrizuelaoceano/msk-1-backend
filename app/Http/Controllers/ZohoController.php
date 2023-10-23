@@ -411,78 +411,31 @@ class ZohoController extends Controller
                     ]
                 ]
             ];
-            $leadExists = Lead::where(['email' => $request->Email])->first();
             $profession = Profession::where('name', $request->Profesion)->first();
             $specialty = Speciality::where('name', $request->Especialidad)->first();
             $career = Career::where('name', $request->Career)->first();
+            $response = $this->Create('Leads', $data);
+            $newLead = Lead::create([
+                "email" => $request->Email,
+                "last_name" => $request->Last_Name,
+                "name" => $request->First_Name,
+                "profession" => isset($profession->id) ? $profession->id : null,
+                "speciality" => isset($specialty->id) ? $specialty->id : null,
+                "phone" => $request->Phone,
+                "method_contact" => 2,
+                "entity_id_crm" => $response['data'][0]['details']['id'],
+                'country' => $request->Pais,
+                "career" => isset($career->id) ? $career->id : '',
+                'year' => isset($request->Year) ? $request->Year : '',
+                'other_profession' => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
+                'other_speciality' => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null
 
-            if (!$leadExists) { // no se encontró ningún registro con ese email
-                $response = $this->Create('Leads', $data);
-                $leadMSK = new Lead();
-                $leadMSK->email = $request->Email;
+            ]);
 
-                if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
-                    $leadMSK->entity_id_crm = $response['data'][0]['details']['id'];
-                }
-
-                // $newLead = Lead::Create($leadMSK->toArray());
-                $newLead = Lead::create([
-                    "email" => $request->Email,
-                    "last_name" => $request->Last_Name,
-                    "name" => $request->First_Name,
-                    "profession" => isset($profession->id) ? $profession->id : null,
-                    "speciality" => isset($specialty->id) ? $specialty->id : null,
-                    "phone" => $request->Phone,
-                    "method_contact" => 2,
-                    "entity_id_crm" => $response['data'][0]['details']['id'],
-                    'country' => $request->Pais,
-                    "career" => isset($career->id) ? $career->id : '',
-                    'year' => isset($request->Year) ? $request->Year : '',
-                    'other_profession' => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
-                    'other_speciality' => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null
-
-                ]);
-
-                return response()->json([
-                    "crm" => $response,
-                    "msk" => $newLead
-                ]);
-            } else { // se encontró un registro con ese email
-                $leadExists->update([
-                    "email" => $request->Email,
-                    "last_name" => $request->Last_Name,
-                    "name" => $request->First_Name,
-                    "profession" => isset($profession->id) ? $profession->id : null,
-                    "speciality" => isset($specialty->id) ? $specialty->id : null,
-                    "phone" => $request->Phone,
-                    "method_contact" => 2,
-                    'country' => $request->Pais,
-                    "career" => isset($career->id) ? $career->id : '',
-                    'year' => isset($request->Year) ? $request->Year : '',
-                    'other_profession' => isset($request->Otra_profesion) ? $request->Otra_profesion : null,
-                    'other_speciality' => isset($request->Otra_especialidad) ? $request->Otra_especialidad : null
-
-                ]);
-                // Cargar el modelo nuevamente para obtener los datos actualizados
-                $leadExists->refresh();
-
-                if (isset($leadExists->entity_id_crm) && $leadExists->entity_id_crm !== '') { //Tiene id en crm, existe en crm, entonces actualizo
-                    $response = $this->zohoService->Update('Leads', $data, $leadExists->entity_id_crm);
-                } else { // No tiene id de crm, no existe en crm, entonces lo creo
-                    $response = $this->Create('Leads', $data);
-                    if (isset($response['data'][0]['code']) && $response['data'][0]['code'] == "SUCCESS") {
-                        // $leadExists->entity_id_crm = $response['data'][0]['details']['id'];
-                        // $leadExists->save();
-                        $leadExists->update([
-                            "entity_id_crm" => $response['data'][0]['details']['id'],
-                        ]);
-                    }
-                }
-                return response()->json([
-                    "crm" => $response,
-                    "msk" => $leadExists
-                ]);
-            }
+            return response()->json([
+                "crm" => $response,
+                "msk" => $newLead
+            ]);
         } catch (\Exception $e) {
             $err = [
                 'message' => $e->getMessage(),
