@@ -48,7 +48,7 @@ class ZohoWorkflowController extends Controller
             // Log::info("salesForCRM-user: " . print_r($user, true));
 
 
-            $contact = Contact::updateOrCreate(['entity_id_crm' => $contactObj->id], [
+            $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
                 'name' => $contactObj->First_Name,
                 'last_name' => $contactObj->Last_Name,
                 'email' => $contactObj->Usuario,
