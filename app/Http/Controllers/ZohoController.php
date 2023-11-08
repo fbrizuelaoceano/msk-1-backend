@@ -306,6 +306,7 @@ class ZohoController extends Controller
                         "Phone" => $request->Phone,
                         "Description" => $request->Description,
                         "Preferencia_de_contactaci_n" => isset($request->Preferencia_de_contactaci_n) ? [$request->Preferencia_de_contactaci_n] : null,
+                        "Lead_Source" => $request->leadSource ?? null,
                         "First_Name" => $request->First_Name,
                         "Last_Name" => $request->Last_Name,
                         "Email" => $request->Email,
