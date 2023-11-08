@@ -18,6 +18,6 @@ Route::get('/', function () {
     throw new Exception('My first GlitchTip error!');
 });
 
-/* Route::get('/', function () {
+ Route::get('/', function () {
     return view('welcome');
-}); */
+}); /**/
