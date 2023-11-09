@@ -160,8 +160,8 @@ Route::get('specialities', function () {
 });
 
 Route::prefix('products')->group(function () {
-    Route::get('/', [ProductController::class, 'GetProducts']);
-    Route::post('/{id}', [ProductController::class, 'CreateLeads']);
+    Route::get('/', [\App\Http\Controllers\ProductController::class, 'GetProducts']);
+    Route::post('/{id}', [\App\Http\Controllers\ProductController::class, 'CreateLeads']);
 });
 
 Route::prefix('webhook/rebill')->group(function () {
@@ -184,3 +184,6 @@ Route::get("omApiPayments", function () {
 Route::post("sso/link", [SSOController::class, "getLMSLink"]);
 Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
 Route::get("/crm/products/{page}", [ZohoController::class, 'getProductsCRM']);
+
+#lala
+Route::get("/crm/leads", [\App\Http\Controllers\Leads\ReadLeadController::class, 'index']);
