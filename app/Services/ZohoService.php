@@ -27,4 +27,13 @@ abstract class ZohoService
         
         return (json_decode($response->getBody()->getContents(), true))['data'];
     }
+
+    public function post($data)
+    {
+        $request = new Request('POST', $this->url.'/'.$this->module, $data);
+        /** @var  Response $response */
+        $response = $this->api->sendAsync($request)->wait();
+
+        return (json_decode($response->getBody()->getContents(), true));
+    }
 }
