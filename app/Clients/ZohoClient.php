@@ -40,6 +40,7 @@ class ZohoClient implements IClient
                 'User-Agent' => Utils::defaultUserAgent(),
                 'Authorization' => 'Bearer '.$this->accessToken,
             ];
+
             $client = new Client([
                 'base_uri' => $this->settingsDto->getZohoUrl(),
                 'headers' => $headers
@@ -63,10 +64,6 @@ class ZohoClient implements IClient
         }
     }
 
-    public function getUrl()
-    {
-        return $this->settingsDto->getZohoUrl();
-    }
     private function accessTokenFromRefreshToken(): void
     {
         $client = new Client();
@@ -104,5 +101,10 @@ class ZohoClient implements IClient
         $zohoToken->created_at = new \DateTime();
         $zohoToken->updated_at = new \DateTime();
         $zohoToken->save();
+    }
+
+    public function getUrl()
+    {
+        return $this->settingsDto->getZohoUrl();
     }
 }
