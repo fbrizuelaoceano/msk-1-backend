@@ -18,8 +18,10 @@ class Responser
 
     public static function success($data, $code = 200): \Illuminate\Http\JsonResponse
     {
-        return response()->json([
+        $response = isset($data['data'])? $data : [
             "data" => $data
-        ], $code);
+        ];
+
+        return response()->json($response, $code);
     }
 }
