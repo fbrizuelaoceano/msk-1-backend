@@ -190,4 +190,6 @@ Route::get("/crm/leads", [\App\Http\Controllers\Leads\ReadLeadController::class,
 Route::post("/crm/leads", [\App\Http\Controllers\Leads\WriteLeadController::class, 'store']);
 #Users
 Route::get("/crm/users", [\App\Http\Controllers\Users\ReadUserController::class, 'index']);
-
+#Contacts
+Route::get("/crm/contacts", [\App\Http\Controllers\Contacts\ReadContactController::class, 'index']);
+Route::post("/crm/contacts", [\App\Http\Controllers\Contacts\WriteContactController::class, 'store']);
