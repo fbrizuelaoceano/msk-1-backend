@@ -26,6 +26,7 @@ class ZohoClient implements IClient
         $this->clientId = $settings->getClientId();
         $this->clientSecret = $settings->getClientSecret();
         $this->refreshToken = $settings->getRefreshToken();
+        $this->accessToken = null;
     }
 
     public function getClient(): ?Client
