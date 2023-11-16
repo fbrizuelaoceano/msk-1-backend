@@ -45,8 +45,6 @@ class ZohoWorkflowController extends Controller
                 'email' => $contactObj->Usuario,
                 'password' => Hash::make($contactObj->Password),
             ]);
-            // Log::info("salesForCRM-user: " . print_r($user, true));
-
 
             $contact = Contact::updateOrCreate(['email' => $contactObj->Usuario], [
                 'name' => $contactObj->First_Name,
@@ -66,28 +64,25 @@ class ZohoWorkflowController extends Controller
                 'address' => $contactObj->Mailing_Street,
                 'date_of_birth' => $contactObj->Date_of_Birth
             ]);
-            // Log::info("salesForCRM-contact: " . print_r($contact, true));
 
             $contactArrayObj = (array) $contactObj;
             $formCourseProgress = (array) $contactArrayObj["Formulario_de_cursada"];
-            Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
+
+            //Log::info("salesForCRM-formCourseProgress: " . print_r($formCourseProgress, true));
 
             if ($formCourseProgress) {
 
                 foreach ($formCourseProgress as $formCPstdClass) {
                     $formCP = (array) $formCPstdClass;
-                    // Log::info("salesForCRM-foreach: " . print_r($formCP, true));
 
                     $mskObjDBCourseProgress = null;
                     $mskObjDBCourseProgress = [
                         'entity_id_crm' => $formCP['id'],
                         'Fecha_finalizaci_n' => $formCP['Fecha_finalizaci_n'],
-                        // 'Nombre_de_curso' => $formCP['Nombre_de_curso']['name'].' id:'.$formCP['Nombre_de_curso']['id'],
                         'Nombre_de_curso' => $formCP['Nombre_de_curso']->name,
                         'Estado_de_OV' => $formCP['Estado_de_OV'],
                         'field_states' => $formCP['$field_states'],
                         'Created_Time' => $formCP['Created_Time'],
-                        // 'Parent_Id' => $formCP['Parent_Id']['name'].' id:'.$formCP['Parent_Id']['id'],
                         'Parent_Id' => $formCP['Parent_Id']->id,
                         'Nota' => $formCP['Nota'],
                         'Estado_cursada' => $formCP['Estado_cursada'],
@@ -103,7 +98,6 @@ class ZohoWorkflowController extends Controller
                         'Plataforma_enrolamiento' => $formCP['Plataforma_enrolamiento'],
                     ];
 
-                    // Log::info("salesForCRM-mskObjDBCourseProgress: " . print_r($mskObjDBCourseProgress, true));
 
                     CourseProgress::updateOrCreate([
                         'entity_id_crm' => $formCP['id'],
@@ -124,10 +118,8 @@ class ZohoWorkflowController extends Controller
             ]);
 
             $productDetails = $saleObj->Product_Details;
-            // Log::info("salesForCRM-productDetails: " . print_r($productDetails, true));
 
             foreach ($productDetails as $pd) {
-                // Log::info("salesForCRM-pd: " . print_r($pd, true));
 
                 Product::updateOrCreate([
                     'entity_id_crm' => $pd->product->id,
@@ -148,13 +140,13 @@ class ZohoWorkflowController extends Controller
                 'user' => $user,
                 'contact' => $contact
             ]);
+
         } catch (\Exception $e) {
             $err = [
                 'message' => $e->getMessage(),
                 'exception' => get_class($e),
                 'line' => $e->getLine(),
-                'file' => $e->getFile(),
-                // 'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile()
             ];
             Log::channel('zohoWorkFlow')->error("Error en salesForCRM: " . $e->getMessage() . "\n" . json_encode($err, JSON_PRETTY_PRINT));
 

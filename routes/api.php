@@ -18,7 +18,7 @@ use App\Http\Controllers\CourseProgressController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\CountryController;
-
+use App\Http\Controllers\Leads\WriteLeadController;
 
 Route::post('signup', [AuthController::class, 'signup']);
 Route::post('signupForCRM', [AuthController::class, 'signupForCRM']);
@@ -97,9 +97,12 @@ Route::prefix('crm')->group(function () {
     // Route::get('Products', [ZohoController::class, 'GetContracts']);
     // Route::get('Contracts', [ZohoController::class, 'GetContracts']);
 
-    Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
+    //Route::post('CreateLeadHomeContactUs', [ZohoController::class, 'CreateLeadHomeContactUs']);
+    //Route::post('CreateLeadHomeNewsletter', [ZohoController::class, 'CreateLeadHomeNewsletter']);
 
-    Route::post('CreateLeadHomeNewsletter', [ZohoController::class, 'CreateLeadHomeNewsletter']);
+    Route::post('CreateLeadHomeContactUs', [WriteLeadController::class, 'storeContactUs']);
+
+    Route::post('CreateLeadHomeNewsletter', [WriteLeadController::class, 'storeNewsletter']);
 
     Route::get('GetLeadFieldsInCRM/{module}', [ZohoController::class, 'GetLeadFieldsInCRM']);
 });

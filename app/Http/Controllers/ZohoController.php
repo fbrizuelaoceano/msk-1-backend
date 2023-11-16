@@ -339,6 +339,7 @@ class ZohoController extends Controller
                 if (!empty($request->Especialidad))
                     $specialty = Speciality::where(['name' => $request->Especialidad])->first();
             }
+
             if (isset($profession->name) && $profession->name === "Estudiante") {
                 if (!empty($request->career))
                     $career = Career::where(['name' => $request->career])->first();

@@ -41,4 +41,58 @@ class LeadsInsertTransform
             ]
         ];
     }
+
+    public static function handleContactUs($array): array
+    {
+        return [
+            "data" => [
+                [
+                    "Phone" => $array['Phone'],
+                    "Description" => $array['Description'],
+                    "Preferencia_de_contactaci_n" => [$array['Preferencia_de_contactaci_n']] ?? null,
+                    "Lead_Source" => $array['leadSource'] ?? null,
+                    "First_Name" => $array['First_Name'],
+                    "Last_Name" => $array['Last_Name'],
+                    "Email" => $array['Email'],
+                    "Profesion" => $array['Profesion'],
+                    "Especialidad" => $array['Especialidad'],
+                    "Otra_profesion" => $array['Otra_profesion'],
+                    "Otra_especialidad" => $array['Otra_especialidad'],
+                    "Ad_Account" => $array['utm_source'] ?? null,
+                    "Ad_Set" =>  $array['utm_medium'] ?? null,
+                    "Ad_Campaign" =>  $array['utm_campaign'] ?? null,
+                    "Ad_Name" =>  $array['utm_content'] ?? null,
+                    "Pais" => $array['Pais'],
+                    "Cursos_consultados" => $array['Cursos_consultados'] ?? null,
+                    "Carrera_de_estudio" => $array['career'] ?? null,
+                    "A_o_de_estudio" => $array['year'] ?? null,
+                ]
+            ]
+        ];
+    }
+
+    public static function handleNewsletter($array): array
+    {
+        return [
+            "data" => [
+                [
+                    "First_Name" => $array['First_Name'],
+                    "Last_Name" => $array['Last_Name'],
+                    "Email" => $array['Email'],
+                    "Profesion" => $array['Profesion'],
+                    "Especialidad" => $array['Especialidad'],
+                    "Otra_profesion" => $array['Otra_profesion'],
+                    "Otra_especialidad" => $array['Otra_especialidad'],
+                    "Temas_de_interes" => $array['Temas_de_interes'],
+                    "Lead_Source" => "Suscriptor newsletter",
+                    "Ad_Account" => $array['utm_source'] ?? null,
+                    "Ad_Set" => $array['utm_medium'] ?? null,
+                    "Ad_Campaign" => $array['utm_campaign'] ?? null,
+                    "Ad_Name" => $array['utm_content'] ?? null,
+                    "Pais" => $array['country'] ?? null,
+                    "Country" => $array['country'] ?? null,
+                ]
+            ]
+        ];
+    }
 }

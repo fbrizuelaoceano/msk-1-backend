@@ -64,4 +64,8 @@ class Lead extends Model
         return $contact;
         // return $contact;
     }
+
+    public static function store($data){
+        self::create($data);
+    }
 }

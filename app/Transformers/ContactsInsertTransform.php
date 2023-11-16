@@ -52,7 +52,29 @@ class ContactsInsertTransform
                 ]
             ]
         ];
+    }
 
-
+    public static function handleUpdateProfile($array): array
+    {
+        return  [
+            'First_Name' => $array['name'],
+            'Last_Name' => $array['last_name'],
+            'Email' => $array['email'],
+            'Phone' => $array['phone'],
+            'Profesi_n' => $array['profession'],
+            'Otra_profesi_n' => $array['other_profession'],
+            'Especialidad' => $array['speciality'],
+            'Otra_especialidad' => $array['other_speciality'],
+            'Pais' => $array['country'],
+            'Mailing_State' => $array['state'],
+            'Mailing_Zip' => $array['postal_code'],
+            'RFC' => $array['rfc'] ?? null,// Mexico
+            'RUT' => $array['rut'] ?? null, // Chile
+            'CUIT_CUIL_o_DNI' => $array['dni'] ?? null, // Argentina
+            'R_gimen_fiscal' => $array['fiscal_regime'],
+            'Mailing_Street' => $array['address'],
+            'Carrera_de_estudio' => ($array['profession'] === "Estudiante") ? $array['career'] : null,
+            'A_o_de_estudio' => ($array['profession'] === "Estudiante") ? $array['year'] : null,
+        ];
     }
 }
