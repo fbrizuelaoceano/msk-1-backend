@@ -66,6 +66,7 @@ class LeadsInsertTransform
                     "Cursos_consultados" => $array['Cursos_consultados'] ?? null,
                     "Carrera_de_estudio" => $array['career'] ?? null,
                     "A_o_de_estudio" => $array['year'] ?? null,
+                    "URL_ORIGEN" => $array['URL_ORIGEN'] ?? null
                 ]
             ]
         ];
@@ -91,6 +92,7 @@ class LeadsInsertTransform
                     "Ad_Name" => $array['utm_content'] ?? null,
                     "Pais" => $array['country'] ?? null,
                     "Country" => $array['country'] ?? null,
+                    "URL_ORIGEN" => $array['URL_ORIGEN'] ?? null
                 ]
             ]
         ];
