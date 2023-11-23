@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactUsRequest;
 use App\Http\Requests\LeadHomeNewsletterRequest;
-use App\Models\{Career, Lead, MethodContact, ProductCRM, Profession, Speciality, TokenPassport};
+use App\Models\{Career, Contact, Lead, MethodContact, ProductCRM, Profession, Speciality, TokenPassport};
 use App\Services\ZohoCRMService;
 use Carbon\Carbon;
 use Exception;
@@ -572,18 +572,9 @@ class ZohoController extends Controller
 
         $response = Http::withHeaders([
             'Authorization' => 'Zoho-oauthtoken ' . $this->ZOHO_ACCESS_TOKEN_RESET,
-        ])
-            ->put($URL_ZOHO, $requestArray)
-            ->json();
+        ])->put($URL_ZOHO, $requestArray)->json();
 
-        $body = [
-            $URL_ZOHO,
-            $response,
-            $requestArray
-        ];
-        // Log::info("ZohoController-Update-body: " . print_r($body, true));
-
-        return response()->json($response, );
+        return response()->json($response);
     }
     public function Delete($module, $ids)
     {
@@ -652,6 +643,11 @@ class ZohoController extends Controller
         }
 
         dump($products);
+
+    }
+
+    public function enrollCourse(Request $request){
+        $contact = Contact::where('email', $request->email)->first();
 
     }
 }

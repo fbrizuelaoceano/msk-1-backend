@@ -49,4 +49,20 @@ class WriteContactController extends Controller
             return Responser::error($e);
         }
     }
+
+    public function updateEnrollCourse(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $contact = Contact::where('email', $request->email)->first();
+
+        try{
+            $contactCRM = $this->service->getBy($contact->entity_id_crm);
+            $coursesForm = collect($contactCRM["data"][0]["Formulario_de_cursada"]);
+
+            dd($coursesForm);
+
+            return Responser::success($data);
+        } catch (\Exception $e) {
+            return Responser::error($e);
+        }
+    }
 }

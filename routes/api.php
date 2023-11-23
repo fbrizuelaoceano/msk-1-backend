@@ -188,6 +188,8 @@ Route::post("sso/link", [SSOController::class, "getLMSLink"]);
 Route::post("/getCountryByIP", [CountryController::class, "getCountryByIP"]);
 Route::get("/crm/products/{page}", [ZohoController::class, 'getProductsCRM']);
 
+Route::post("/course/enroll", [\App\Http\Controllers\Contacts\WriteContactController::class, 'updateEnrollCourse']);
+
 #LEADS
 Route::get("/crm/leads", [\App\Http\Controllers\Leads\ReadLeadController::class, 'index']);
 Route::post("/crm/leads", [\App\Http\Controllers\Leads\WriteLeadController::class, 'store']);

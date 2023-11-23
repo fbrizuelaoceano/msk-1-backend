@@ -24,7 +24,16 @@ abstract class ZohoService
         $request = new Request('GET', $this->url.'/'.$this->module);
         /** @var  Response $response */
         $response = $this->api->sendAsync($request)->wait();
-        
+
+        return (json_decode($response->getBody()->getContents(), true));
+    }
+
+    public function getBy($id)
+    {
+        $request = new Request('GET', $this->url.'/'.$this->module.'/'.$id);
+        /** @var  Response $response */
+        $response = $this->api->sendAsync($request)->wait();
+
         return (json_decode($response->getBody()->getContents(), true));
     }
 
