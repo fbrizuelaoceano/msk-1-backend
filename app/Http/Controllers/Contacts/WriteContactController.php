@@ -6,6 +6,7 @@ use App\Clients\ZohoClient;
 use App\Helpers\Responser;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\ProductCRM;
 use App\Services\ZohoContactsService;
 use App\Transformers\ContactsInsertTransform;
 use Illuminate\Http\Request;
@@ -55,12 +56,8 @@ class WriteContactController extends Controller
         $contact = Contact::where('email', $request->email)->first();
 
         try{
-            $contactCRM = $this->service->getBy($contact->entity_id_crm);
-            $coursesForm = collect($contactCRM["data"][0]["Formulario_de_cursada"]);
-
-            dd($coursesForm);
-
-            return Responser::success($data);
+            $enrolledCourse = $this->service->enrollCourse($contact, $request);
+            return Responser::success($enrolledCourse);
         } catch (\Exception $e) {
             return Responser::error($e);
         }

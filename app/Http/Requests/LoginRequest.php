@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Rules\Recaptcha;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
 
 class LoginRequest extends FormRequest
 {
@@ -49,7 +50,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => 'required|string|email',
             'password' => 'required|string',
-            'recaptcha_token' => ['required', new Recaptcha],
+            'recaptcha_token' => App::environment('production') ? ['required', new Recaptcha] : [],
         ];
     }
 }
