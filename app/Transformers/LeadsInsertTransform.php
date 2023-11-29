@@ -50,6 +50,7 @@ class LeadsInsertTransform
                     "Phone" => $array['Phone'],
                     "Description" => $array['Description'],
                     "Preferencia_de_contactaci_n" => [$array['Preferencia_de_contactaci_n']] ?? null,
+                    "Lead_Status" =>($array['leadSource'] === 'Descarga ebook') ? 'No habilitado' : 'Contacto urgente',
                     "Lead_Source" => $array['leadSource'] ?? null,
                     "First_Name" => $array['First_Name'],
                     "Last_Name" => $array['Last_Name'],
